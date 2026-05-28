@@ -1,13 +1,13 @@
 package di
 
 import (
+	KafkaProducer "ab/internal/kafka-producer"
 	"context"
 	"fmt"
 
 	"ab/internal/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )
 
@@ -15,8 +15,9 @@ type DI struct {
 	config *config.Config
 	logger *zap.Logger
 
-	pgConn        *pgxpool.Pool
-	kafkaProducer *kafka.Writer
+	kafka *KafkaProducer.Kafka
+
+	pgConn *pgxpool.Pool
 }
 
 func New(ctx context.Context) *DI {

@@ -1,12 +1,11 @@
 package di
 
-import "context"
+import "ab/internal/repository/pg-repo/experement"
 
-type ExampleRepository interface {
-	Ping(ctx context.Context) error
+func (d *DI) GetExperimentPgRepo() *experement.Storage {
+	return experement.New(d.GetPgDatabase())
 }
 
-func (d *DI) GetExampleRepository() ExampleRepository {
-	// TODO: replace with real repository constructor
-	return nil
+func (d *DI) GetGroupPgRepo() *experement.Storage {
+	return experement.New(d.GetPgDatabase())
 }

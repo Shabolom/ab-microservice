@@ -1,26 +1,11 @@
 package di
 
-import (
-	"time"
+import KafkaProducer "ab/internal/kafka-producer"
 
-	"github.com/segmentio/kafka-go"
-)
-
-func (d *DI) NewProducer() *kafka.Writer {
-	if d.kafkaProducer != nil {
-		return d.kafkaProducer
+func (d *DI) GetKafka() *KafkaProducer.Kafka {
+	if d.kafka != nil {
+		return d.kafka
 	}
 
-	producer := &kafka.Writer{
-		Addr:                   kafka.TCP(d.Config().Kafka.Brokers...),
-		Topic:                  d.Config().Kafka.Topic,
-		Balancer:               &kafka.LeastBytes{},
-		AllowAutoTopicCreation: true,
-		WriteTimeout:           10 * time.Second,
-		ReadTimeout:            10 * time.Second,
-		RequiredAcks:           kafka.RequireOne,
-	}
-
-	d.kafkaProducer = producer
-	return producer
+	return KafkaProducer.New(d.NewKafkaProducer(), d.NewKafkaJSONSerializer(), d.Config().Kafka.Topic)
 }

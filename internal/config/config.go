@@ -2,96 +2,69 @@ package config
 
 import (
 	"fmt"
-	"os"
-	"strconv"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
+type PgDB struct {
+	PostgresHost     string `envconfig:"POSTGRES_HOST"`
+	PostgresPort     string `envconfig:"POSTGRES_PORT"`
+	PostgresUser     string `envconfig:"POSTGRES_SERVICE_USERNAME"`
+	PostgresPassword string `envconfig:"POSTGRES_SERVICE_PASSWORD"`
+	PostgresDatabase string `envconfig:"POSTGRES_SERVICE_DATABASE"`
+	PostgresParams   string `envconfig:"POSTGRES_PARAMS"`
+	MaxConnection    int    `envconfig:"POSTGRES_MAX_CONNECTION" default:"10"`
+	MinConnection    int    `envconfig:"POSTGRES_MIN_CONNECTION" default:"0"`
+}
 type Config struct {
-	ServiceName string
-	Debug       bool
-	Port        string
-	Secret      string
-	Postgres    PostgresConfig
-	Kafka       KafkaConfig
+	ServiceName    string `envconfig:"APP_NAME"`
+	Debug          bool   `envconfig:"APP_DEBUG"`
+	GRPCPort       string `envconfig:"APP_GRPC_ADDRESS"`
+	Secret         string `envconfig:"APP_SECRET"`
+	ResendAppKey   string `envconfig:"RESEND_API_KEY"`
+	Kafka          Kafka
+	KafkaSerialize KafkaSerialize
+	PostgresDB     PgDB
 }
 
-type PostgresConfig struct {
-	Host     string
-	Port     string
-	DB       string
-	User     string
-	Password string
-	SSLMode  string
-	DSN      string
+type KafkaSerialize struct {
+	Host string `envconfig:"SCHEMA_REGISTRY_HOST"`
+	Port string `envconfig:"SCHEMA_REGISTRY_PORT"`
 }
-
-type KafkaConfig struct {
-	Brokers []string
-	Topic   string
-	GroupID string
+type Kafka struct {
+	Brokers []string `envconfig:"KAFKA_BROKERS"`
+	Topic   string   `envconfig:"KAFKA_TOPIC"`
+	GroupID string   `envconfig:"KAFKA_GROUP_ID"`
 }
 
 func FromEnv() (*Config, error) {
-	cfg := &Config{
-		ServiceName: getEnv("APP_NAME", "app"),
-		Debug:       getEnvBool("APP_DEBUG", true),
-		Port:        getEnv("APP_PORT", "8080"),
-		Secret:      getEnv("APP_SECRET", "secret"),
+	cfg := new(Config)
 
-		Postgres: PostgresConfig{
-			Host:     getEnv("POSTGRES_HOST", "localhost"),
-			Port:     getEnv("POSTGRES_PORT", "5432"),
-			DB:       getEnv("POSTGRES_DB", "postgres"),
-			User:     getEnv("POSTGRES_USER", "postgres"),
-			Password: getEnv("POSTGRES_PASSWORD", "postgres"),
-			SSLMode:  getEnv("POSTGRES_SSLMODE", "disable"),
-			DSN:      os.Getenv("POSTGRES_DSN"),
-		},
-
-		Kafka: KafkaConfig{
-			Brokers: splitAndClean(getEnv("KAFKA_BROKERS", "localhost:9092")),
-			Topic:   getEnv("KAFKA_TOPIC", "example-topic"),
-			GroupID: getEnv("KAFKA_GROUP_ID", "example-group"),
-		},
+	if err := envconfig.Process("", cfg); err != nil {
+		return nil, fmt.Errorf("error while parse env config | %w", err)
 	}
 
 	return cfg, nil
 }
 
-func (c *Config) DatabaseURL() string {
-	if c.Postgres.DSN != "" {
-		return c.Postgres.DSN
-	}
+func (c *Config) SchemaRegisterDSN() string {
+	return fmt.Sprintf("http://%v:%v",
+		c.KafkaSerialize.Host,
+		c.KafkaSerialize.Port)
+}
 
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		c.Postgres.User,
-		c.Postgres.Password,
-		c.Postgres.Host,
-		c.Postgres.Port,
-		c.Postgres.DB,
-		c.Postgres.SSLMode,
+func (c *Config) PostgresDBURL() string {
+	pgURL := fmt.Sprintf(
+		"postgres://%v:%v@%v:%v/%v",
+		c.PostgresDB.PostgresUser,
+		c.PostgresDB.PostgresPassword,
+		c.PostgresDB.PostgresHost,
+		c.PostgresDB.PostgresPort,
+		c.PostgresDB.PostgresDatabase,
 	)
-}
-
-func getEnv(key, fallback string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
-	}
-	return value
-}
-
-func getEnvBool(key string, fallback bool) bool {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
+	if c.PostgresDB.PostgresParams != "" {
+		pgURL = fmt.Sprintf("%v?%v", pgURL, c.PostgresDB.PostgresParams)
 	}
 
-	parsed, err := strconv.ParseBool(value)
-	if err != nil {
-		return fallback
-	}
-
-	return parsed
+	return pgURL
 }
