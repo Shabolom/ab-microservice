@@ -1,12 +1,7 @@
 package di
 
-import "context"
+import "ab/internal/service/experiments"
 
-type ExampleService interface {
-	Health(ctx context.Context) error
-}
-
-func (d *DI) GetExampleService() ExampleService {
-	// TODO: replace with real service constructor
-	return nil
+func (d *DI) GetExampleService() *experiments.Service {
+	return experiments.New(d.GetGroupPgRepo(), d.GetExperimentPgRepo())
 }

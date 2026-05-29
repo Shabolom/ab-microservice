@@ -13,22 +13,16 @@ func ErrorValidator(err error) error {
 	case errors.Is(err, shortcut.ErrNotFound):
 		return status.Error(codes.NotFound, err.Error())
 
-	case errors.Is(err, shortcut.ErrValidation):
+	case errors.Is(err, shortcut.ErrValidation),
+		errors.Is(err, shortcut.ErrCheckViolation):
 		return status.Error(codes.InvalidArgument, err.Error())
 
-	case errors.Is(err, shortcut.ErrDuplicateKey):
+	case errors.Is(err, shortcut.ErrDuplicateKey),
+		errors.Is(err, shortcut.ErrExclusionViolation):
 		return status.Error(codes.AlreadyExists, err.Error())
 
-	case errors.Is(err, shortcut.ErrForeignKeyViolation):
-		return status.Error(codes.FailedPrecondition, err.Error())
-
-	case errors.Is(err, shortcut.ErrCheckViolation):
-		return status.Error(codes.InvalidArgument, err.Error())
-
-	case errors.Is(err, shortcut.ErrExclusionViolation):
-		return status.Error(codes.AlreadyExists, err.Error())
-
-	case errors.Is(err, shortcut.ErrNotInExperiment):
+	case errors.Is(err, shortcut.ErrForeignKeyViolation),
+		errors.Is(err, shortcut.ErrNotInExperiment):
 		return status.Error(codes.FailedPrecondition, err.Error())
 
 	case errors.Is(err, shortcut.ErrGroupNotFoundByBucket):

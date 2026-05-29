@@ -30,7 +30,6 @@ func (s *Storage) Update(ctx context.Context, req *dto.UpdateExperiment) (*dto.E
 		query,
 		req.ID,
 		req.Name,
-		req.Namespace,
 		req.RollingPercentage,
 	).Scan(
 		&experiment.Id,
