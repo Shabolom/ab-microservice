@@ -28,6 +28,12 @@ func ErrorValidator(err error) error {
 	case errors.Is(err, shortcut.ErrExclusionViolation):
 		return status.Error(codes.AlreadyExists, err.Error())
 
+	case errors.Is(err, shortcut.ErrNotInExperiment):
+		return status.Error(codes.FailedPrecondition, err.Error())
+
+	case errors.Is(err, shortcut.ErrGroupNotFoundByBucket):
+		return status.Error(codes.Internal, err.Error())
+
 	default:
 		return status.Error(codes.Internal, "internal server error")
 	}

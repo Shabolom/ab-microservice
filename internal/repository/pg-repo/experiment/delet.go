@@ -1,4 +1,4 @@
-package experement
+package experiment
 
 import (
 	"context"

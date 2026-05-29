@@ -1,5 +1,5 @@
 CREATE TABLE experiments (
- id TEXT PRIMARY KEY,
+ id BIGSERIAL  PRIMARY KEY,
  name TEXT NOT NULL,
  namespace TEXT NOT NULL,
  rolling_percentage INT NOT NULL
