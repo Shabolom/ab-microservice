@@ -1,4 +1,4 @@
-package split
+package experiments
 
 import (
 	"ab/internal/dto"
@@ -20,6 +20,7 @@ type experimentRepo interface {
 	Delete(ctx context.Context, id string) error
 	Update(ctx context.Context, req *dto.UpdateExperiment) (*dto.Experiment, error)
 	GetList(ctx context.Context) ([]*dto.Experiment, error)
+	GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, error)
 }
 type Service struct {
 	groupRepo      groupRepo

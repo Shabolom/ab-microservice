@@ -13,8 +13,16 @@ func (s *Storage) Post(ctx context.Context, experimentID string, group *dto.Grou
 			name,
 			rolling_percentage
 		)
-		VALUES ($1, $2, $3)
-		RETURNING id
+		SELECT
+			$1,
+			$2,
+			$3
+		WHERE (
+			SELECT COALESCE(SUM(rolling_percentage), 0)
+			FROM experiment_groups
+			WHERE experiment_id = $1
+		) + $3 <= 100
+		RETURNING id;
 	`
 
 	err := s.conn.QueryRow(

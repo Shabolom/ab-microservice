@@ -1,6 +1,6 @@
 CREATE TABLE experiment_groups (
    id BIGSERIAL PRIMARY KEY,
-   experiment_id TEXT NOT NULL
+   experiment_id BIGSERIAL NOT NULL
        REFERENCES experiments(id)
            ON DELETE CASCADE,
    name TEXT NOT NULL,

@@ -2,31 +2,51 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"ab/internal/di"
 
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	ctx := context.Background()
 
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
 	if err := godotenv.Load("./build/local/.env"); err != nil {
 		panic(err)
 	}
 
-	e := echo.New()
-
 	container := di.New(ctx)
 	container.Logger()
 
-	// TODO: register routes here
-	// handlers := container.GetHTTPHandlers()
-	// _ = handlers
+	grpcServer := container.NewAuthGRPCServer(
+		container.Logger(),
+		container.GetGRPCHandlers(),
+	)
 
-	if err := e.Start(":" + os.Getenv("APP_PORT")); err != nil {
-		panic(err)
-	}
+	go func() {
+		lis, err := net.Listen("tcp", container.Config().GRPCPort)
+		if err != nil {
+			container.Logger().Fatal(error.Error(err))
+		}
+
+		log.Println("grpc server started on ", container.Config().GRPCPort)
+
+		if err = grpcServer.Serve(lis); err != nil {
+			container.Logger().Fatal(error.Error(err))
+		}
+
+		container.Logger().Info("grpc server started on :50051")
+	}()
+
+	<-stop
+
+	container.Logger().Info("Shutting down server...")
 }

@@ -3,14 +3,28 @@ syntax = "proto3";
 package platform.mvp;
 option go_package = "gen/auth/v1;authv1";
 
-import "google/protobuf/empty.proto";
-
 // AuthService
-service AuthService {
-  rpc UserExperiment(ExperimentRequest) returns (google.protobuf.Empty) {}
+service ABExperiment {
+  rpc UserExperiment(ExperimentRequest) returns (ExperimentsReply) {}
 }
 
 message ExperimentRequest {
   int64 splitID = 1;
+}
+
+message ExperimentsReply {
+  enum ERR_INFO_REASON {
+    UNSPECIFIED = 0;
+    VALIDATION_ERROR = 1;
+    INVALID_REQUEST = 2;
+    STATUS_OK = 3;
+  }
+  ERR_INFO_REASON err_info_reason = 1;
+  repeated ExperimentReply experimentsReply = 2;
+}
+
+message ExperimentReply {
+  string  ExperimentName = 1;
+  string  GroupName = 2;
 }
 

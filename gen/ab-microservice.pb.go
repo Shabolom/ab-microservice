@@ -9,7 +9,6 @@ package authv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,6 +20,58 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type ExperimentsReply_ERR_INFO_REASON int32
+
+const (
+	ExperimentsReply_UNSPECIFIED      ExperimentsReply_ERR_INFO_REASON = 0
+	ExperimentsReply_VALIDATION_ERROR ExperimentsReply_ERR_INFO_REASON = 1
+	ExperimentsReply_INVALID_REQUEST  ExperimentsReply_ERR_INFO_REASON = 2
+	ExperimentsReply_STATUS_OK        ExperimentsReply_ERR_INFO_REASON = 3
+)
+
+// Enum value maps for ExperimentsReply_ERR_INFO_REASON.
+var (
+	ExperimentsReply_ERR_INFO_REASON_name = map[int32]string{
+		0: "UNSPECIFIED",
+		1: "VALIDATION_ERROR",
+		2: "INVALID_REQUEST",
+		3: "STATUS_OK",
+	}
+	ExperimentsReply_ERR_INFO_REASON_value = map[string]int32{
+		"UNSPECIFIED":      0,
+		"VALIDATION_ERROR": 1,
+		"INVALID_REQUEST":  2,
+		"STATUS_OK":        3,
+	}
+)
+
+func (x ExperimentsReply_ERR_INFO_REASON) Enum() *ExperimentsReply_ERR_INFO_REASON {
+	p := new(ExperimentsReply_ERR_INFO_REASON)
+	*p = x
+	return p
+}
+
+func (x ExperimentsReply_ERR_INFO_REASON) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ExperimentsReply_ERR_INFO_REASON) Descriptor() protoreflect.EnumDescriptor {
+	return file_ab_microservice_proto_enumTypes[0].Descriptor()
+}
+
+func (ExperimentsReply_ERR_INFO_REASON) Type() protoreflect.EnumType {
+	return &file_ab_microservice_proto_enumTypes[0]
+}
+
+func (x ExperimentsReply_ERR_INFO_REASON) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ExperimentsReply_ERR_INFO_REASON.Descriptor instead.
+func (ExperimentsReply_ERR_INFO_REASON) EnumDescriptor() ([]byte, []int) {
+	return file_ab_microservice_proto_rawDescGZIP(), []int{1, 0}
+}
 
 type ExperimentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -66,15 +117,130 @@ func (x *ExperimentRequest) GetSplitID() int64 {
 	return 0
 }
 
+type ExperimentsReply struct {
+	state            protoimpl.MessageState           `protogen:"open.v1"`
+	ErrInfoReason    ExperimentsReply_ERR_INFO_REASON `protobuf:"varint,1,opt,name=err_info_reason,json=errInfoReason,proto3,enum=platform.mvp.ExperimentsReply_ERR_INFO_REASON" json:"err_info_reason,omitempty"`
+	ExperimentsReply []*ExperimentReply               `protobuf:"bytes,2,rep,name=experimentsReply,proto3" json:"experimentsReply,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ExperimentsReply) Reset() {
+	*x = ExperimentsReply{}
+	mi := &file_ab_microservice_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExperimentsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExperimentsReply) ProtoMessage() {}
+
+func (x *ExperimentsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ab_microservice_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExperimentsReply.ProtoReflect.Descriptor instead.
+func (*ExperimentsReply) Descriptor() ([]byte, []int) {
+	return file_ab_microservice_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ExperimentsReply) GetErrInfoReason() ExperimentsReply_ERR_INFO_REASON {
+	if x != nil {
+		return x.ErrInfoReason
+	}
+	return ExperimentsReply_UNSPECIFIED
+}
+
+func (x *ExperimentsReply) GetExperimentsReply() []*ExperimentReply {
+	if x != nil {
+		return x.ExperimentsReply
+	}
+	return nil
+}
+
+type ExperimentReply struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ExperimentName string                 `protobuf:"bytes,1,opt,name=ExperimentName,proto3" json:"ExperimentName,omitempty"`
+	GroupName      string                 `protobuf:"bytes,2,opt,name=GroupName,proto3" json:"GroupName,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ExperimentReply) Reset() {
+	*x = ExperimentReply{}
+	mi := &file_ab_microservice_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExperimentReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExperimentReply) ProtoMessage() {}
+
+func (x *ExperimentReply) ProtoReflect() protoreflect.Message {
+	mi := &file_ab_microservice_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExperimentReply.ProtoReflect.Descriptor instead.
+func (*ExperimentReply) Descriptor() ([]byte, []int) {
+	return file_ab_microservice_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ExperimentReply) GetExperimentName() string {
+	if x != nil {
+		return x.ExperimentName
+	}
+	return ""
+}
+
+func (x *ExperimentReply) GetGroupName() string {
+	if x != nil {
+		return x.GroupName
+	}
+	return ""
+}
+
 var File_ab_microservice_proto protoreflect.FileDescriptor
 
 const file_ab_microservice_proto_rawDesc = "" +
 	"\n" +
-	"\x15ab-microservice.proto\x12\fplatform.mvp\x1a\x1bgoogle/protobuf/empty.proto\"-\n" +
+	"\x15ab-microservice.proto\x12\fplatform.mvp\"-\n" +
 	"\x11ExperimentRequest\x12\x18\n" +
-	"\asplitID\x18\x01 \x01(\x03R\asplitID2Z\n" +
-	"\vAuthService\x12K\n" +
-	"\x0eUserExperiment\x12\x1f.platform.mvp.ExperimentRequest\x1a\x16.google.protobuf.Empty\"\x00B\x14Z\x12gen/auth/v1;authv1b\x06proto3"
+	"\asplitID\x18\x01 \x01(\x03R\asplitID\"\x93\x02\n" +
+	"\x10ExperimentsReply\x12V\n" +
+	"\x0ferr_info_reason\x18\x01 \x01(\x0e2..platform.mvp.ExperimentsReply.ERR_INFO_REASONR\rerrInfoReason\x12I\n" +
+	"\x10experimentsReply\x18\x02 \x03(\v2\x1d.platform.mvp.ExperimentReplyR\x10experimentsReply\"\\\n" +
+	"\x0fERR_INFO_REASON\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\x14\n" +
+	"\x10VALIDATION_ERROR\x10\x01\x12\x13\n" +
+	"\x0fINVALID_REQUEST\x10\x02\x12\r\n" +
+	"\tSTATUS_OK\x10\x03\"W\n" +
+	"\x0fExperimentReply\x12&\n" +
+	"\x0eExperimentName\x18\x01 \x01(\tR\x0eExperimentName\x12\x1c\n" +
+	"\tGroupName\x18\x02 \x01(\tR\tGroupName2c\n" +
+	"\fABExperiment\x12S\n" +
+	"\x0eUserExperiment\x12\x1f.platform.mvp.ExperimentRequest\x1a\x1e.platform.mvp.ExperimentsReply\"\x00B\x14Z\x12gen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_ab_microservice_proto_rawDescOnce sync.Once
@@ -88,19 +254,24 @@ func file_ab_microservice_proto_rawDescGZIP() []byte {
 	return file_ab_microservice_proto_rawDescData
 }
 
-var file_ab_microservice_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_ab_microservice_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_ab_microservice_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_ab_microservice_proto_goTypes = []any{
-	(*ExperimentRequest)(nil), // 0: platform.mvp.ExperimentRequest
-	(*emptypb.Empty)(nil),     // 1: google.protobuf.Empty
+	(ExperimentsReply_ERR_INFO_REASON)(0), // 0: platform.mvp.ExperimentsReply.ERR_INFO_REASON
+	(*ExperimentRequest)(nil),             // 1: platform.mvp.ExperimentRequest
+	(*ExperimentsReply)(nil),              // 2: platform.mvp.ExperimentsReply
+	(*ExperimentReply)(nil),               // 3: platform.mvp.ExperimentReply
 }
 var file_ab_microservice_proto_depIdxs = []int32{
-	0, // 0: platform.mvp.AuthService.UserExperiment:input_type -> platform.mvp.ExperimentRequest
-	1, // 1: platform.mvp.AuthService.UserExperiment:output_type -> google.protobuf.Empty
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: platform.mvp.ExperimentsReply.err_info_reason:type_name -> platform.mvp.ExperimentsReply.ERR_INFO_REASON
+	3, // 1: platform.mvp.ExperimentsReply.experimentsReply:type_name -> platform.mvp.ExperimentReply
+	1, // 2: platform.mvp.ABExperiment.UserExperiment:input_type -> platform.mvp.ExperimentRequest
+	2, // 3: platform.mvp.ABExperiment.UserExperiment:output_type -> platform.mvp.ExperimentsReply
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_ab_microservice_proto_init() }
@@ -113,13 +284,14 @@ func file_ab_microservice_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ab_microservice_proto_rawDesc), len(file_ab_microservice_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_ab_microservice_proto_goTypes,
 		DependencyIndexes: file_ab_microservice_proto_depIdxs,
+		EnumInfos:         file_ab_microservice_proto_enumTypes,
 		MessageInfos:      file_ab_microservice_proto_msgTypes,
 	}.Build()
 	File_ab_microservice_proto = out.File

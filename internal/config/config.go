@@ -7,14 +7,14 @@ import (
 )
 
 type PgDB struct {
-	PostgresHost     string `envconfig:"POSTGRES_HOST"`
-	PostgresPort     string `envconfig:"POSTGRES_PORT"`
-	PostgresUser     string `envconfig:"POSTGRES_SERVICE_USERNAME"`
-	PostgresPassword string `envconfig:"POSTGRES_SERVICE_PASSWORD"`
-	PostgresDatabase string `envconfig:"POSTGRES_SERVICE_DATABASE"`
-	PostgresParams   string `envconfig:"POSTGRES_PARAMS"`
-	MaxConnection    int    `envconfig:"POSTGRES_MAX_CONNECTION" default:"10"`
-	MinConnection    int    `envconfig:"POSTGRES_MIN_CONNECTION" default:"0"`
+	Host          string `envconfig:"POSTGRES_HOST"`
+	Port          string `envconfig:"POSTGRES_PORT"`
+	User          string `envconfig:"POSTGRES_USER"`
+	Password      string `envconfig:"POSTGRES_PASSWORD"`
+	Database      string `envconfig:"POSTGRES_DB"`
+	SSLMode       string `envconfig:"POSTGRES_SSLMODE"`
+	MaxConnection int    `envconfig:"POSTGRES_MAX_CONNECTION" default:"10"`
+	MinConnection int    `envconfig:"POSTGRES_MIN_CONNECTION" default:"0"`
 }
 type Config struct {
 	ServiceName    string `envconfig:"APP_NAME"`
@@ -56,15 +56,12 @@ func (c *Config) SchemaRegisterDSN() string {
 func (c *Config) PostgresDBURL() string {
 	pgURL := fmt.Sprintf(
 		"postgres://%v:%v@%v:%v/%v",
-		c.PostgresDB.PostgresUser,
-		c.PostgresDB.PostgresPassword,
-		c.PostgresDB.PostgresHost,
-		c.PostgresDB.PostgresPort,
-		c.PostgresDB.PostgresDatabase,
+		c.PostgresDB.User,
+		c.PostgresDB.Password,
+		c.PostgresDB.Host,
+		c.PostgresDB.Port,
+		c.PostgresDB.Database,
 	)
-	if c.PostgresDB.PostgresParams != "" {
-		pgURL = fmt.Sprintf("%v?%v", pgURL, c.PostgresDB.PostgresParams)
-	}
 
 	return pgURL
 }
