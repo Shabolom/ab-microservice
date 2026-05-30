@@ -1,11 +1,18 @@
 package inMemmoryCashe
 
-import "sync"
+import (
+	"ab/internal/dto"
+	"sync"
+)
 
-type SessionStorage struct {
+type RawExperimentSessionStorage struct {
 	mu      sync.RWMutex
-	session map[int64]string
+	session map[string]dto.NameSpaceExperiments
 }
 
-func New() {
+func New() *RawExperimentSessionStorage {
+	return &RawExperimentSessionStorage{
+		mu:      sync.RWMutex{},
+		session: map[string]dto.NameSpaceExperiments{},
+	}
 }

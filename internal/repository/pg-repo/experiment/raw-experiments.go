@@ -6,38 +6,60 @@ import (
 	"fmt"
 )
 
-func (s *Storage) GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, error) {
+func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error) {
 	query := `
 		SELECT
 			e.id,
 			e.name,
-			e.namespace,
-			e.rolling_percentage,
+			e.rollout_percentage,
+			e.start_date,
+			e.end_date,
+
+			ns.id,
+			ns.name,
+			ns.description,
+
+			l.id,
+			l.namespace_id,
+			l.name,
+			l.description,
 
 			g.id,
 			g.name,
 			g.rolling_percentage
 		FROM experiments e
+		LEFT JOIN layer_experiments le
+			ON le.experiment_id = e.id
+		LEFT JOIN layers l
+			ON l.id = le.layer_id
+		LEFT JOIN namespaces ns
+			ON ns.id = l.namespace_id
 		LEFT JOIN experiment_groups g
 			ON g.experiment_id = e.id
-		ORDER BY e.id, g.id
+		WHERE ns.name = $1
+		ORDER BY e.id, l.id, g.id
 	`
 
-	rows, err := s.conn.Query(ctx, query)
+	rows, err := s.conn.Query(ctx, query, namespace)
 	if err != nil {
 		return nil, fmt.Errorf("get raw experiments: %w", err)
 	}
 	defer rows.Close()
 
-	experimentsMap := make(map[int64]*dto.RawExperiment)
-	experimentIDs := make([]int64, 0)
+	result := make([]dto.RawExperiment, 0)
 
 	for rows.Next() {
 		var (
-			expID                int64
-			expName              string
-			expNamespace         string
-			expRollingPercentage int
+			exp dto.RawExperiment
+
+			namespaceID          *int64
+			namespaceName        *string
+			namespaceDescription *string
+
+			layerID          *int64
+			layerNamespaceID *int64
+			layerName        *string
+			layerDescription *string
 
 			groupID                *int64
 			groupName              *string
@@ -45,10 +67,21 @@ func (s *Storage) GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, 
 		)
 
 		err = rows.Scan(
-			&expID,
-			&expName,
-			&expNamespace,
-			&expRollingPercentage,
+			&exp.Id,
+			&exp.Name,
+			&exp.RollingPercentage,
+			&exp.StartDate,
+			&exp.EndDate,
+
+			&namespaceID,
+			&namespaceName,
+			&namespaceDescription,
+
+			&layerID,
+			&layerNamespaceID,
+			&layerName,
+			&layerDescription,
+
 			&groupID,
 			&groupName,
 			&groupRollingPercentage,
@@ -57,18 +90,22 @@ func (s *Storage) GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, 
 			return nil, fmt.Errorf("scan raw experiment: %w", err)
 		}
 
-		exp, exists := experimentsMap[expID]
-		if !exists {
-			exp = &dto.RawExperiment{
-				Id:                expID,
-				Name:              expName,
-				NameSpase:         expNamespace,
-				RollingPercentage: expRollingPercentage,
-				Group:             make([]dto.Group, 0),
+		if namespaceID != nil {
+			exp.NameSpaceName = *namespaceName
+			exp.NameSpace = dto.NameSpace{
+				ID:          *namespaceID,
+				Name:        *namespaceName,
+				Description: *namespaceDescription,
 			}
+		}
 
-			experimentsMap[expID] = exp
-			experimentIDs = append(experimentIDs, expID)
+		if layerID != nil {
+			exp.Layer = append(exp.Layer, dto.Layer{
+				ID:          *layerID,
+				NameSpaceID: *layerNamespaceID,
+				Name:        *layerName,
+				Description: *layerDescription,
+			})
 		}
 
 		if groupID != nil {
@@ -78,15 +115,12 @@ func (s *Storage) GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, 
 				RollingPercentage: *groupRollingPercentage,
 			})
 		}
+
+		result = append(result, exp)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate raw experiments: %w", err)
-	}
-
-	result := make([]*dto.RawExperiment, 0, len(experimentsMap))
-	for _, id := range experimentIDs {
-		result = append(result, experimentsMap[id])
 	}
 
 	return result, nil

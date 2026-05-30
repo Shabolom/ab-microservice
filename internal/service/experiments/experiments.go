@@ -5,6 +5,15 @@ import (
 	"context"
 )
 
+type inMemoryStorage interface {
+	Replace(newCash map[string]dto.NameSpaceExperiments)
+	GetExperimentByNamespace(namespace string) dto.NameSpaceExperiments
+}
+
+type nameSpaceRepo interface {
+	GetList(ctx context.Context) ([]dto.NameSpace, error)
+}
+
 type groupRepo interface {
 	GetListByExperimentID(ctx context.Context, experimentID string) ([]*dto.Group, error)
 	Update(ctx context.Context, group *dto.UpdateGroup) (*dto.Group, error)
@@ -20,11 +29,13 @@ type experimentRepo interface {
 	Delete(ctx context.Context, id string) error
 	Update(ctx context.Context, req *dto.UpdateExperiment) (*dto.Experiment, error)
 	GetList(ctx context.Context) ([]*dto.Experiment, error)
-	GetRawExperiments(ctx context.Context) ([]*dto.RawExperiment, error)
+	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
 }
 type Service struct {
-	groupRepo      groupRepo
-	experimentRepo experimentRepo
+	groupRepo       groupRepo
+	experimentRepo  experimentRepo
+	nameSpaceRepo   nameSpaceRepo
+	inMemoryStorage inMemoryStorage
 }
 
 func New(groupRepo groupRepo, experimentRepo experimentRepo) *Service {

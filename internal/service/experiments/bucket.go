@@ -10,14 +10,13 @@ import (
 
 func (s *Service) Bucket(key string) int {
 	hash := murmur3.Sum32([]byte(key))
-	return int(hash % 100)
+	return int(hash%100) + 1
 }
 
 func (s *Service) InExperiment(deviceID int64, rawExperiment *dto.RawExperiment) bool {
 	key := fmt.Sprintf("experiment:%d:device-id:%s", rawExperiment.Id, deviceID)
 
 	bucket := s.Bucket(key)
-	fmt.Println(bucket, "33333")
 	return bucket < rawExperiment.RollingPercentage
 }
 
@@ -35,7 +34,6 @@ func (s *Service) PickGroup(deviceID int64, rawExperiments *dto.RawExperiment) (
 	groupKey := fmt.Sprintf("rawExperiments-id:%d:device-id:%s", rawExperiments.Id, deviceID)
 
 	bucket := s.Bucket(groupKey)
-	fmt.Println(bucket, "awawawaw12123")
 	current := 0
 
 	for i := range groups {
