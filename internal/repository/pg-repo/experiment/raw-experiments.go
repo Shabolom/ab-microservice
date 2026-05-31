@@ -3,6 +3,7 @@ package experiment
 import (
 	"ab/internal/dto"
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -12,6 +13,7 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			e.id,
 			e.name,
 			e.rollout_percentage,
+			e.status,
 			e.start_date,
 			e.end_date,
 
@@ -19,14 +21,29 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			ns.name,
 			ns.description,
 
-			l.id,
-			l.namespace_id,
-			l.name,
-			l.description,
+			COALESCE(
+				jsonb_agg(
+					DISTINCT jsonb_build_object(
+						'id', l.id,
+						'namespace_id', l.namespace_id,
+						'name', l.name,
+						'description', l.description
+					)
+				) FILTER (WHERE l.id IS NOT NULL),
+				'[]'::jsonb
+			) AS layers,
 
-			g.id,
-			g.name,
-			g.rolling_percentage
+			COALESCE(
+				jsonb_agg(
+					DISTINCT jsonb_build_object(
+						'id', g.id,
+						'name', g.name,
+						'rolling_percentage', g.rolling_percentage,
+						'device_id', g.device_ids
+					)
+				) FILTER (WHERE g.id IS NOT NULL),
+				'[]'::jsonb
+			) AS groups
 		FROM experiments e
 		LEFT JOIN layer_experiments le
 			ON le.experiment_id = e.id
@@ -37,7 +54,17 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		LEFT JOIN experiment_groups g
 			ON g.experiment_id = e.id
 		WHERE ns.name = $1
-		ORDER BY e.id, l.id, g.id
+		GROUP BY
+			e.id,
+			e.name,
+			e.rollout_percentage,
+			e.status,
+			e.start_date,
+			e.end_date,
+			ns.id,
+			ns.name,
+			ns.description
+		ORDER BY e.id
 	`
 
 	rows, err := s.conn.Query(ctx, query, namespace)
@@ -52,24 +79,19 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		var (
 			exp dto.RawExperiment
 
-			namespaceID          *int64
-			namespaceName        *string
-			namespaceDescription *string
+			namespaceID          int64
+			namespaceName        string
+			namespaceDescription string
 
-			layerID          *int64
-			layerNamespaceID *int64
-			layerName        *string
-			layerDescription *string
-
-			groupID                *int64
-			groupName              *string
-			groupRollingPercentage *int
+			layersRaw []byte
+			groupsRaw []byte
 		)
 
 		err = rows.Scan(
 			&exp.Id,
 			&exp.Name,
 			&exp.RollingPercentage,
+			&exp.Status,
 			&exp.StartDate,
 			&exp.EndDate,
 
@@ -77,43 +99,26 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			&namespaceName,
 			&namespaceDescription,
 
-			&layerID,
-			&layerNamespaceID,
-			&layerName,
-			&layerDescription,
-
-			&groupID,
-			&groupName,
-			&groupRollingPercentage,
+			&layersRaw,
+			&groupsRaw,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("scan raw experiment: %w", err)
 		}
 
-		if namespaceID != nil {
-			exp.NameSpaceName = *namespaceName
-			exp.NameSpace = dto.NameSpace{
-				ID:          *namespaceID,
-				Name:        *namespaceName,
-				Description: *namespaceDescription,
-			}
+		exp.NameSpaceName = namespaceName
+		exp.NameSpace = dto.NameSpace{
+			ID:          namespaceID,
+			Name:        namespaceName,
+			Description: namespaceDescription,
 		}
 
-		if layerID != nil {
-			exp.Layer = append(exp.Layer, dto.Layer{
-				ID:          *layerID,
-				NameSpaceID: *layerNamespaceID,
-				Name:        *layerName,
-				Description: *layerDescription,
-			})
+		if err = json.Unmarshal(layersRaw, &exp.Layer); err != nil {
+			return nil, fmt.Errorf("unmarshal layers for experiment %d: %w", exp.Id, err)
 		}
 
-		if groupID != nil {
-			exp.Group = append(exp.Group, dto.Group{
-				ID:                *groupID,
-				Name:              *groupName,
-				RollingPercentage: *groupRollingPercentage,
-			})
+		if err = json.Unmarshal(groupsRaw, &exp.Group); err != nil {
+			return nil, fmt.Errorf("unmarshal groups for experiment %d: %w", exp.Id, err)
 		}
 
 		result = append(result, exp)

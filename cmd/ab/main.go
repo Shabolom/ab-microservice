@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net"
-	"os"
 	"os/signal"
 	"syscall"
 
@@ -14,17 +13,22 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer stop()
 
 	if err := godotenv.Load("./build/local/.env"); err != nil {
 		panic(err)
 	}
 
 	container := di.New(ctx)
-	container.Logger()
+
+	go func() {
+		container.GetWorker().StartExperimentsCacheWorker(ctx)
+	}()
 
 	grpcServer := container.NewAuthGRPCServer(
 		container.Logger(),
@@ -46,7 +50,7 @@ func main() {
 		container.Logger().Info("grpc server started on :50051")
 	}()
 
-	<-stop
+	<-ctx.Done()
 
 	container.Logger().Info("Shutting down server...")
 }

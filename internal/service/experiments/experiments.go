@@ -3,10 +3,11 @@ package experiments
 import (
 	"ab/internal/dto"
 	"context"
+
+	"go.uber.org/zap"
 )
 
 type inMemoryStorage interface {
-	Replace(newCash map[string]dto.NameSpaceExperiments)
 	GetExperimentByNamespace(namespace string) dto.NameSpaceExperiments
 }
 
@@ -36,11 +37,21 @@ type Service struct {
 	experimentRepo  experimentRepo
 	nameSpaceRepo   nameSpaceRepo
 	inMemoryStorage inMemoryStorage
+	logger          *zap.Logger
 }
 
-func New(groupRepo groupRepo, experimentRepo experimentRepo) *Service {
+func New(
+	groupRepo groupRepo,
+	experimentRepo experimentRepo,
+	nameSpaceRepo nameSpaceRepo,
+	inMemoryStorage inMemoryStorage,
+	logger *zap.Logger,
+) *Service {
 	return &Service{
-		groupRepo:      groupRepo,
-		experimentRepo: experimentRepo,
+		groupRepo:       groupRepo,
+		experimentRepo:  experimentRepo,
+		nameSpaceRepo:   nameSpaceRepo,
+		inMemoryStorage: inMemoryStorage,
+		logger:          logger,
 	}
 }

@@ -15,3 +15,4 @@ CREATE TABLE experiment_groups (
 
 CREATE INDEX idx_experiment_groups_experiment_id
     ON experiment_groups(experiment_id);
+

@@ -1,8 +1,15 @@
 package dto
 
+import "time"
+
 type Experiment struct {
-	Id                int64  `json:"id"`
-	Name              string `json:"name"`
-	NameSpase         string `json:"name_spase"`
-	RollingPercentage int    `json:"rolling_percentage"`
+	ID                int64     `json:"id"`
+	Name              string    `json:"name"`
+	Status            string    `json:"status"`
+	RolloutPercentage int64     `json:"rollout_percentage"`
+	StartDate         time.Time `json:"start_date"`
+	EndDate           time.Time `json:"end_date"`
+	LayersID          []int64   `json:"layers_id"`
+	Bucket            []int64   `json:"bucket"`
+	Groups            []Group   `json:"groups"`
 }

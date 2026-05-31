@@ -12,7 +12,6 @@ type RawExperimentSessionStorage struct {
 
 func New() *RawExperimentSessionStorage {
 	return &RawExperimentSessionStorage{
-		mu:      sync.RWMutex{},
 		session: map[string]dto.NameSpaceExperiments{},
 	}
 }

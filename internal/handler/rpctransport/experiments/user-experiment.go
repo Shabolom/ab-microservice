@@ -2,14 +2,19 @@ package experiments
 
 import (
 	authv1 "ab/gen"
+	"ab/internal/dto"
 	"ab/internal/render"
 	"context"
 )
 
 func (h *Handler) UserExperiment(ctx context.Context, req *authv1.ExperimentRequest) (*authv1.ExperimentsReply, error) {
-	splitID := req.GetSplitID()
+	reqParam := &dto.RequestParameters{
+		SplitID:   req.GetSplitID(),
+		DeviceID:  req.GetDeviceID(),
+		NameSpace: req.GetNameSpace(),
+	}
 
-	reply, err := h.experimentService.GetExperiments(ctx, splitID)
+	reply, err := h.experimentService.GetExperiments(reqParam)
 	if err != nil {
 		return nil, render.ErrorValidator(err)
 	}

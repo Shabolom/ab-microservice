@@ -1,0 +1,7 @@
+package dto
+
+type RequestParameters struct {
+	SplitID   int64
+	DeviceID  int64
+	NameSpace string
+}

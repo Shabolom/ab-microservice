@@ -19,16 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ABExperiment_UserExperiment_FullMethodName = "/platform.mvp.ABExperiment/UserExperiment"
+	ABExperiment_UserExperiment_FullMethodName   = "/platform.mvp.ABExperiment/UserExperiment"
+	ABExperiment_CreateExperiment_FullMethodName = "/platform.mvp.ABExperiment/CreateExperiment"
+	ABExperiment_CreateNamespace_FullMethodName  = "/platform.mvp.ABExperiment/CreateNamespace"
+	ABExperiment_CreateLayer_FullMethodName      = "/platform.mvp.ABExperiment/CreateLayer"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// AuthService
 type ABExperimentClient interface {
 	UserExperiment(ctx context.Context, in *ExperimentRequest, opts ...grpc.CallOption) (*ExperimentsReply, error)
+	CreateExperiment(ctx context.Context, in *CreateExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
+	CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*StockReply, error)
+	CreateLayer(ctx context.Context, in *CreateLayerRequest, opts ...grpc.CallOption) (*StockReply, error)
 }
 
 type aBExperimentClient struct {
@@ -49,13 +53,44 @@ func (c *aBExperimentClient) UserExperiment(ctx context.Context, in *ExperimentR
 	return out, nil
 }
 
+func (c *aBExperimentClient) CreateExperiment(ctx context.Context, in *CreateExperimentRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_CreateExperiment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_CreateNamespace_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) CreateLayer(ctx context.Context, in *CreateLayerRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_CreateLayer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
-//
-// AuthService
 type ABExperimentServer interface {
 	UserExperiment(context.Context, *ExperimentRequest) (*ExperimentsReply, error)
+	CreateExperiment(context.Context, *CreateExperimentRequest) (*StockReply, error)
+	CreateNamespace(context.Context, *CreateNamespaceRequest) (*StockReply, error)
+	CreateLayer(context.Context, *CreateLayerRequest) (*StockReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -67,6 +102,15 @@ type UnimplementedABExperimentServer struct{}
 
 func (UnimplementedABExperimentServer) UserExperiment(context.Context, *ExperimentRequest) (*ExperimentsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserExperiment not implemented")
+}
+func (UnimplementedABExperimentServer) CreateExperiment(context.Context, *CreateExperimentRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateExperiment not implemented")
+}
+func (UnimplementedABExperimentServer) CreateNamespace(context.Context, *CreateNamespaceRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateNamespace not implemented")
+}
+func (UnimplementedABExperimentServer) CreateLayer(context.Context, *CreateLayerRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateLayer not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -106,6 +150,60 @@ func _ABExperiment_UserExperiment_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_CreateExperiment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateExperimentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).CreateExperiment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_CreateExperiment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).CreateExperiment(ctx, req.(*CreateExperimentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_CreateNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNamespaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).CreateNamespace(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_CreateNamespace_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).CreateNamespace(ctx, req.(*CreateNamespaceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_CreateLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateLayerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).CreateLayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_CreateLayer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).CreateLayer(ctx, req.(*CreateLayerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +214,18 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserExperiment",
 			Handler:    _ABExperiment_UserExperiment_Handler,
+		},
+		{
+			MethodName: "CreateExperiment",
+			Handler:    _ABExperiment_CreateExperiment_Handler,
+		},
+		{
+			MethodName: "CreateNamespace",
+			Handler:    _ABExperiment_CreateNamespace_Handler,
+		},
+		{
+			MethodName: "CreateLayer",
+			Handler:    _ABExperiment_CreateLayer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

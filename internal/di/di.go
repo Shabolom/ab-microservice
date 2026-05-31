@@ -1,6 +1,7 @@
 package di
 
 import (
+	inMemmoryCashe "ab/internal/in-memory-cache"
 	KafkaProducer "ab/internal/kafka-producer"
 	"context"
 	"fmt"
@@ -16,6 +17,8 @@ type DI struct {
 	logger *zap.Logger
 
 	kafka *KafkaProducer.Kafka
+
+	inMemoryCache *inMemmoryCashe.RawExperimentSessionStorage
 
 	pgConn *pgxpool.Pool
 }

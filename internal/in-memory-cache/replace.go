@@ -1,6 +1,8 @@
 package inMemmoryCashe
 
-import "ab/internal/dto"
+import (
+	"ab/internal/dto"
+)
 
 func (r *RawExperimentSessionStorage) Replace(newCash map[string]dto.NameSpaceExperiments) {
 	r.mu.Lock()

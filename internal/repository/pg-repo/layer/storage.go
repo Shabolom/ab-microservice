@@ -1,4 +1,4 @@
-package experiment
+package layer
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"

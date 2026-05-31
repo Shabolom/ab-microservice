@@ -3,15 +3,59 @@ syntax = "proto3";
 package platform.mvp;
 option go_package = "gen/auth/v1;authv1";
 
-// AuthService
+import "google/protobuf/timestamp.proto";
+
 service ABExperiment {
   rpc UserExperiment(ExperimentRequest) returns (ExperimentsReply) {}
+  rpc CreateExperiment(CreateExperimentRequest) returns (StockReply) {}
+  rpc CreateNamespace(CreateNamespaceRequest) returns (StockReply) {}
+  rpc CreateLayer(CreateLayerRequest) returns (StockReply) {}
 }
+
+message StockReply {
+  enum ERR_INFO_REASON {
+    UNSPECIFIED = 0;
+    VALIDATION_ERROR = 1;
+    INVALID_REQUEST = 2;
+    STATUS_OK = 3;
+  }
+  ERR_INFO_REASON err_info_reason = 1;
+  string message = 2;
+}
+
+message CreateExperimentRequest {
+  string name = 1;
+  string status = 2;
+  int64  RolloutPercentage = 3;
+  google.protobuf.Timestamp StartDate = 4;
+  google.protobuf.Timestamp EndDate = 5;
+  repeated int64 LayersID = 6;
+  repeated int64 Bucket = 7;
+  repeated Group Groups = 8;
+}
+
+message Group {
+  string Name = 2;
+  int64 RollingPercentage = 3;
+  repeated int64 DeviceID = 4;
+}
+
+message CreateNamespaceRequest {
+  string Name = 1;
+  string Description = 2;
+}
+
+message CreateLayerRequest {
+  int64 NameSpaceID = 1;
+  string Name = 2;
+  string Description = 3;
+}
+
 
 message ExperimentRequest {
   int64 splitID = 1;
-  // int64 deviceID = 2;
-  // string nameSpace = 3;
+   int64 deviceID = 2;
+   string nameSpace = 3;
   // Params params = 4;
 }
 

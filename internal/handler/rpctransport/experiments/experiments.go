@@ -2,11 +2,10 @@ package experiments
 
 import (
 	"ab/internal/dto"
-	"context"
 )
 
 type experimentService interface {
-	GetExperiments(ctx context.Context, splitID int64) ([]*dto.GetExperimentsReply, error)
+	GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetExperimentsReply, error)
 }
 type Handler struct {
 	experimentService experimentService
