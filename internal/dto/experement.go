@@ -10,6 +10,5 @@ type Experiment struct {
 	StartDate         time.Time `json:"start_date"`
 	EndDate           time.Time `json:"end_date"`
 	LayersID          []int64   `json:"layers_id"`
-	Bucket            []int64   `json:"bucket"`
 	Groups            []Group   `json:"groups"`
 }

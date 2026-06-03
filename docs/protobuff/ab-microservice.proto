@@ -52,8 +52,6 @@ message CreateLayerRequest {
 
 message SetReadyExperimentRequest {
   int64 experiment_id = 1;
-  string start_date = 2;
-  string end_date = 3;
 }
 
 message ExperimentRequest {

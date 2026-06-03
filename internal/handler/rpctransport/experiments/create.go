@@ -16,7 +16,7 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 		groups = append(groups, dto.Group{
 			Name:              g.GetName(),
 			RollingPercentage: g.GetRollingPercentage(),
-			DeviceID:          g.GetDeviceID(),
+			DeviceID:          g.GetDeviceId(),
 		})
 	}
 
@@ -25,7 +25,7 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 		RolloutPercentage: req.GetRolloutPercentage(),
 		StartDate:         req.GetStartDate().AsTime(),
 		EndDate:           req.GetEndDate().AsTime(),
-		LayersID:          req.GetLayersID(),
+		LayersID:          req.GetLayersId(),
 		Groups:            groups,
 	}
 

@@ -10,7 +10,7 @@ import (
 
 func (h *Handler) CreateLayer(ctx context.Context, req *authv1.CreateLayerRequest) (*authv1.StockReply, error) {
 	reqLayer := &dto.Layer{
-		NameSpaceID: req.GetNameSpaceID(),
+		NameSpaceID: req.GetNamespaceId(),
 		Name:        req.GetName(),
 		Description: req.GetDescription(),
 	}

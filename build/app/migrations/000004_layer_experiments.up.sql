@@ -7,7 +7,14 @@ CREATE TABLE layer_experiments (
                                        REFERENCES experiments(id)
                                            ON DELETE CASCADE,
 
-                                   PRIMARY KEY (layer_id, experiment_id)
+                                   bucket INT[] NOT NULL DEFAULT '{}',
+
+                                   PRIMARY KEY (layer_id, experiment_id),
+
+                                   CHECK (
+                                       array_length(bucket, 1) IS NULL
+                                           OR array_length(bucket, 1) <= 100
+                                       )
 );
 
 CREATE INDEX idx_layer_experiments_experiment_id

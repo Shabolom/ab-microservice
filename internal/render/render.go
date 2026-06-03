@@ -22,7 +22,8 @@ func ErrorValidator(err error) error {
 		errors.Is(err, shortcut.ErrExperimentGroupsMinCount),
 		errors.Is(err, shortcut.ErrExperimentLayersRequired),
 		errors.Is(err, shortcut.ErrExperimentRolloutOutOfRange),
-		errors.Is(err, shortcut.ErrExperimentGroupsRolloutTooBig):
+		errors.Is(err, shortcut.ErrExperimentGroupsRolloutTooBig),
+		errors.Is(err, shortcut.ErrExperimentLayerRolloutTooBig):
 		return status.Error(codes.InvalidArgument, err.Error())
 
 	case errors.Is(err, shortcut.ErrDuplicateKey),
@@ -33,7 +34,12 @@ func ErrorValidator(err error) error {
 		errors.Is(err, shortcut.ErrNotInExperiment):
 		return status.Error(codes.FailedPrecondition, err.Error())
 
-	case errors.Is(err, shortcut.ErrGroupNotFoundByBucket):
+	case errors.Is(err, shortcut.ErrFailedToGetExperiment):
+		return status.Error(codes.NotFound, err.Error())
+
+	case errors.Is(err, shortcut.ErrFailedToGetLayerExperiments),
+		errors.Is(err, shortcut.ErrFailedToUpdateExperiment),
+		errors.Is(err, shortcut.ErrGroupNotFoundByBucket):
 		return status.Error(codes.Internal, err.Error())
 
 	default:

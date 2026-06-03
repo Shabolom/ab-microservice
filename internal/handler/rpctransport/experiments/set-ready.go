@@ -2,18 +2,19 @@ package experiments
 
 import (
 	authv1 "ab/gen"
-	"ab/internal/dto"
+	"ab/internal/render"
 	"context"
-	"time"
+	"fmt"
 )
 
-func (h *Handler) SetReadyExperiment(context.Context, *authv1.SetReadyExperimentRequest) (*authv1.StockReply, error) {
-	experimentInfo := &dto.ExperimentStatus{
-		ExpID:     0,
-		LayerID:   0,
-		StartedAt: time.Time{},
-		EndedAt:   time.Time{},
+func (h *Handler) SetReadyExperiment(ctx context.Context, req *authv1.SetReadyExperimentRequest) (*authv1.StockReply, error) {
+	err := h.experimentService.SetReady(ctx, req.GetExperimentId())
+	if err != nil {
+		return nil, render.ErrorValidator(err)
 	}
 
-	return &authv1.StockReply{}, nil
+	return &authv1.StockReply{
+		ErrInfoReason: authv1.StockReply_STATUS_OK,
+		Message:       fmt.Sprintf("Set ready experiment success status experiment id: %s", req.GetExperimentId()),
+	}, nil
 }

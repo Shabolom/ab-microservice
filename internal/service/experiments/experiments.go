@@ -20,17 +20,15 @@ type groupRepo interface {
 	Update(ctx context.Context, group *dto.UpdateGroup) (*dto.Group, error)
 	GetByID(ctx context.Context, id int64) (*dto.Group, error)
 	Post(ctx context.Context, experimentID int64, group *dto.Group) (*dto.Group, error)
-	Delete(ctx context.Context, id int64) error
 	GetList(ctx context.Context, limit int, id int) ([]*dto.Group, error)
 }
 
 type experimentRepo interface {
 	GetExperiment(ctx context.Context, id int64) (*dto.Experiment, error)
 	CreateExperiment(ctx context.Context, experiment *dto.Experiment) (*dto.Experiment, error)
-	Delete(ctx context.Context, id string) error
-	Update(ctx context.Context, req *dto.UpdateExperiment) (*dto.Experiment, error)
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
-	GetLayerExperimentsInPeriod(ctx context.Context, experimentInfo *dto.ExperimentStatus) ([]dto.LayerWithExperiments, error)
+	GetLayerBucketsInPeriod(ctx context.Context, experiment *dto.Experiment) ([]dto.LayerBuckets, error)
+	UpdateStatusBucketsTx(ctx context.Context, experimentID int64, status string, layerBuckets []dto.LayerBuckets) error
 }
 type Service struct {
 	groupRepo       groupRepo

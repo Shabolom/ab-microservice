@@ -61,7 +61,6 @@ func (s *Storage) createExperiment(
 			id,
 			name,
 			rollout_percentage,
-			bucket,
 			start_date,
 			end_date,
 			status
@@ -81,7 +80,6 @@ func (s *Storage) createExperiment(
 		&created.ID,
 		&created.Name,
 		&created.RolloutPercentage,
-		&created.Bucket,
 		&created.StartDate,
 		&created.EndDate,
 		&created.Status,

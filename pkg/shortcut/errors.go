@@ -28,6 +28,11 @@ var (
 	ErrExperimentLayersRequired      = errors.New("experiment must have at least 1 layer")
 	ErrExperimentRolloutOutOfRange   = errors.New("experiment rollout percentage must be between 0 and 100")
 	ErrExperimentGroupsRolloutTooBig = errors.New("experiment groups rollout percentage must be <= 100")
+
+	ErrFailedToUpdateExperiment     = errors.New("failed to update experiment")
+	ErrExperimentLayerRolloutTooBig = errors.New("experiment layer rollout percentage must be <= 100")
+	ErrFailedToGetExperiment        = errors.New("failed to get experiment")
+	ErrFailedToGetLayerExperiments  = errors.New("failed to get layer experiments")
 )
 
 const (

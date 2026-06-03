@@ -9,9 +9,9 @@ import (
 
 func (h *Handler) UserExperiment(ctx context.Context, req *authv1.ExperimentRequest) (*authv1.ExperimentsReply, error) {
 	reqParam := &dto.RequestParameters{
-		SplitID:   req.GetSplitID(),
-		DeviceID:  req.GetDeviceID(),
-		NameSpace: req.GetNameSpace(),
+		SplitID:   req.GetSplitId(),
+		DeviceID:  req.GetDeviceId(),
+		NameSpace: req.GetNamespace(),
 	}
 
 	reply, err := h.experimentService.GetExperiments(reqParam)

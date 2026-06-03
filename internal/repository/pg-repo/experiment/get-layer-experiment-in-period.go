@@ -7,101 +7,69 @@ import (
 	"fmt"
 )
 
-func (s *Storage) GetLayerExperimentsInPeriod(ctx context.Context, experimentInfo *dto.ExperimentStatus) ([]dto.LayerWithExperiments, error) {
+func (s *Storage) GetLayerBucketsInPeriod(
+	ctx context.Context,
+	experiment *dto.Experiment,
+) ([]dto.LayerBuckets, error) {
 	query := `
+		WITH target_layers AS (
+			SELECT layer_id
+			FROM layer_experiments
+			WHERE experiment_id = $1
+		)
 		SELECT
-			le.layer_id,
-			e.id,
-			e.name,
-			e.status,
-			e.rollout_percentage,
-			e.start_date,
-			e.end_date,
-			e.bucket,
+			tl.layer_id,
 			COALESCE(
-				array_agg(DISTINCT all_le.layer_id),
+				array_agg(DISTINCT bucket_value) FILTER (WHERE bucket_value IS NOT NULL),
 				'{}'
-			) AS layers_id
-		FROM experiments e
-		JOIN layer_experiments le
-			ON le.experiment_id = e.id
-		LEFT JOIN layer_experiments all_le
-			ON all_le.experiment_id = e.id
-		WHERE le.layer_id = $1
-		  AND e.status IN ($2, $3)
-		  AND e.start_date <= $4
-		  AND e.end_date >= $5
-		  AND e.id <> $6
-		GROUP BY
-			le.layer_id,
-			e.id,
-			e.name,
-			e.status,
-			e.rollout_percentage,
-			e.start_date,
-			e.end_date,
-			e.bucket
-		ORDER BY le.layer_id, e.id
+			) AS buckets
+		FROM target_layers tl
+		LEFT JOIN layer_experiments le
+			ON le.layer_id = tl.layer_id
+		LEFT JOIN experiments e
+			ON e.id = le.experiment_id
+		   AND e.status IN ($2, $3)
+		   AND e.start_date <= $4
+		   AND e.end_date >= $5
+		   AND e.id <> $1
+		LEFT JOIN LATERAL unnest(le.bucket) AS bucket_value
+			ON e.id IS NOT NULL
+		GROUP BY tl.layer_id
+		ORDER BY tl.layer_id
 	`
 
 	rows, err := s.conn.Query(
 		ctx,
 		query,
-		experimentInfo.LayerID,
+		experiment.ID,
 		shortcut.ExpStatusReady,
 		shortcut.ExpStatusActive,
-		experimentInfo.EndedAt,
-		experimentInfo.StartedAt,
-		experimentInfo.ExpID,
+		experiment.EndDate,
+		experiment.StartDate,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("get layer experiments in period: %w", err)
+		return nil, fmt.Errorf("get layer buckets in period: %w", err)
 	}
 	defer rows.Close()
 
-	layersMap := make(map[int64]*dto.LayerWithExperiments)
+	result := make([]dto.LayerBuckets, 0)
 
 	for rows.Next() {
-		var (
-			layerID int64
-			exp     dto.Experiment
-		)
+		var item dto.LayerBuckets
 
 		err = rows.Scan(
-			&layerID,
-			&exp.ID,
-			&exp.Name,
-			&exp.Status,
-			&exp.RolloutPercentage,
-			&exp.StartDate,
-			&exp.EndDate,
-			&exp.Bucket,
-			&exp.LayersID,
+			&item.LayerID,
+			&item.Buckets,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("scan layer experiment: %w", err)
+			return nil, fmt.Errorf("scan layer buckets: %w", err)
 		}
 
-		layer, ok := layersMap[layerID]
-		if !ok {
-			layer = &dto.LayerWithExperiments{
-				LayerID:     layerID,
-				Experiments: make([]dto.Experiment, 0),
-			}
-			layersMap[layerID] = layer
-		}
-
-		layer.Experiments = append(layer.Experiments, exp)
+		result = append(result, item)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate layer experiments: %w", err)
-	}
-
-	result := make([]dto.LayerWithExperiments, 0, len(layersMap))
-
-	for _, layer := range layersMap {
-		result = append(result, *layer)
+		return nil, fmt.Errorf("iterate layer buckets: %w", err)
 	}
 
 	return result, nil

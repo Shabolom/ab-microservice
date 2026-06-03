@@ -437,9 +437,6 @@ func (x *CreateLayerRequest) GetDescription() string {
 type SetReadyExperimentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ExperimentId  int64                  `protobuf:"varint,1,opt,name=experiment_id,json=experimentId,proto3" json:"experiment_id,omitempty"`
-	LayerId       int64                  `protobuf:"varint,2,opt,name=layer_id,json=layerId,proto3" json:"layer_id,omitempty"`
-	StartDate     string                 `protobuf:"bytes,3,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
-	EndDate       string                 `protobuf:"bytes,4,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -479,27 +476,6 @@ func (x *SetReadyExperimentRequest) GetExperimentId() int64 {
 		return x.ExperimentId
 	}
 	return 0
-}
-
-func (x *SetReadyExperimentRequest) GetLayerId() int64 {
-	if x != nil {
-		return x.LayerId
-	}
-	return 0
-}
-
-func (x *SetReadyExperimentRequest) GetStartDate() string {
-	if x != nil {
-		return x.StartDate
-	}
-	return ""
-}
-
-func (x *SetReadyExperimentRequest) GetEndDate() string {
-	if x != nil {
-		return x.EndDate
-	}
-	return ""
 }
 
 type ExperimentRequest struct {
@@ -698,13 +674,9 @@ const file_ab_microservice_proto_rawDesc = "" +
 	"\x12CreateLayerRequest\x12!\n" +
 	"\fnamespace_id\x18\x01 \x01(\x03R\vnamespaceId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\"\x95\x01\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"@\n" +
 	"\x19SetReadyExperimentRequest\x12#\n" +
-	"\rexperiment_id\x18\x01 \x01(\x03R\fexperimentId\x12\x19\n" +
-	"\blayer_id\x18\x02 \x01(\x03R\alayerId\x12\x1d\n" +
-	"\n" +
-	"start_date\x18\x03 \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\x04 \x01(\tR\aendDate\"i\n" +
+	"\rexperiment_id\x18\x01 \x01(\x03R\fexperimentId\"i\n" +
 	"\x11ExperimentRequest\x12\x19\n" +
 	"\bsplit_id\x18\x01 \x01(\x03R\asplitId\x12\x1b\n" +
 	"\tdevice_id\x18\x02 \x01(\x03R\bdeviceId\x12\x1c\n" +

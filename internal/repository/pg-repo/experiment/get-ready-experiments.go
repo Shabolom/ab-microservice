@@ -22,7 +22,7 @@ func (s *Storage) GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWith
 			e.id,
 			e.name,
 			e.rollout_percentage,
-			e.bucket,
+			le.bucket,
 			e.start_date,
 			e.end_date,
 			e.status
@@ -38,18 +38,18 @@ func (s *Storage) GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWith
 	}
 	defer rows.Close()
 
-	layerMap := make(map[int64][]dto.Experiment)
+	layerMap := make(map[int64][]dto.LayerExperiment)
 
 	for rows.Next() {
 		var layerID int64
-		var exp dto.Experiment
+		var exp dto.LayerExperiment
 
 		err := rows.Scan(
 			&layerID,
 			&exp.ID,
 			&exp.Name,
 			&exp.RolloutPercentage,
-			&exp.Bucket,
+			&exp.Buckets,
 			&exp.StartDate,
 			&exp.EndDate,
 			&exp.Status,
