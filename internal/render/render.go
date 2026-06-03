@@ -14,7 +14,15 @@ func ErrorValidator(err error) error {
 		return status.Error(codes.NotFound, err.Error())
 
 	case errors.Is(err, shortcut.ErrValidation),
-		errors.Is(err, shortcut.ErrCheckViolation):
+		errors.Is(err, shortcut.ErrCheckViolation),
+		errors.Is(err, shortcut.ErrExperimentEndDateInPast),
+		errors.Is(err, shortcut.ErrExperimentStartDateAfterEnd),
+		errors.Is(err, shortcut.ErrExperimentNameRequired),
+		errors.Is(err, shortcut.ErrExperimentStatusRequired),
+		errors.Is(err, shortcut.ErrExperimentGroupsMinCount),
+		errors.Is(err, shortcut.ErrExperimentLayersRequired),
+		errors.Is(err, shortcut.ErrExperimentRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrExperimentGroupsRolloutTooBig):
 		return status.Error(codes.InvalidArgument, err.Error())
 
 	case errors.Is(err, shortcut.ErrDuplicateKey),

@@ -1,4 +1,4 @@
-package cache
+package worker
 
 import (
 	"ab/internal/dto"
@@ -13,6 +13,8 @@ type nameSpaceRepository interface {
 
 type experimentRepository interface {
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
+	GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWithExperiments, error)
+	UpdateStatusBuckets(ctx context.Context, experimentID int64, status string, buckets []int64) error
 }
 
 type rawExperimentCache interface {

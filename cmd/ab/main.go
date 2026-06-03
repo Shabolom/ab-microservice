@@ -27,7 +27,7 @@ func main() {
 	container := di.New(ctx)
 
 	go func() {
-		container.GetWorker().StartExperimentsCacheWorker(ctx)
+		container.GetWorker().Start(ctx)
 	}()
 
 	grpcServer := container.NewAuthGRPCServer(

@@ -17,7 +17,7 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 
 	nameSpaceExperiments := s.inMemoryStorage.GetExperimentByNamespace(parameters.NameSpace)
 	s.logger.Info(
-		"experiments loaded from cache",
+		"experiments loaded from worker",
 		zap.String("namespace", parameters.NameSpace),
 		zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
 	)

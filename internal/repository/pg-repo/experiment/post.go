@@ -52,12 +52,11 @@ func (s *Storage) createExperiment(
 		INSERT INTO experiments (
 			name,
 			rollout_percentage,
-			bucket,
 			start_date,
 			end_date,
 			status
 		)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING
 			id,
 			name,
@@ -75,7 +74,6 @@ func (s *Storage) createExperiment(
 		query,
 		experiment.Name,
 		experiment.RolloutPercentage,
-		experiment.Bucket,
 		experiment.StartDate,
 		experiment.EndDate,
 		experiment.Status,
@@ -139,6 +137,10 @@ func (s *Storage) createExperimentGroups(
 	createdGroups := make([]dto.Group, 0, len(groups))
 
 	for _, group := range groups {
+		if group.DeviceID == nil {
+			group.DeviceID = []int64{}
+		}
+
 		err := tx.QueryRow(
 			ctx,
 			query,

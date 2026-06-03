@@ -3,7 +3,10 @@ package experiments
 import (
 	authv1 "ab/gen"
 	"ab/internal/dto"
-	"context"
+	"ab/internal/render"
+	"fmt"
+
+	"golang.org/x/net/context"
 )
 
 func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperimentRequest) (*authv1.StockReply, error) {
@@ -19,14 +22,20 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 
 	exp := &dto.Experiment{
 		Name:              req.GetName(),
-		Status:            req.GetStatus(),
 		RolloutPercentage: req.GetRolloutPercentage(),
 		StartDate:         req.GetStartDate().AsTime(),
 		EndDate:           req.GetEndDate().AsTime(),
 		LayersID:          req.GetLayersID(),
-		Bucket:            req.GetBucket(),
 		Groups:            groups,
 	}
-	
-	return h.CreateExperiment(ctx, req)
+
+	createdExp, err := h.experimentService.Create(ctx, exp)
+	if err != nil {
+		return nil, render.ErrorValidator(err)
+	}
+
+	return &authv1.StockReply{
+		ErrInfoReason: authv1.StockReply_STATUS_OK,
+		Message:       fmt.Sprintf("Create %v Experiment Successfully, id: %v", createdExp.Name, createdExp.ID),
+	}, nil
 }

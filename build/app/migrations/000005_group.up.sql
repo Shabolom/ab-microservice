@@ -10,9 +10,8 @@ CREATE TABLE experiment_groups (
 
                                    name TEXT NOT NULL,
 
-                                   device_ids TEXT[] NOT NULL DEFAULT '{}'
+                                   device_ids BIGINT[] NOT NULL DEFAULT '{}'
 );
 
 CREATE INDEX idx_experiment_groups_experiment_id
     ON experiment_groups(experiment_id);
-

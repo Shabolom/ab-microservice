@@ -1,9 +1,9 @@
 package di
 
-import "ab/internal/cache"
+import "ab/internal/worker"
 
-func (d *DI) GetWorker() *cache.Worker {
-	return cache.New(
+func (d *DI) GetWorker() *worker.Worker {
+	return worker.New(
 		d.GetNamespacePgRepo(),
 		d.GetExperimentPgRepo(),
 		d.GetInMemoryCache(),

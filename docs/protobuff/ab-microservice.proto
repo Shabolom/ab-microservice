@@ -10,6 +10,7 @@ service ABExperiment {
   rpc CreateExperiment(CreateExperimentRequest) returns (StockReply) {}
   rpc CreateNamespace(CreateNamespaceRequest) returns (StockReply) {}
   rpc CreateLayer(CreateLayerRequest) returns (StockReply) {}
+  rpc SetReadyExperiment(SetReadyExperimentRequest) returns (StockReply) {}
 }
 
 message StockReply {
@@ -25,38 +26,41 @@ message StockReply {
 
 message CreateExperimentRequest {
   string name = 1;
-  string status = 2;
-  int64  RolloutPercentage = 3;
-  google.protobuf.Timestamp StartDate = 4;
-  google.protobuf.Timestamp EndDate = 5;
-  repeated int64 LayersID = 6;
-  repeated int64 Bucket = 7;
-  repeated Group Groups = 8;
+  int64 rollout_percentage = 2;
+  google.protobuf.Timestamp start_date = 3;
+  google.protobuf.Timestamp end_date = 4;
+  repeated int64 layers_id = 5;
+  repeated Group groups = 7;
 }
 
 message Group {
-  string Name = 2;
-  int64 RollingPercentage = 3;
-  repeated int64 DeviceID = 4;
+  string name = 2;
+  int64 rolling_percentage = 3;
+  repeated int64 device_id = 4;
 }
 
 message CreateNamespaceRequest {
-  string Name = 1;
-  string Description = 2;
+  string name = 1;
+  string description = 2;
 }
 
 message CreateLayerRequest {
-  int64 NameSpaceID = 1;
-  string Name = 2;
-  string Description = 3;
+  int64 namespace_id = 1;
+  string name = 2;
+  string description = 3;
 }
 
+message SetReadyExperimentRequest {
+  int64 experiment_id = 1;
+  int64 layer_id = 2;
+  string start_date = 3;
+  string end_date = 4;
+}
 
 message ExperimentRequest {
-  int64 splitID = 1;
-   int64 deviceID = 2;
-   string nameSpace = 3;
-  // Params params = 4;
+  int64 split_id = 1;
+  int64 device_id = 2;
+  string namespace = 3;
 }
 
 message ExperimentsReply {
@@ -66,12 +70,12 @@ message ExperimentsReply {
     INVALID_REQUEST = 2;
     STATUS_OK = 3;
   }
+
   ERR_INFO_REASON err_info_reason = 1;
-  repeated ExperimentReply experimentsReply = 2;
+  repeated ExperimentReply experiments_reply = 2;
 }
 
 message ExperimentReply {
-  string  ExperimentName = 1;
-  string  GroupName = 2;
+  string experiment_name = 1;
+  string group_name = 2;
 }
-

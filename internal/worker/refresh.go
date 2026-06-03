@@ -1,4 +1,4 @@
-package cache
+package worker
 
 import (
 	"ab/internal/dto"
@@ -35,7 +35,7 @@ func (w *Worker) refresh(ctx context.Context) error {
 	w.rawExperimentCache.Replace(cache)
 
 	w.logger.Info(
-		"experiment cache refreshed",
+		"experiment worker refreshed",
 		zap.Int("namespaces_count", len(cache)),
 	)
 
