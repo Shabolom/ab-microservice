@@ -30,6 +30,7 @@ type experimentRepo interface {
 	Delete(ctx context.Context, id string) error
 	Update(ctx context.Context, req *dto.UpdateExperiment) (*dto.Experiment, error)
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
+	GetLayerExperimentsInPeriod(ctx context.Context, experimentInfo *dto.ExperimentStatus) ([]dto.LayerWithExperiments, error)
 }
 type Service struct {
 	groupRepo       groupRepo
