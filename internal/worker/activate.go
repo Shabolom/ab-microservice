@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"ab/pkg/shortcut"
 	"context"
 	"time"
 
@@ -42,36 +41,15 @@ func (w *Worker) startActivateExperimentWorker(ctx context.Context) {
 func (w *Worker) activateExperimentWorker(ctx context.Context) error {
 	now := time.Now()
 
-	readyToStartExp, err := w.experimentRepository.GetReadyToStart(ctx, now)
+	activatedExp, err := w.experimentRepository.UpdateReadyToStart(ctx, now)
 	if err != nil {
 		return err
 	}
 
-	if len(readyToStartExp) > 0 {
+	if len(activatedExp) > 0 {
 		w.logger.Info(
-			"experiments ready to activate found",
-			zap.Int("count", len(readyToStartExp)),
-		)
-	}
-
-	for _, expID := range readyToStartExp {
-		err = w.experimentRepository.UpdateStatus(
-			ctx,
-			expID,
-			shortcut.ExpStatusActive,
-		)
-		if err != nil {
-			w.logger.Error(
-				"failed to mark experiment as active",
-				zap.Int64("experiment_id", expID),
-				zap.Error(err),
-			)
-			continue
-		}
-
-		w.logger.Info(
-			"experiment marked as active",
-			zap.Int64("experiment_id", expID),
+			"experiments activated",
+			zap.Int("count", len(activatedExp)),
 		)
 	}
 

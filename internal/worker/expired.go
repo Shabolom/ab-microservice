@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"ab/pkg/shortcut"
 	"context"
 	"time"
 
@@ -42,36 +41,15 @@ func (w *Worker) startExpiredExperimentWorker(ctx context.Context) {
 func (w *Worker) expiredExperimentWorker(ctx context.Context) error {
 	now := time.Now()
 
-	expiredExp, err := w.experimentRepository.GetExpired(ctx, now)
+	expiredExp, err := w.experimentRepository.UpdateExpired(ctx, now)
 	if err != nil {
 		return err
 	}
 
 	if len(expiredExp) > 0 {
 		w.logger.Info(
-			"expired experiments found",
+			"experiments marked as ended and deleted from layers",
 			zap.Int("count", len(expiredExp)),
-		)
-	}
-
-	for _, expID := range expiredExp {
-		err = w.experimentRepository.UpdateStatus(
-			ctx,
-			expID,
-			shortcut.ExpStatusEnded,
-		)
-		if err != nil {
-			w.logger.Error(
-				"failed to mark experiment as ended",
-				zap.Int64("experiment_id", expID),
-				zap.Error(err),
-			)
-			continue
-		}
-
-		w.logger.Info(
-			"experiment marked as ended",
-			zap.Int64("experiment_id", expID),
 		)
 	}
 
