@@ -14,7 +14,6 @@ type nameSpaceRepository interface {
 
 type experimentRepository interface {
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
-	UpdateStatus(ctx context.Context, experimentID int64, status string) error
 	UpdateReadyToStart(ctx context.Context, startDate time.Time) ([]int64, error)
 	UpdateExpired(ctx context.Context, date time.Time) ([]int64, error)
 }
