@@ -1,9 +1,13 @@
 package KafkaProducer
 
-import "github.com/confluentinc/confluent-kafka-go/v2/kafka"
+import (
+	"ab/internal/dto/kafka-messege-dto"
+	"ab/pkg/shortcut"
 
-// TODO заменить event когда дело дойдет до записи в кафку, а так же создать схему в кафка ui
-func (k *Kafka) WriteEvent(event string) error {
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+)
+
+func (k *Kafka) WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) error {
 	payload, err := k.serializer.Serialize(
 		k.topic,
 		event,
@@ -29,7 +33,10 @@ func (k *Kafka) WriteEvent(event string) error {
 
 	e := <-deliveryChan
 
-	msg := e.(*kafka.Message)
+	msg, ok := e.(*kafka.Message)
+	if !ok {
+		return shortcut.ErrTypeCast
+	}
 	if msg.TopicPartition.Error != nil {
 		return msg.TopicPartition.Error
 	}

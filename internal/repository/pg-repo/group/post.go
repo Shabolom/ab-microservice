@@ -2,8 +2,8 @@ package group
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) Post(ctx context.Context, experimentID int64, group *dto.Group) (*dto.Group, error) {
@@ -37,7 +37,7 @@ func (s *Storage) Post(ctx context.Context, experimentID int64, group *dto.Group
 	).Scan(&group.ID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create group: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return group, nil

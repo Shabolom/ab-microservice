@@ -34,7 +34,7 @@ func (s *Storage) GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWith
 
 	rows, err := s.conn.Query(ctx, query, shortcut.ExpStatusReady)
 	if err != nil {
-		return nil, err
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -44,7 +44,7 @@ func (s *Storage) GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWith
 		var layerID int64
 		var exp dto.LayerExperiment
 
-		err := rows.Scan(
+		err = rows.Scan(
 			&layerID,
 			&exp.ID,
 			&exp.Name,
@@ -55,14 +55,14 @@ func (s *Storage) GetLayersWithExperiments(ctx context.Context) ([]dto.LayerWith
 			&exp.Status,
 		)
 		if err != nil {
-			return nil, err
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		layerMap[layerID] = append(layerMap[layerID], exp)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, err
+	if err = rows.Err(); err != nil {
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	result := make([]dto.LayerWithExperiments, 0, len(layerMap))

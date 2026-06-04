@@ -11,8 +11,14 @@ import (
 
 func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 	if targetExpID == 0 {
+		s.logger.Warn("empty experiment id")
 		return shortcut.ErrValidation
 	}
+
+	s.logger.Info(
+		"set experiment ready started",
+		zap.Int64("experiment_id", targetExpID),
+	)
 
 	targetExp, err := s.experimentRepo.GetExperiment(ctx, targetExpID)
 	if err != nil {
@@ -23,6 +29,16 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		)
 
 		return shortcut.ErrFailedToGetExperiment
+	}
+
+	if targetExp.Status == shortcut.ExpStatusActive || targetExp.Status == shortcut.ExpStatusReady {
+		s.logger.Warn(
+			"experiment already active or ready",
+			zap.Int64("experiment_id", targetExp.ID),
+			zap.String("status", targetExp.Status),
+		)
+
+		return shortcut.ErrExperimentAlreadyRunning
 	}
 
 	layersBuckets, err := s.experimentRepo.GetLayerBucketsInPeriod(ctx, targetExp)
@@ -38,11 +54,26 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		return shortcut.ErrFailedToGetLayerExperiments
 	}
 
+	s.logger.Info(
+		"loaded layer buckets",
+		zap.Int64("experiment_id", targetExp.ID),
+		zap.Int("layers_count", len(layersBuckets)),
+	)
+
 	newLayerBuckets := make([]dto.LayerBuckets, 0, len(layersBuckets))
 
 	for _, layerBucket := range layersBuckets {
 		usedBuckets := len(layerBucket.Buckets)
 		availableBuckets := 100 - usedBuckets
+
+		s.logger.Debug(
+			"layer buckets analysis",
+			zap.Int64("experiment_id", targetExp.ID),
+			zap.Int64("layer_id", layerBucket.LayerID),
+			zap.Int("used_buckets", usedBuckets),
+			zap.Int("available_buckets", availableBuckets),
+			zap.Int64("required_buckets", targetExp.RolloutPercentage),
+		)
 
 		if int64(usedBuckets)+targetExp.RolloutPercentage > 100 {
 			s.logger.Warn(
@@ -64,13 +95,20 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 			targetExp.RolloutPercentage,
 		)
 
+		s.logger.Debug(
+			"generated buckets for layer",
+			zap.Int64("experiment_id", targetExp.ID),
+			zap.Int64("layer_id", layerBucket.LayerID),
+			zap.Int("generated_count", len(generatedBuckets)),
+		)
+
 		newLayerBuckets = append(newLayerBuckets, dto.LayerBuckets{
 			LayerID: layerBucket.LayerID,
 			Buckets: generatedBuckets,
 		})
 	}
 
-	err = s.experimentRepo.UpdateStatusBucketsTx(
+	err = s.experimentRepo.SetReadyStatus(
 		ctx,
 		targetExp.ID,
 		shortcut.ExpStatusReady,
@@ -88,44 +126,15 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		return shortcut.ErrFailedToUpdateExperiment
 	}
 
+	s.logger.Info(
+		"experiment marked as ready",
+		zap.Int64("experiment_id", targetExp.ID),
+		zap.Int("layers_count", len(newLayerBuckets)),
+		zap.Int64("rollout_percentage", targetExp.RolloutPercentage),
+	)
+
 	return nil
 }
-
-//func (s *Service) validateRolloutPercentage(
-//	layersWithExp []dto.LayerWithExperiments,
-//	targetExpRolloutPercentage int64,
-//) (map[int64][]int64, error) {
-//	usedBucketsInlayer := make(map[int64][]int64, 100)
-//
-//	for _, layerWithExp := range layersWithExp {
-//		usedRolloutPercentageInLayer := int64(0)
-//		val, ok := usedBucketsInlayer[layerWithExp.LayerID]
-//		if !ok {
-//			usedBucketsInlayer[layerWithExp.LayerID] = make([]int64, 0, 100)
-//		}
-//
-//		for _, exp := range layerWithExp.Experiments {
-//			usedRolloutPercentageInLayer += exp.RolloutPercentage
-//
-//			for _, bucket := range exp.Bucket {
-//				val = append(val, bucket)
-//			}
-//		}
-//
-//		if usedRolloutPercentageInLayer+targetExpRolloutPercentage > 100 {
-//			s.logger.Info(
-//				"rollout percentage goes beyond limit",
-//				zap.Int64("layer_id", layerWithExp.LayerID),
-//				zap.Int64("used_rollout_percentage_in_layer", usedRolloutPercentageInLayer),
-//				zap.Int64("target_rollout_percentage", targetExpRolloutPercentage),
-//			)
-//
-//			return nil, shortcut.ErrExperimentLayerRolloutTooBig
-//		}
-//	}
-//
-//	return usedBucketsInlayer, nil
-//}
 
 func (s *Service) generateBuckets(usedBuckets []int64, count int64) []int64 {
 	used := make(map[int64]struct{}, len(usedBuckets))

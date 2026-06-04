@@ -4,7 +4,7 @@ import (
 	"ab/internal/repository/pg-repo/experiment"
 	"ab/internal/repository/pg-repo/group"
 	"ab/internal/repository/pg-repo/layer"
-	nameSpace "ab/internal/repository/pg-repo/name-space"
+	nameSpace "ab/internal/repository/pg-repo/namespace"
 )
 
 func (d *DI) GetExperimentPgRepo() *experiment.Storage {

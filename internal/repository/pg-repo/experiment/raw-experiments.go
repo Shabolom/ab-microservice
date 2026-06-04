@@ -2,9 +2,9 @@ package experiment
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
 	"encoding/json"
-	"fmt"
 )
 
 func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error) {
@@ -20,6 +20,16 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			ns.id,
 			ns.name,
 			ns.description,
+
+			COALESCE(
+				(
+					SELECT array_agg(DISTINCT b ORDER BY b)
+					FROM layer_experiments le2
+					CROSS JOIN LATERAL unnest(le2.bucket) AS b
+					WHERE le2.experiment_id = e.id
+				),
+				'{}'::int[]
+			) AS bucket,
 
 			COALESCE(
 				jsonb_agg(
@@ -69,7 +79,7 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 
 	rows, err := s.conn.Query(ctx, query, namespace)
 	if err != nil {
-		return nil, fmt.Errorf("get raw experiments: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -99,11 +109,13 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			&namespaceName,
 			&namespaceDescription,
 
+			&exp.Bucket,
+
 			&layersRaw,
 			&groupsRaw,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("scan raw experiment: %w", err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		exp.NameSpaceName = namespaceName
@@ -114,18 +126,18 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		}
 
 		if err = json.Unmarshal(layersRaw, &exp.Layer); err != nil {
-			return nil, fmt.Errorf("unmarshal layers for experiment %d: %w", exp.Id, err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		if err = json.Unmarshal(groupsRaw, &exp.Group); err != nil {
-			return nil, fmt.Errorf("unmarshal groups for experiment %d: %w", exp.Id, err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		result = append(result, exp)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate raw experiments: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return result, nil

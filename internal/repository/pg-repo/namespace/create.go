@@ -1,9 +1,9 @@
-package nameSpace
+package namespace
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) Create(ctx context.Context, namespace *dto.NameSpace) (*dto.NameSpace, error) {
@@ -25,7 +25,7 @@ func (s *Storage) Create(ctx context.Context, namespace *dto.NameSpace) (*dto.Na
 		namespace.Description,
 	).Scan(&id)
 	if err != nil {
-		return nil, fmt.Errorf("create namespace: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	namespace.ID = id

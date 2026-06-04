@@ -4,7 +4,6 @@ import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) GetList(ctx context.Context, limit int, id int) ([]*dto.Group, error) {
@@ -26,7 +25,7 @@ func (s *Storage) GetList(ctx context.Context, limit int, id int) ([]*dto.Group,
 		limit,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get groups list: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -41,14 +40,14 @@ func (s *Storage) GetList(ctx context.Context, limit int, id int) ([]*dto.Group,
 			&group.RollingPercentage,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %v", shortcut.ErrFailedToScanGroup, err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		groups = append(groups, group)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("%w: %v", shortcut.ErrRowsIteration, err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return groups, nil

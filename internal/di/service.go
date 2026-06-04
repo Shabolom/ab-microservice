@@ -12,6 +12,8 @@ func (d *DI) GetExperimentService() *experiments.Service {
 		d.GetExperimentPgRepo(),
 		d.GetNamespacePgRepo(),
 		d.GetInMemoryCache(),
+		d.GetLayerPgRepo(),
+		d.GetKafka(),
 		d.Logger(),
 	)
 }

@@ -2,6 +2,7 @@ package experiment
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
 	"fmt"
 
@@ -36,8 +37,8 @@ func (s *Storage) CreateExperiment(ctx context.Context, experiment *dto.Experime
 	created.LayersID = experiment.LayersID
 	created.Groups = groups
 
-	if err := tx.Commit(ctx); err != nil {
-		return nil, fmt.Errorf("commit tx: %w", err)
+	if err = tx.Commit(ctx); err != nil {
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return created, nil
@@ -54,16 +55,18 @@ func (s *Storage) createExperiment(
 			rollout_percentage,
 			start_date,
 			end_date,
-			status
+			status,
+		    namespace
 		)
-		VALUES ($1, $2, $3, $4, $5)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING
 			id,
 			name,
 			rollout_percentage,
 			start_date,
 			end_date,
-			status
+			status,
+			namespace
 	`
 
 	var created dto.Experiment
@@ -76,6 +79,7 @@ func (s *Storage) createExperiment(
 		experiment.StartDate,
 		experiment.EndDate,
 		experiment.Status,
+		experiment.NameSpace,
 	).Scan(
 		&created.ID,
 		&created.Name,
@@ -83,9 +87,10 @@ func (s *Storage) createExperiment(
 		&created.StartDate,
 		&created.EndDate,
 		&created.Status,
+		&created.NameSpace,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("create experiment: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return &created, nil
@@ -108,7 +113,7 @@ func (s *Storage) createLayerExperiments(
 	for _, layerID := range layerIDs {
 		_, err := tx.Exec(ctx, query, layerID, experimentID)
 		if err != nil {
-			return fmt.Errorf("create layer experiment: %w", err)
+			return shortcut.MapStorageError(err)
 		}
 	}
 
@@ -148,7 +153,7 @@ func (s *Storage) createExperimentGroups(
 			group.DeviceID,
 		).Scan(&group.ID)
 		if err != nil {
-			return nil, fmt.Errorf("create experiment group: %w", err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		createdGroups = append(createdGroups, group)

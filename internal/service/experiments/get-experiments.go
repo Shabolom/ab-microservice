@@ -2,8 +2,10 @@ package experiments
 
 import (
 	"ab/internal/dto"
+	"ab/internal/dto/kafka-messege-dto"
 	"ab/pkg/shortcut"
 	"errors"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -24,8 +26,6 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 
 	result := make([]*dto.GetExperimentsReply, 0)
 
-	rollingPercentageExp := int64(0)
-
 	for _, experiment := range nameSpaceExperiments.RawExp {
 		s.logger.Debug(
 			"picking group for experiment",
@@ -35,7 +35,7 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 			zap.Int("groups_count", len(experiment.Group)),
 		)
 
-		group, err := s.PickGroup(parameters, &experiment, rollingPercentageExp)
+		group, err := s.PickGroup(parameters, &experiment)
 		if errors.Is(err, shortcut.ErrGroupNotFoundByBucket) {
 			s.logger.Warn(
 				"group not found by bucket",
@@ -46,7 +46,6 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 
 			return []*dto.GetExperimentsReply{}, err
 		}
-		rollingPercentageExp += experiment.RollingPercentage
 
 		if err != nil {
 			s.logger.Error(
@@ -83,6 +82,30 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 			zap.String("group_name", group.Name),
 		)
 	}
+
+	go func(result []*dto.GetExperimentsReply, userID int64) {
+		for _, rawMessage := range result {
+			message := &kafkaMessageDto.UserInExperimentMessage{
+				UserID:         userID,
+				ExperimentName: rawMessage.ExperimentName,
+				GroupName:      rawMessage.GroupName,
+				Timestamp:      time.Now(),
+			}
+
+			err := s.kafkaProducer.WriteEvent(message)
+			if err != nil {
+				s.logger.Warn(
+					"failed to publish user experiment event",
+					zap.Int64("user_id", userID),
+					zap.String("experiment_name", rawMessage.ExperimentName),
+					zap.String("group_name", rawMessage.GroupName),
+					zap.Error(err),
+				)
+
+				continue
+			}
+		}
+	}(result, parameters.SplitID)
 
 	s.logger.Info(
 		"get experiments finished",

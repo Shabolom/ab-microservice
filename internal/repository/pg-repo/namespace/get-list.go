@@ -1,9 +1,9 @@
-package nameSpace
+package namespace
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) GetList(ctx context.Context) ([]dto.NameSpace, error) {
@@ -18,7 +18,7 @@ func (s *Storage) GetList(ctx context.Context) ([]dto.NameSpace, error) {
 
 	rows, err := s.conn.Query(ctx, query)
 	if err != nil {
-		return nil, fmt.Errorf("get namespaces: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -33,14 +33,14 @@ func (s *Storage) GetList(ctx context.Context) ([]dto.NameSpace, error) {
 			&namespace.Description,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("scan namespace: %w", err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		result = append(result, namespace)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate namespaces: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return result, nil

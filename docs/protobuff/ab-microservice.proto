@@ -11,6 +11,7 @@ service ABExperiment {
   rpc CreateNamespace(CreateNamespaceRequest) returns (StockReply) {}
   rpc CreateLayer(CreateLayerRequest) returns (StockReply) {}
   rpc SetReadyExperiment(SetReadyExperimentRequest) returns (StockReply) {}
+  rpc SetStopedExperiment(SetStopedExperimentRequest) returns (StockReply) {}
 }
 
 message StockReply {
@@ -51,6 +52,10 @@ message CreateLayerRequest {
 }
 
 message SetReadyExperimentRequest {
+  int64 experiment_id = 1;
+}
+
+message SetStopedExperimentRequest {
   int64 experiment_id = 1;
 }
 

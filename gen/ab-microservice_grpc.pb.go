@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ABExperiment_UserExperiment_FullMethodName     = "/platform.mvp.ABExperiment/UserExperiment"
-	ABExperiment_CreateExperiment_FullMethodName   = "/platform.mvp.ABExperiment/CreateExperiment"
-	ABExperiment_CreateNamespace_FullMethodName    = "/platform.mvp.ABExperiment/CreateNamespace"
-	ABExperiment_CreateLayer_FullMethodName        = "/platform.mvp.ABExperiment/CreateLayer"
-	ABExperiment_SetReadyExperiment_FullMethodName = "/platform.mvp.ABExperiment/SetReadyExperiment"
+	ABExperiment_UserExperiment_FullMethodName      = "/platform.mvp.ABExperiment/UserExperiment"
+	ABExperiment_CreateExperiment_FullMethodName    = "/platform.mvp.ABExperiment/CreateExperiment"
+	ABExperiment_CreateNamespace_FullMethodName     = "/platform.mvp.ABExperiment/CreateNamespace"
+	ABExperiment_CreateLayer_FullMethodName         = "/platform.mvp.ABExperiment/CreateLayer"
+	ABExperiment_SetReadyExperiment_FullMethodName  = "/platform.mvp.ABExperiment/SetReadyExperiment"
+	ABExperiment_SetStopedExperiment_FullMethodName = "/platform.mvp.ABExperiment/SetStopedExperiment"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
@@ -35,6 +36,7 @@ type ABExperimentClient interface {
 	CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*StockReply, error)
 	CreateLayer(ctx context.Context, in *CreateLayerRequest, opts ...grpc.CallOption) (*StockReply, error)
 	SetReadyExperiment(ctx context.Context, in *SetReadyExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
+	SetStopedExperiment(ctx context.Context, in *SetStopedExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
 }
 
 type aBExperimentClient struct {
@@ -95,6 +97,16 @@ func (c *aBExperimentClient) SetReadyExperiment(ctx context.Context, in *SetRead
 	return out, nil
 }
 
+func (c *aBExperimentClient) SetStopedExperiment(ctx context.Context, in *SetStopedExperimentRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_SetStopedExperiment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type ABExperimentServer interface {
 	CreateNamespace(context.Context, *CreateNamespaceRequest) (*StockReply, error)
 	CreateLayer(context.Context, *CreateLayerRequest) (*StockReply, error)
 	SetReadyExperiment(context.Context, *SetReadyExperimentRequest) (*StockReply, error)
+	SetStopedExperiment(context.Context, *SetStopedExperimentRequest) (*StockReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -127,6 +140,9 @@ func (UnimplementedABExperimentServer) CreateLayer(context.Context, *CreateLayer
 }
 func (UnimplementedABExperimentServer) SetReadyExperiment(context.Context, *SetReadyExperimentRequest) (*StockReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetReadyExperiment not implemented")
+}
+func (UnimplementedABExperimentServer) SetStopedExperiment(context.Context, *SetStopedExperimentRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetStopedExperiment not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -238,6 +254,24 @@ func _ABExperiment_SetReadyExperiment_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_SetStopedExperiment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetStopedExperimentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).SetStopedExperiment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_SetStopedExperiment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).SetStopedExperiment(ctx, req.(*SetStopedExperimentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -264,6 +298,10 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetReadyExperiment",
 			Handler:    _ABExperiment_SetReadyExperiment_Handler,
+		},
+		{
+			MethodName: "SetStopedExperiment",
+			Handler:    _ABExperiment_SetStopedExperiment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

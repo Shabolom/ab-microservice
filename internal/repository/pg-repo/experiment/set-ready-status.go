@@ -2,13 +2,13 @@ package experiment
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *Storage) UpdateStatusBucketsTx(
+func (s *Storage) SetReadyStatus(
 	ctx context.Context,
 	experimentID int64,
 	status string,
@@ -16,7 +16,7 @@ func (s *Storage) UpdateStatusBucketsTx(
 ) error {
 	tx, err := s.conn.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
+		return shortcut.MapStorageError(err)
 	}
 
 	defer func() {
@@ -32,7 +32,7 @@ func (s *Storage) UpdateStatusBucketsTx(
 			item.Buckets,
 		)
 		if err != nil {
-			return err
+			return shortcut.MapStorageError(err)
 		}
 	}
 
@@ -60,7 +60,7 @@ func (s *Storage) updateLayerBucketsTx(
 
 	_, err := tx.Exec(ctx, query, layerID, experimentID, buckets)
 	if err != nil {
-		return fmt.Errorf("update layer buckets: %w", err)
+		return shortcut.MapStorageError(err)
 	}
 
 	return nil
@@ -80,7 +80,7 @@ func (s *Storage) updateStatusTx(
 
 	_, err := tx.Exec(ctx, query, experimentID, status)
 	if err != nil {
-		return fmt.Errorf("update experiment status: %w", err)
+		return shortcut.MapStorageError(err)
 	}
 
 	return nil

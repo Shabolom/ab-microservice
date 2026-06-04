@@ -3,7 +3,6 @@ package group
 import (
 	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) Delete(ctx context.Context, id int64) error {
@@ -18,7 +17,7 @@ func (s *Storage) Delete(ctx context.Context, id int64) error {
 		id,
 	)
 	if err != nil {
-		return fmt.Errorf("%w: %v", shortcut.ErrFailedToDeleteGroup, err)
+		return shortcut.MapStorageError(err)
 	}
 
 	if tag.RowsAffected() == 0 {

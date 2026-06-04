@@ -4,7 +4,6 @@ import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) GetLayerBucketsInPeriod(
@@ -48,7 +47,7 @@ func (s *Storage) GetLayerBucketsInPeriod(
 		experiment.StartDate,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("get layer buckets in period: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -62,14 +61,14 @@ func (s *Storage) GetLayerBucketsInPeriod(
 			&item.Buckets,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("scan layer buckets: %w", err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		result = append(result, item)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate layer buckets: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return result, nil

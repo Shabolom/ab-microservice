@@ -11,6 +11,7 @@ type RawExperiment struct {
 	StartDate         time.Time
 	EndDate           time.Time
 	NameSpace         NameSpace
+	Bucket            []int64
 	Layer             []Layer
 	Group             []Group
 }

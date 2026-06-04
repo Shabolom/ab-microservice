@@ -1,4 +1,4 @@
-package nameSpace
+package namespace
 
 import "github.com/jackc/pgx/v5/pgxpool"
 

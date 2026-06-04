@@ -4,7 +4,6 @@ import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
 	"fmt"
-	"time"
 
 	"github.com/spaolacci/murmur3"
 	"go.uber.org/zap"
@@ -16,43 +15,44 @@ func (s *Service) Bucket(key string) int64 {
 
 	s.logger.Debug(
 		"bucket calculated",
-		zap.String("key", key),
-		zap.Uint32("hash", hash),
 		zap.Int64("bucket", bucket),
 	)
 
 	return bucket
 }
 
-func (s *Service) InExperiment(splitID int64, rollingPercentageExp int64, rawExperiment *dto.RawExperiment) bool {
+func (s *Service) InExperiment(splitID int64, rawExperiment *dto.RawExperiment) bool {
 	key := fmt.Sprintf("experiment:%d:SplitID:%v", rawExperiment.Id, splitID)
 
 	bucket := s.Bucket(key)
-	inExperiment := bucket <= rawExperiment.RollingPercentage+rollingPercentageExp
+	fmt.Println(bucket, "asdasdasd")
+	for _, expBucket := range rawExperiment.Bucket {
+		if bucket == expBucket {
+			return true
+		}
+	}
 
 	s.logger.Debug(
-		"in experiment checked",
-		zap.Int64("experiment_id", rawExperiment.Id),
-		zap.Int64("split_id", splitID),
+		"bucket not in experiment",
 		zap.Int64("bucket", bucket),
-		zap.Int64("rolling_percentage", rawExperiment.RollingPercentage),
-		zap.Bool("in_experiment", inExperiment),
 	)
 
-	return inExperiment
+	return false
 }
 
-func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *dto.RawExperiment, rollingPercentageExp int64) (*dto.Group, error) {
+func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *dto.RawExperiment) (*dto.Group, error) {
+	fmt.Println(1234444)
 	groups := rawExperiments.Group
 	for i := range groups {
 		for _, id := range groups[i].DeviceID {
 			if id == parameters.DeviceID {
+				fmt.Println(123, groups[i])
 				return &groups[i], nil
 			}
 		}
 	}
 
-	if rawExperiments.Status != "active" || rawExperiments.EndDate.After(time.Now()) || rawExperiments.StartDate.Before(time.Now()) {
+	if rawExperiments.Status != shortcut.ExpStatusActive {
 		return nil, nil
 	}
 
@@ -73,7 +73,7 @@ func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *d
 		return nil, shortcut.ErrGroupNotFoundByBucket
 	}
 
-	if !s.InExperiment(parameters.SplitID, rollingPercentageExp, rawExperiments) {
+	if !s.InExperiment(parameters.SplitID, rawExperiments) {
 		s.logger.Debug(
 			"split is not in experiment",
 			zap.Int64("experiment_id", rawExperiments.Id),
@@ -82,12 +82,10 @@ func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *d
 
 		return nil, nil
 	}
-
 	groupKey := fmt.Sprintf("rawExperiments-id:%d:SplitID:%v", rawExperiments.Id, parameters.SplitID)
 
 	bucket := s.Bucket(groupKey)
 	current := int64(0)
-
 	for i := range groups {
 		current += groups[i].RollingPercentage
 

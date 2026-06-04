@@ -2,8 +2,8 @@ package layer
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) Create(ctx context.Context, layer *dto.Layer) error {
@@ -25,7 +25,7 @@ func (s *Storage) Create(ctx context.Context, layer *dto.Layer) error {
 		layer.Description,
 	).Scan(&layer.ID)
 	if err != nil {
-		return fmt.Errorf("create layer: %w", err)
+		return shortcut.MapStorageError(err)
 	}
 
 	return nil
