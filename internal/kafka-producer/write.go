@@ -3,6 +3,7 @@ package KafkaProducer
 import (
 	"ab/internal/dto/kafka-messege-dto"
 	"ab/pkg/shortcut"
+	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
@@ -21,6 +22,7 @@ func (k *Kafka) WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) error
 			Topic:     &k.topic,
 			Partition: kafka.PartitionAny,
 		},
+		Key:   []byte(fmt.Sprintf("%d", event.UserID)),
 		Value: payload,
 	}
 
@@ -37,6 +39,7 @@ func (k *Kafka) WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) error
 	if !ok {
 		return shortcut.ErrTypeCast
 	}
+
 	if msg.TopicPartition.Error != nil {
 		return msg.TopicPartition.Error
 	}

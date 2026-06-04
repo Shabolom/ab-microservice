@@ -17,7 +17,8 @@ func (s *Storage) GetExperiment(ctx context.Context, id int64) (*dto.Experiment,
 			rollout_percentage,
 			start_date,
 			end_date,
-			status
+			status,
+			namespace
 		FROM experiments
 		WHERE id = $1
 	`
@@ -31,6 +32,7 @@ func (s *Storage) GetExperiment(ctx context.Context, id int64) (*dto.Experiment,
 		&experiment.StartDate,
 		&experiment.EndDate,
 		&experiment.Status,
+		&experiment.NameSpace,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

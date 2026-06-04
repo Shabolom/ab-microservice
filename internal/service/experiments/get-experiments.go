@@ -17,6 +17,10 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 		zap.Int64("split_id", parameters.SplitID),
 	)
 
+	if parameters.NameSpace == "" || parameters.SplitID == 0 {
+		return nil, shortcut.ErrValidation
+	}
+
 	nameSpaceExperiments := s.inMemoryStorage.GetExperimentByNamespace(parameters.NameSpace)
 	s.logger.Info(
 		"experiments loaded from worker",

@@ -52,13 +52,24 @@ func (s *Storage) updateLayerBucketsTx(
 	buckets []int64,
 ) error {
 	query := `
-		UPDATE layer_experiments
-		SET bucket = $3
-		WHERE layer_id = $1
-		  AND experiment_id = $2
+		INSERT INTO layer_experiments (
+			layer_id,
+			experiment_id,
+			bucket
+		)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (layer_id, experiment_id)
+		DO UPDATE SET
+			bucket = EXCLUDED.bucket
 	`
 
-	_, err := tx.Exec(ctx, query, layerID, experimentID, buckets)
+	_, err := tx.Exec(
+		ctx,
+		query,
+		layerID,
+		experimentID,
+		buckets,
+	)
 	if err != nil {
 		return shortcut.MapStorageError(err)
 	}

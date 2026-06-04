@@ -41,6 +41,19 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		return shortcut.ErrExperimentAlreadyRunning
 	}
 
+	err = s.validate(targetExp)
+	if err != nil {
+		s.logger.Error(
+			"experiment validation failed",
+			zap.Int64("experiment_id", targetExp.ID),
+			zap.String("experiment_name", targetExp.Name),
+			zap.String("status", targetExp.Status),
+			zap.Error(err),
+		)
+
+		return err
+	}
+
 	layersBuckets, err := s.experimentRepo.GetLayerBucketsInPeriod(ctx, targetExp)
 	if err != nil {
 		s.logger.Warn(
@@ -52,6 +65,20 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		)
 
 		return shortcut.ErrFailedToGetLayerExperiments
+	}
+
+	if len(layersBuckets) == 0 {
+		layersBuckets, err = s.createLayerExp(ctx, targetExp.NameSpace, targetExp.ID)
+		if err != nil {
+			s.logger.Error(
+				"create layer experiments failed",
+				zap.Int64("experiment_id", targetExp.ID),
+				zap.String("namespace", targetExp.NameSpace),
+				zap.Error(err),
+			)
+
+			return err
+		}
 	}
 
 	s.logger.Info(
@@ -156,4 +183,23 @@ func (s *Service) generateBuckets(usedBuckets []int64, count int64) []int64 {
 	})
 
 	return freeBuckets[:count]
+}
+
+func (s *Service) createLayerExp(ctx context.Context, namespaceName string, expID int64) ([]dto.LayerBuckets, error) {
+	nameSpace, err := s.nameSpaceRepo.GetByName(ctx, namespaceName)
+	if err != nil {
+		return nil, err
+	}
+
+	layersID, err := s.layerRepo.GetIDsByNamespaceId(ctx, nameSpace.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	layersBuckets, err := s.experimentRepo.CreateAndGetLayerExperiment(ctx, layersID, expID)
+	if err != nil {
+		return nil, err
+	}
+
+	return layersBuckets, nil
 }

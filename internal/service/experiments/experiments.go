@@ -15,6 +15,7 @@ type inMemoryStorage interface {
 type nameSpaceRepo interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
 	GetByID(ctx context.Context, namespaceID int64) (*dto.NameSpace, error)
+	GetByName(ctx context.Context, name string) (*dto.NameSpace, error)
 }
 
 type groupRepo interface {
@@ -32,10 +33,12 @@ type experimentRepo interface {
 	GetLayerBucketsInPeriod(ctx context.Context, experiment *dto.Experiment) ([]dto.LayerBuckets, error)
 	SetReadyStatus(ctx context.Context, experimentID int64, status string, layerBuckets []dto.LayerBuckets) error
 	SetStatusStopped(ctx context.Context, expID int64) error
+	CreateAndGetLayerExperiment(ctx context.Context, layerIDs []int64, expID int64) ([]dto.LayerBuckets, error)
 }
 
 type layerRepo interface {
 	GetLayers(ctx context.Context, layerIDs []int64) ([]dto.Layer, error)
+	GetIDsByNamespaceId(ctx context.Context, namespaceId int64) ([]int64, error)
 }
 
 type kafkaProducer interface {

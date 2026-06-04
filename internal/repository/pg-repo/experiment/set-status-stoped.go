@@ -21,7 +21,7 @@ func (s *Storage) SetStatusStopped(ctx context.Context, expID int64) error {
 		return err
 	}
 
-	if err = s.deleteExperimentLayer(ctx, tx, expID); err != nil {
+	if err = s.clearExperimentBuckets(ctx, tx, expID); err != nil {
 		return err
 	}
 
@@ -55,13 +55,14 @@ func (s *Storage) updateStatusStopped(
 	return nil
 }
 
-func (s *Storage) deleteExperimentLayer(
+func (s *Storage) clearExperimentBuckets(
 	ctx context.Context,
 	tx pgx.Tx,
 	expID int64,
 ) error {
 	query := `
-		DELETE FROM layer_experiments
+		UPDATE layer_experiments
+		SET bucket = '{}'
 		WHERE experiment_id = $1
 	`
 
