@@ -27,7 +27,7 @@ type groupRepo interface {
 }
 
 type experimentRepo interface {
-	GetExperiment(ctx context.Context, id int64) (*dto.Experiment, error)
+	GetExperimentWithLayers(ctx context.Context, id int64) (*dto.Experiment, error)
 	CreateExperiment(ctx context.Context, experiment *dto.Experiment) (*dto.Experiment, error)
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
 	GetLayerBucketsInPeriod(ctx context.Context, experiment *dto.Experiment) ([]dto.LayerBuckets, error)

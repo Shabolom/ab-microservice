@@ -12,6 +12,8 @@ func (h *Handler) UserExperiment(ctx context.Context, req *authv1.ExperimentRequ
 		SplitID:   req.GetSplitId(),
 		DeviceID:  req.GetDeviceId(),
 		NameSpace: req.GetNamespace(),
+		City:      req.GetCity(),
+		Store:     req.GetStore(),
 	}
 
 	reply, err := h.experimentService.GetExperiments(reqParam)

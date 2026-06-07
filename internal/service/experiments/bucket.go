@@ -35,24 +35,87 @@ func (s *Service) InExperiment(splitID int64, rawExperiment *dto.RawExperiment) 
 	s.logger.Debug(
 		"bucket not in experiment",
 		zap.Int64("bucket", bucket),
+		zap.Int64("splitID", splitID),
 	)
 
 	return false
 }
 
 func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *dto.RawExperiment) (*dto.Group, error) {
-	fmt.Println(1234444)
 	groups := rawExperiments.Group
+
 	for i := range groups {
 		for _, id := range groups[i].DeviceID {
 			if id == parameters.DeviceID {
-				fmt.Println(123, groups[i])
 				return &groups[i], nil
 			}
 		}
 	}
 
 	if rawExperiments.Status != shortcut.ExpStatusActive {
+		s.logger.Debug("experiment is not active")
+		return nil, nil
+	}
+
+	for _, excludedCity := range rawExperiments.ExcludedCities {
+		if excludedCity == parameters.City {
+			s.logger.Debug(
+				"experiment filtered by excluded city",
+				zap.String("city", parameters.City),
+				zap.Int64("experiment_id", rawExperiments.Id),
+				zap.String("experiment_name", rawExperiments.Name),
+			)
+			return nil, nil
+		}
+	}
+
+	for _, excludedStore := range rawExperiments.ExcludedStores {
+		if excludedStore == parameters.Store {
+			s.logger.Debug(
+				"experiment filtered by excluded store",
+				zap.String("store", parameters.Store),
+				zap.Int64("experiment_id", rawExperiments.Id),
+				zap.String("experiment_name", rawExperiments.Name),
+			)
+			return nil, nil
+		}
+	}
+
+	pass := false
+	for _, passingCity := range rawExperiments.PassingCities {
+		if passingCity == parameters.City {
+			pass = true
+			break
+		}
+	}
+
+	if !pass {
+		s.logger.Debug(
+			"experiment filtered by passing cities",
+			zap.String("city", parameters.City),
+			zap.Int64("experiment_id", rawExperiments.Id),
+			zap.String("experiment_name", rawExperiments.Name),
+			zap.Strings("allowed_cities", rawExperiments.PassingCities),
+		)
+		return nil, nil
+	}
+
+	pass = false
+	for _, passingStore := range rawExperiments.PassingStores {
+		if passingStore == parameters.Store {
+			pass = true
+			break
+		}
+	}
+
+	if !pass {
+		s.logger.Debug(
+			"experiment filtered by passing stores",
+			zap.String("store", parameters.Store),
+			zap.Int64("experiment_id", rawExperiments.Id),
+			zap.String("experiment_name", rawExperiments.Name),
+			zap.Strings("allowed_stores", rawExperiments.PassingStores),
+		)
 		return nil, nil
 	}
 

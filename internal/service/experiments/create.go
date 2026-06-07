@@ -85,7 +85,7 @@ func (s *Service) Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Expe
 			zap.String("namespace", reqExp.NameSpace),
 		)
 
-		return nil, err
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	s.logger.Info(

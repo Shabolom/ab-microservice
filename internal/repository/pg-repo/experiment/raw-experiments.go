@@ -16,6 +16,10 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			e.status,
 			e.start_date,
 			e.end_date,
+			e.passing_cities,
+			e.excluded_cities,
+			e.passing_stores,
+			e.excluded_stores,
 
 			ns.id,
 			ns.name,
@@ -71,6 +75,10 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			e.status,
 			e.start_date,
 			e.end_date,
+			e.passing_cities,
+			e.excluded_cities,
+			e.passing_stores,
+			e.excluded_stores,
 			ns.id,
 			ns.name,
 			ns.description
@@ -104,6 +112,10 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			&exp.Status,
 			&exp.StartDate,
 			&exp.EndDate,
+			&exp.PassingCities,
+			&exp.ExcludedCities,
+			&exp.PassingStores,
+			&exp.ExcludedStores,
 
 			&namespaceID,
 			&namespaceName,

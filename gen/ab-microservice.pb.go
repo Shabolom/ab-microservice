@@ -185,7 +185,11 @@ type CreateExperimentRequest struct {
 	StartDate         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
 	EndDate           *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	LayersId          []int64                `protobuf:"varint,5,rep,packed,name=layers_id,json=layersId,proto3" json:"layers_id,omitempty"`
-	Groups            []*Group               `protobuf:"bytes,7,rep,name=groups,proto3" json:"groups,omitempty"`
+	PassingCities     []string               `protobuf:"bytes,6,rep,name=passing_cities,json=passingCities,proto3" json:"passing_cities,omitempty"`
+	ExcludedCities    []string               `protobuf:"bytes,7,rep,name=excluded_cities,json=excludedCities,proto3" json:"excluded_cities,omitempty"`
+	PassingStores     []string               `protobuf:"bytes,8,rep,name=passing_stores,json=passingStores,proto3" json:"passing_stores,omitempty"`
+	ExcludedStores    []string               `protobuf:"bytes,9,rep,name=excluded_stores,json=excludedStores,proto3" json:"excluded_stores,omitempty"`
+	Groups            []*Group               `protobuf:"bytes,10,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -251,6 +255,34 @@ func (x *CreateExperimentRequest) GetEndDate() *timestamppb.Timestamp {
 func (x *CreateExperimentRequest) GetLayersId() []int64 {
 	if x != nil {
 		return x.LayersId
+	}
+	return nil
+}
+
+func (x *CreateExperimentRequest) GetPassingCities() []string {
+	if x != nil {
+		return x.PassingCities
+	}
+	return nil
+}
+
+func (x *CreateExperimentRequest) GetExcludedCities() []string {
+	if x != nil {
+		return x.ExcludedCities
+	}
+	return nil
+}
+
+func (x *CreateExperimentRequest) GetPassingStores() []string {
+	if x != nil {
+		return x.PassingStores
+	}
+	return nil
+}
+
+func (x *CreateExperimentRequest) GetExcludedStores() []string {
+	if x != nil {
+		return x.ExcludedStores
 	}
 	return nil
 }
@@ -527,6 +559,8 @@ type ExperimentRequest struct {
 	SplitId       int64                  `protobuf:"varint,1,opt,name=split_id,json=splitId,proto3" json:"split_id,omitempty"`
 	DeviceId      int64                  `protobuf:"varint,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Namespace     string                 `protobuf:"bytes,3,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
+	Store         string                 `protobuf:"bytes,5,opt,name=store,proto3" json:"store,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -578,6 +612,20 @@ func (x *ExperimentRequest) GetDeviceId() int64 {
 func (x *ExperimentRequest) GetNamespace() string {
 	if x != nil {
 		return x.Namespace
+	}
+	return ""
+}
+
+func (x *ExperimentRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *ExperimentRequest) GetStore() string {
+	if x != nil {
+		return x.Store
 	}
 	return ""
 }
@@ -699,15 +747,20 @@ const file_ab_microservice_proto_rawDesc = "" +
 	"\vUNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10VALIDATION_ERROR\x10\x01\x12\x13\n" +
 	"\x0fINVALID_REQUEST\x10\x02\x12\r\n" +
-	"\tSTATUS_OK\x10\x03\"\x98\x02\n" +
+	"\tSTATUS_OK\x10\x03\"\xb8\x03\n" +
 	"\x17CreateExperimentRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12-\n" +
 	"\x12rollout_percentage\x18\x02 \x01(\x03R\x11rolloutPercentage\x129\n" +
 	"\n" +
 	"start_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
 	"\bend_date\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\x12\x1b\n" +
-	"\tlayers_id\x18\x05 \x03(\x03R\blayersId\x12+\n" +
-	"\x06groups\x18\a \x03(\v2\x13.platform.mvp.GroupR\x06groups\"g\n" +
+	"\tlayers_id\x18\x05 \x03(\x03R\blayersId\x12%\n" +
+	"\x0epassing_cities\x18\x06 \x03(\tR\rpassingCities\x12'\n" +
+	"\x0fexcluded_cities\x18\a \x03(\tR\x0eexcludedCities\x12%\n" +
+	"\x0epassing_stores\x18\b \x03(\tR\rpassingStores\x12'\n" +
+	"\x0fexcluded_stores\x18\t \x03(\tR\x0eexcludedStores\x12+\n" +
+	"\x06groups\x18\n" +
+	" \x03(\v2\x13.platform.mvp.GroupR\x06groups\"g\n" +
 	"\x05Group\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12-\n" +
 	"\x12rolling_percentage\x18\x03 \x01(\x03R\x11rollingPercentage\x12\x1b\n" +
@@ -722,11 +775,13 @@ const file_ab_microservice_proto_rawDesc = "" +
 	"\x19SetReadyExperimentRequest\x12#\n" +
 	"\rexperiment_id\x18\x01 \x01(\x03R\fexperimentId\"A\n" +
 	"\x1aSetStopedExperimentRequest\x12#\n" +
-	"\rexperiment_id\x18\x01 \x01(\x03R\fexperimentId\"i\n" +
+	"\rexperiment_id\x18\x01 \x01(\x03R\fexperimentId\"\x93\x01\n" +
 	"\x11ExperimentRequest\x12\x19\n" +
 	"\bsplit_id\x18\x01 \x01(\x03R\asplitId\x12\x1b\n" +
 	"\tdevice_id\x18\x02 \x01(\x03R\bdeviceId\x12\x1c\n" +
-	"\tnamespace\x18\x03 \x01(\tR\tnamespace\"\x94\x02\n" +
+	"\tnamespace\x18\x03 \x01(\tR\tnamespace\x12\x12\n" +
+	"\x04city\x18\x04 \x01(\tR\x04city\x12\x14\n" +
+	"\x05store\x18\x05 \x01(\tR\x05store\"\x94\x02\n" +
 	"\x10ExperimentsReply\x12V\n" +
 	"\x0ferr_info_reason\x18\x01 \x01(\x0e2..platform.mvp.ExperimentsReply.ERR_INFO_REASONR\rerrInfoReason\x12J\n" +
 	"\x11experiments_reply\x18\x02 \x03(\v2\x1d.platform.mvp.ExperimentReplyR\x10experimentsReply\"\\\n" +

@@ -4,13 +4,11 @@ import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 
 	"go.uber.org/zap"
 )
 
 func (s *Service) Create(ctx context.Context, reqLayer *dto.Layer) error {
-	fmt.Println(reqLayer.Name, reqLayer.NameSpaceID, 123123123)
 	if reqLayer.Name == "" || reqLayer.NameSpaceID <= 0 {
 		s.logger.Warn(
 			"layer validation failed",

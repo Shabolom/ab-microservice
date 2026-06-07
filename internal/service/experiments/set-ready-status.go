@@ -20,7 +20,7 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		zap.Int64("experiment_id", targetExpID),
 	)
 
-	targetExp, err := s.experimentRepo.GetExperiment(ctx, targetExpID)
+	targetExp, err := s.experimentRepo.GetExperimentWithLayers(ctx, targetExpID)
 	if err != nil {
 		s.logger.Warn(
 			"failed to get experiment",
@@ -39,19 +39,6 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 		)
 
 		return shortcut.ErrExperimentAlreadyRunning
-	}
-
-	err = s.validate(targetExp)
-	if err != nil {
-		s.logger.Error(
-			"experiment validation failed",
-			zap.Int64("experiment_id", targetExp.ID),
-			zap.String("experiment_name", targetExp.Name),
-			zap.String("status", targetExp.Status),
-			zap.Error(err),
-		)
-
-		return err
 	}
 
 	layersBuckets, err := s.experimentRepo.GetLayerBucketsInPeriod(ctx, targetExp)

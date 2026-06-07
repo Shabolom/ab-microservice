@@ -19,9 +19,9 @@ func (s *Storage) GetLayerBucketsInPeriod(
 		SELECT
 			tl.layer_id,
 			COALESCE(
-				array_agg(DISTINCT bucket_value) FILTER (WHERE bucket_value IS NOT NULL),
+				array_agg(bucket_value) FILTER (WHERE bucket_value IS NOT NULL),
 				'{}'
-			) AS buckets
+    		) AS buckets
 		FROM target_layers tl
 		LEFT JOIN layer_experiments le
 			ON le.layer_id = tl.layer_id

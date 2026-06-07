@@ -56,9 +56,13 @@ func (s *Storage) createExperiment(
 			start_date,
 			end_date,
 			status,
-		    namespace
+			namespace,
+			passing_cities,
+			excluded_cities,
+			passing_stores,
+			excluded_stores
 		)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING
 			id,
 			name,
@@ -66,7 +70,11 @@ func (s *Storage) createExperiment(
 			start_date,
 			end_date,
 			status,
-			namespace
+			namespace,
+			passing_cities,
+			excluded_cities,
+			passing_stores,
+			excluded_stores
 	`
 
 	var created dto.Experiment
@@ -80,6 +88,10 @@ func (s *Storage) createExperiment(
 		experiment.EndDate,
 		experiment.Status,
 		experiment.NameSpace,
+		experiment.PassingCities,
+		experiment.ExcludedCities,
+		experiment.PassingStores,
+		experiment.ExcludedStores,
 	).Scan(
 		&created.ID,
 		&created.Name,
@@ -88,9 +100,13 @@ func (s *Storage) createExperiment(
 		&created.EndDate,
 		&created.Status,
 		&created.NameSpace,
+		&created.PassingCities,
+		&created.ExcludedCities,
+		&created.PassingStores,
+		&created.ExcludedStores,
 	)
 	if err != nil {
-		return nil, shortcut.MapStorageError(err)
+		return nil, err
 	}
 
 	return &created, nil
@@ -113,7 +129,8 @@ func (s *Storage) createLayerExperiments(
 	for _, layerID := range layerIDs {
 		_, err := tx.Exec(ctx, query, layerID, experimentID)
 		if err != nil {
-			return shortcut.MapStorageError(err)
+			fmt.Println(2)
+			return err
 		}
 	}
 
@@ -153,7 +170,8 @@ func (s *Storage) createExperimentGroups(
 			group.DeviceID,
 		).Scan(&group.ID)
 		if err != nil {
-			return nil, shortcut.MapStorageError(err)
+			fmt.Println(3)
+			return nil, err
 		}
 
 		createdGroups = append(createdGroups, group)

@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *Storage) GetExperiment(ctx context.Context, id int64) (*dto.Experiment, error) {
+func (s *Storage) GetExperimentWithLayers(ctx context.Context, id int64) (*dto.Experiment, error) {
 	query := `
 		SELECT
 			id,
@@ -18,7 +18,11 @@ func (s *Storage) GetExperiment(ctx context.Context, id int64) (*dto.Experiment,
 			start_date,
 			end_date,
 			status,
-			namespace
+			namespace,
+			passing_cities,
+			excluded_cities,
+			passing_stores,
+			excluded_stores
 		FROM experiments
 		WHERE id = $1
 	`
@@ -33,6 +37,10 @@ func (s *Storage) GetExperiment(ctx context.Context, id int64) (*dto.Experiment,
 		&experiment.EndDate,
 		&experiment.Status,
 		&experiment.NameSpace,
+		&experiment.PassingCities,
+		&experiment.ExcludedCities,
+		&experiment.PassingStores,
+		&experiment.ExcludedStores,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

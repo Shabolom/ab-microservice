@@ -31,7 +31,11 @@ message CreateExperimentRequest {
   google.protobuf.Timestamp start_date = 3;
   google.protobuf.Timestamp end_date = 4;
   repeated int64 layers_id = 5;
-  repeated Group groups = 7;
+  repeated string passing_cities = 6;
+  repeated string excluded_cities = 7;
+  repeated string passing_stores = 8;
+  repeated string excluded_stores = 9;
+  repeated Group groups = 10;
 }
 
 message Group {
@@ -63,6 +67,8 @@ message ExperimentRequest {
   int64 split_id = 1;
   int64 device_id = 2;
   string namespace = 3;
+  string city = 4;
+  string store = 5;
 }
 
 message ExperimentsReply {
