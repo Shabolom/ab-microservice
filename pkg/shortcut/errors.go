@@ -44,12 +44,19 @@ var (
 	ErrFailedToGetExperiment        = errors.New("failed to get experiment")
 	ErrFailedToGetLayerExperiments  = errors.New("failed to get layer experiments")
 
-	ErrLayerNotFound            = errors.New("layer not found")
-	ErrFailedToGetLayer         = errors.New("failed to get layer")
-	ErrStorage                  = errors.New("storage error")
-	ErrExperimentAlreadyRunning = errors.New("experiment status is already ready or active")
-	ErrDifferentNamespaces      = errors.New("different namespaces")
-	ErrTypeCast                 = errors.New("error while trying to cast to a specific type")
+	ErrLayerNotFound                 = errors.New("layer not found")
+	ErrFailedToGetLayer              = errors.New("failed to get layer")
+	ErrStorage                       = errors.New("storage error")
+	ErrExperimentAlreadyRunning      = errors.New("experiment status is already ready or active")
+	ErrDifferentNamespaces           = errors.New("different namespaces")
+	ErrTypeCast                      = errors.New("error while trying to cast to a specific type")
+	ErrNoParamsInGroup               = errors.New("no params in group")
+	ErrNameSpaseCountInGroup         = errors.New("name spase count in group")
+	ErrNamespaceIDsDontMatch         = errors.New("namespace IDs don't match")
+	ErrCustomParamsNamespaceMismatch = errors.New("custom params namespace does not match experiment namespace")
+
+	ErrNotSupportedConditions = errors.New("not supported conditions")
+	ErrNotSupportedType       = errors.New("not supported type")
 )
 
 const (

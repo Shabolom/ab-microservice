@@ -15,6 +15,7 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 	excludedCities := make([]string, 0, len(req.GetExcludedCities()))
 	passingStores := make([]string, 0, len(req.GetPassingStores()))
 	excludedStores := make([]string, 0, len(req.GetExcludedStores()))
+	customParamsGroups := make([]dto.ParamGroup, 0, len(req.GetCustomParamGroups()))
 
 	for _, g := range req.GetGroups() {
 		groups = append(groups, dto.Group{
@@ -40,6 +41,26 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 		excludedStores = append(excludedStores, excludedStore)
 	}
 
+	for _, reqCustomParamGroup := range req.GetCustomParamGroups() {
+		customParams := reqCustomParamGroup.GetCustomParam()
+		customParamGroup := dto.ParamGroup{
+			Percent:              reqCustomParamGroup.GetPercentage(),
+			ParamsWithConditions: make([]dto.CustomParamWithCondition, 0, len(customParams)),
+		}
+
+		for _, param := range customParams {
+			customParamWithCondition := dto.CustomParamWithCondition{
+				ParameterID: param.GetParametrId(),
+				Value:       param.GetValue(),
+				Condition:   param.GetCondition(),
+			}
+
+			customParamGroup.ParamsWithConditions = append(customParamGroup.ParamsWithConditions, customParamWithCondition)
+		}
+
+		customParamsGroups = append(customParamsGroups, customParamGroup)
+	}
+
 	exp := &dto.Experiment{
 		Name:              req.GetName(),
 		RolloutPercentage: req.GetRolloutPercentage(),
@@ -50,10 +71,10 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 		ExcludedCities:    excludedCities,
 		PassingStores:     passingStores,
 		ExcludedStores:    excludedStores,
+		ParamsGroups:      customParamsGroups,
 		Groups:            groups,
 	}
 
-	fmt.Println(exp, 5555555)
 	createdExp, err := h.experimentService.Create(ctx, exp)
 	if err != nil {
 		return nil, render.ErrorValidator(err)

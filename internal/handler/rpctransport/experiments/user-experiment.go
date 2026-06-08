@@ -8,12 +8,21 @@ import (
 )
 
 func (h *Handler) UserExperiment(ctx context.Context, req *authv1.ExperimentRequest) (*authv1.ExperimentsReply, error) {
+	params := make([]dto.Parameter, 0, len(req.GetParams()))
+	for _, param := range req.GetParams() {
+		params = append(params, dto.Parameter{
+			ParamName: param.GetParamName(),
+			Value:     param.GetValue(),
+		})
+	}
+
 	reqParam := &dto.RequestParameters{
-		SplitID:   req.GetSplitId(),
-		DeviceID:  req.GetDeviceId(),
-		NameSpace: req.GetNamespace(),
-		City:      req.GetCity(),
-		Store:     req.GetStore(),
+		SplitID:    req.GetSplitId(),
+		DeviceID:   req.GetDeviceId(),
+		NameSpace:  req.GetNamespace(),
+		City:       req.GetCity(),
+		Store:      req.GetStore(),
+		Parameters: params,
 	}
 
 	reply, err := h.experimentService.GetExperiments(reqParam)

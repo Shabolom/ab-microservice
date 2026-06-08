@@ -6,12 +6,14 @@ import (
 )
 
 type RawExperimentSessionStorage struct {
-	mu      sync.RWMutex
-	session map[string]dto.NameSpaceExperiments
+	mu                              sync.RWMutex
+	sessionWithCustomParamGroups    map[string]dto.NameSpaceExperiments
+	sessionWithoutCustomParamGroups map[string]dto.NameSpaceExperiments
 }
 
 func New() *RawExperimentSessionStorage {
 	return &RawExperimentSessionStorage{
-		session: map[string]dto.NameSpaceExperiments{},
+		sessionWithCustomParamGroups:    map[string]dto.NameSpaceExperiments{},
+		sessionWithoutCustomParamGroups: map[string]dto.NameSpaceExperiments{},
 	}
 }

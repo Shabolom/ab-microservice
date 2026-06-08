@@ -5,6 +5,7 @@ import (
 	"ab/pkg/shortcut"
 	"context"
 	"encoding/json"
+	"fmt"
 )
 
 func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error) {
@@ -36,52 +37,78 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			) AS bucket,
 
 			COALESCE(
-				jsonb_agg(
-					DISTINCT jsonb_build_object(
-						'id', l.id,
-						'namespace_id', l.namespace_id,
-						'name', l.name,
-						'description', l.description
+				(
+					SELECT jsonb_agg(
+						DISTINCT jsonb_build_object(
+							'id', l2.id,
+							'namespace_id', l2.namespace_id,
+							'name', l2.name,
+							'description', l2.description
+						)
 					)
-				) FILTER (WHERE l.id IS NOT NULL),
+					FROM layer_experiments le2
+					JOIN layers l2 ON l2.id = le2.layer_id
+					WHERE le2.experiment_id = e.id
+				),
 				'[]'::jsonb
 			) AS layers,
 
 			COALESCE(
-				jsonb_agg(
-					DISTINCT jsonb_build_object(
-						'id', g.id,
-						'name', g.name,
-						'rolling_percentage', g.rolling_percentage,
-						'device_id', g.device_ids
+				(
+					SELECT jsonb_agg(
+						jsonb_build_object(
+							'id', g.id,
+							'name', g.name,
+							'rolling_percentage', g.rolling_percentage,
+							'device_id', g.device_ids
+						)
+						ORDER BY g.id
 					)
-				) FILTER (WHERE g.id IS NOT NULL),
+					FROM experiment_groups g
+					WHERE g.experiment_id = e.id
+				),
 				'[]'::jsonb
-			) AS groups
+			) AS groups,
+
+			COALESCE(
+				(
+					SELECT jsonb_agg(
+						jsonb_build_object(
+							'id', pg.id,
+							'percent', pg.percent,
+							'conditions', COALESCE(
+								(
+									SELECT jsonb_agg(
+										jsonb_build_object(
+											'id', cpc.id,
+											'parameter_id', cpc.parameter_id,
+											'parameter_group_id', cpc.parameter_group_id,
+											'parameter_type', cp.type,
+											'parameter_name', cp.name,
+											'value', cpc.value,
+											'condition', cpc.condition
+										)
+										ORDER BY cpc.id
+									)
+									FROM customparametercondition cpc
+									JOIN customparameter cp
+										ON cp.id = cpc.parameter_id
+									WHERE cpc.parameter_group_id = pg.id
+								),
+								'[]'::jsonb
+							)
+						)
+						ORDER BY pg.id
+					)
+					FROM parametergroup pg
+					WHERE pg.experiment_id = e.id
+				),
+				'[]'::jsonb
+			) AS custom_params_groups
 		FROM experiments e
-		LEFT JOIN layer_experiments le
-			ON le.experiment_id = e.id
-		LEFT JOIN layers l
-			ON l.id = le.layer_id
-		LEFT JOIN namespaces ns
-			ON ns.id = l.namespace_id
-		LEFT JOIN experiment_groups g
-			ON g.experiment_id = e.id
+		JOIN namespaces ns
+			ON ns.name = e.namespace
 		WHERE ns.name = $1
-		GROUP BY
-			e.id,
-			e.name,
-			e.rollout_percentage,
-			e.status,
-			e.start_date,
-			e.end_date,
-			e.passing_cities,
-			e.excluded_cities,
-			e.passing_stores,
-			e.excluded_stores,
-			ns.id,
-			ns.name,
-			ns.description
 		ORDER BY e.id
 	`
 
@@ -101,8 +128,9 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			namespaceName        string
 			namespaceDescription string
 
-			layersRaw []byte
-			groupsRaw []byte
+			layersRaw             []byte
+			groupsRaw             []byte
+			customParamsGroupsRaw []byte
 		)
 
 		err = rows.Scan(
@@ -125,6 +153,7 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 
 			&layersRaw,
 			&groupsRaw,
+			&customParamsGroupsRaw,
 		)
 		if err != nil {
 			return nil, shortcut.MapStorageError(err)
@@ -138,11 +167,15 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		}
 
 		if err = json.Unmarshal(layersRaw, &exp.Layer); err != nil {
-			return nil, shortcut.MapStorageError(err)
+			return nil, fmt.Errorf("unmarshal layers: %w", err)
 		}
 
 		if err = json.Unmarshal(groupsRaw, &exp.Group); err != nil {
-			return nil, shortcut.MapStorageError(err)
+			return nil, fmt.Errorf("unmarshal groups: %w", err)
+		}
+
+		if err = json.Unmarshal(customParamsGroupsRaw, &exp.CustomParamsGroups); err != nil {
+			return nil, fmt.Errorf("unmarshal custom params groups: %w", err)
 		}
 
 		result = append(result, exp)

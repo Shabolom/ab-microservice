@@ -19,7 +19,8 @@ type experimentRepository interface {
 }
 
 type rawExperimentCache interface {
-	Replace(newCash map[string]dto.NameSpaceExperiments)
+	ReplaceWithCustomGroups(newCash map[string]dto.NameSpaceExperiments)
+	ReplaceWithoutCustomGroups(newCash map[string]dto.NameSpaceExperiments)
 }
 type Worker struct {
 	nameSpaceRepository  nameSpaceRepository

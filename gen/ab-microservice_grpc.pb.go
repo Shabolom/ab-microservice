@@ -25,6 +25,7 @@ const (
 	ABExperiment_CreateLayer_FullMethodName         = "/platform.mvp.ABExperiment/CreateLayer"
 	ABExperiment_SetReadyExperiment_FullMethodName  = "/platform.mvp.ABExperiment/SetReadyExperiment"
 	ABExperiment_SetStopedExperiment_FullMethodName = "/platform.mvp.ABExperiment/SetStopedExperiment"
+	ABExperiment_CreateCustomParam_FullMethodName   = "/platform.mvp.ABExperiment/CreateCustomParam"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
@@ -37,6 +38,7 @@ type ABExperimentClient interface {
 	CreateLayer(ctx context.Context, in *CreateLayerRequest, opts ...grpc.CallOption) (*StockReply, error)
 	SetReadyExperiment(ctx context.Context, in *SetReadyExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
 	SetStopedExperiment(ctx context.Context, in *SetStopedExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
+	CreateCustomParam(ctx context.Context, in *CreateCustomParamRequest, opts ...grpc.CallOption) (*StockReply, error)
 }
 
 type aBExperimentClient struct {
@@ -107,6 +109,16 @@ func (c *aBExperimentClient) SetStopedExperiment(ctx context.Context, in *SetSto
 	return out, nil
 }
 
+func (c *aBExperimentClient) CreateCustomParam(ctx context.Context, in *CreateCustomParamRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_CreateCustomParam_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type ABExperimentServer interface {
 	CreateLayer(context.Context, *CreateLayerRequest) (*StockReply, error)
 	SetReadyExperiment(context.Context, *SetReadyExperimentRequest) (*StockReply, error)
 	SetStopedExperiment(context.Context, *SetStopedExperimentRequest) (*StockReply, error)
+	CreateCustomParam(context.Context, *CreateCustomParamRequest) (*StockReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -143,6 +156,9 @@ func (UnimplementedABExperimentServer) SetReadyExperiment(context.Context, *SetR
 }
 func (UnimplementedABExperimentServer) SetStopedExperiment(context.Context, *SetStopedExperimentRequest) (*StockReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetStopedExperiment not implemented")
+}
+func (UnimplementedABExperimentServer) CreateCustomParam(context.Context, *CreateCustomParamRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCustomParam not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -272,6 +288,24 @@ func _ABExperiment_SetStopedExperiment_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_CreateCustomParam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCustomParamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).CreateCustomParam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_CreateCustomParam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).CreateCustomParam(ctx, req.(*CreateCustomParamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -302,6 +336,10 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetStopedExperiment",
 			Handler:    _ABExperiment_SetStopedExperiment_Handler,
+		},
+		{
+			MethodName: "CreateCustomParam",
+			Handler:    _ABExperiment_CreateCustomParam_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

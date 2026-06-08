@@ -1,6 +1,7 @@
 package di
 
 import (
+	customParams "ab/internal/service/custom-params"
 	"ab/internal/service/experiments"
 	"ab/internal/service/layer"
 	"ab/internal/service/namespace"
@@ -14,6 +15,7 @@ func (d *DI) GetExperimentService() *experiments.Service {
 		d.GetInMemoryCache(),
 		d.GetLayerPgRepo(),
 		d.GetKafka(),
+		d.GetCustomParamsPgDatabase(),
 		d.Logger(),
 	)
 }
@@ -24,4 +26,8 @@ func (d *DI) GetLayerService() *layer.Service {
 
 func (d *DI) GetNamespaceService() *namespace.Service {
 	return namespace.New(d.Logger(), d.GetNamespacePgRepo())
+}
+
+func (d *DI) GetCustomParamsService() *customParams.Service {
+	return customParams.New(d.Logger(), d.GetCustomParamsPgDatabase())
 }

@@ -28,6 +28,12 @@ func ErrorValidator(err error) error {
 		errors.Is(err, shortcut.ErrExperimentAlreadyRunning),
 		errors.Is(err, shortcut.ErrDifferentNamespaces),
 		errors.Is(err, shortcut.ErrExperimentGroupsRolloutNotFull),
+		errors.Is(err, shortcut.ErrNoParamsInGroup),
+		errors.Is(err, shortcut.ErrNameSpaseCountInGroup),
+		errors.Is(err, shortcut.ErrNamespaceIDsDontMatch),
+		errors.Is(err, shortcut.ErrCustomParamsNamespaceMismatch),
+		errors.Is(err, shortcut.ErrNotSupportedConditions),
+		errors.Is(err, shortcut.ErrNotSupportedType),
 		errors.Is(err, shortcut.ErrExperimentLayerRolloutTooBig):
 		return status.Error(codes.InvalidArgument, err.Error())
 

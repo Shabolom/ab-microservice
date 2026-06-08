@@ -21,21 +21,27 @@ func (s *Storage) CreateExperiment(ctx context.Context, experiment *dto.Experime
 
 	created, err := s.createExperiment(ctx, tx, experiment)
 	if err != nil {
-		return nil, err
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	err = s.createLayerExperiments(ctx, tx, created.ID, experiment.LayersID)
 	if err != nil {
-		return nil, err
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	groups, err := s.createExperimentGroups(ctx, tx, created.ID, experiment.Groups)
 	if err != nil {
-		return nil, err
+		return nil, shortcut.MapStorageError(err)
+	}
+
+	paramsGroups, err := s.createParamGroups(ctx, tx, created.ID, experiment.ParamsGroups)
+	if err != nil {
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	created.LayersID = experiment.LayersID
 	created.Groups = groups
+	created.ParamsGroups = paramsGroups
 
 	if err = tx.Commit(ctx); err != nil {
 		return nil, shortcut.MapStorageError(err)
@@ -129,7 +135,6 @@ func (s *Storage) createLayerExperiments(
 	for _, layerID := range layerIDs {
 		_, err := tx.Exec(ctx, query, layerID, experimentID)
 		if err != nil {
-			fmt.Println(2)
 			return err
 		}
 	}
@@ -170,7 +175,6 @@ func (s *Storage) createExperimentGroups(
 			group.DeviceID,
 		).Scan(&group.ID)
 		if err != nil {
-			fmt.Println(3)
 			return nil, err
 		}
 
@@ -178,4 +182,100 @@ func (s *Storage) createExperimentGroups(
 	}
 
 	return createdGroups, nil
+}
+
+func (s *Storage) createParamGroups(
+	ctx context.Context,
+	tx pgx.Tx,
+	experimentID int64,
+	paramGroups []dto.ParamGroup,
+) ([]dto.ParamGroup, error) {
+	query := `
+		INSERT INTO parametergroup (
+			percent,
+			experiment_id
+		)
+		VALUES ($1, $2)
+		RETURNING id
+	`
+
+	createdGroups := make([]dto.ParamGroup, 0, len(paramGroups))
+
+	for _, group := range paramGroups {
+		err := tx.QueryRow(
+			ctx,
+			query,
+			group.Percent,
+			experimentID,
+		).Scan(&group.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		conditions, err := s.createParamGroupConditions(
+			ctx,
+			tx,
+			group.ID,
+			group.ParamsWithConditions,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		group.ParamsWithConditions = conditions
+		createdGroups = append(createdGroups, group)
+	}
+
+	return createdGroups, nil
+}
+
+func (s *Storage) createParamGroupConditions(
+	ctx context.Context,
+	tx pgx.Tx,
+	paramGroupID int64,
+	conditions []dto.CustomParamWithCondition,
+) ([]dto.CustomParamWithCondition, error) {
+	query := `
+		INSERT INTO customparametercondition (
+			parameter_id,
+			value,
+			condition,
+			parameter_group_id
+		)
+		VALUES ($1, $2, $3, $4)
+		RETURNING
+			id,
+			parameter_id,
+			value,
+			condition,
+			parameter_group_id
+	`
+
+	createdConditions := make([]dto.CustomParamWithCondition, 0, len(conditions))
+
+	for _, condition := range conditions {
+		var created dto.CustomParamWithCondition
+
+		err := tx.QueryRow(
+			ctx,
+			query,
+			condition.ParameterID,
+			condition.Value,
+			condition.Condition,
+			paramGroupID,
+		).Scan(
+			&created.ID,
+			&created.ParameterID,
+			&created.Value,
+			&created.Condition,
+			&created.ParameterGroupID,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		createdConditions = append(createdConditions, created)
+	}
+
+	return createdConditions, nil
 }

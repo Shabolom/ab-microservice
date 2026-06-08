@@ -9,7 +9,8 @@ import (
 )
 
 type inMemoryStorage interface {
-	GetExperimentByNamespace(namespace string) dto.NameSpaceExperiments
+	GetExperimentWithCustomGroupsByNamespace(namespace string) dto.NameSpaceExperiments
+	GetExperimentWithoutCustomGroupsByNamespace(namespace string) dto.NameSpaceExperiments
 }
 
 type nameSpaceRepo interface {
@@ -44,6 +45,12 @@ type layerRepo interface {
 type kafkaProducer interface {
 	WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) error
 }
+
+type customParamRepo interface {
+	GetById(ctx context.Context, id int64) (dto.CustomParams, error)
+	CountDistinctNamespaces(ctx context.Context, ids []int64) (int64, error)
+}
+
 type Service struct {
 	groupRepo       groupRepo
 	experimentRepo  experimentRepo
@@ -51,6 +58,7 @@ type Service struct {
 	inMemoryStorage inMemoryStorage
 	layerRepo       layerRepo
 	kafkaProducer   kafkaProducer
+	customParamRepo customParamRepo
 	logger          *zap.Logger
 }
 
@@ -61,6 +69,7 @@ func New(
 	inMemoryStorage inMemoryStorage,
 	layerRepo layerRepo,
 	kafkaProducer kafkaProducer,
+	customParamRepo customParamRepo,
 	logger *zap.Logger,
 ) *Service {
 	return &Service{
@@ -70,6 +79,7 @@ func New(
 		inMemoryStorage: inMemoryStorage,
 		layerRepo:       layerRepo,
 		kafkaProducer:   kafkaProducer,
+		customParamRepo: customParamRepo,
 		logger:          logger,
 	}
 }

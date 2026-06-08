@@ -11,6 +11,8 @@ import (
 )
 
 func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetExperimentsReply, error) {
+	var nameSpaceExperiments dto.NameSpaceExperiments
+
 	s.logger.Info(
 		"get experiments started",
 		zap.String("namespace", parameters.NameSpace),
@@ -21,15 +23,25 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 		return nil, shortcut.ErrValidation
 	}
 
-	nameSpaceExperiments := s.inMemoryStorage.GetExperimentByNamespace(parameters.NameSpace)
-	s.logger.Info(
-		"experiments loaded from worker",
-		zap.String("namespace", parameters.NameSpace),
-		zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
-	)
+	if len(parameters.Parameters) > 0 {
+		nameSpaceExperiments = s.inMemoryStorage.GetExperimentWithCustomGroupsByNamespace(parameters.NameSpace)
+		s.logger.Info(
+			"experiments loaded from worker",
+			zap.String("namespace", parameters.NameSpace),
+			zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
+		)
+	} else {
+		nameSpaceExperiments = s.inMemoryStorage.GetExperimentWithCustomGroupsByNamespace(parameters.NameSpace)
+		s.logger.Info(
+			"experiments loaded from worker",
+			zap.String("namespace", parameters.NameSpace),
+			zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
+		)
+	}
 
 	result := make([]*dto.GetExperimentsReply, 0)
 
+nextExp:
 	for _, experiment := range nameSpaceExperiments.RawExp {
 		s.logger.Debug(
 			"picking group for experiment",
@@ -38,6 +50,41 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 			zap.Int64("rolling_percentage", experiment.RollingPercentage),
 			zap.Int("groups_count", len(experiment.Group)),
 		)
+
+		if experiment.CustomParamsGroups != nil {
+			for _, group := range experiment.CustomParamsGroups {
+				ok, err := shortcut.CustomParamsGroupValidation(
+					group,
+					parameters.Parameters,
+				)
+				if err != nil {
+					s.logger.Warn(
+						"custom params group validation failed",
+						zap.Int64("experiment_id", experiment.Id),
+						zap.Int64("group_id", group.ID),
+						zap.Error(err),
+					)
+
+					return []*dto.GetExperimentsReply{}, err
+				}
+
+				if !ok {
+					s.logger.Debug(
+						"custom params group not matched",
+						zap.Int64("experiment_id", experiment.Id),
+						zap.Int64("group_id", group.ID),
+					)
+
+					continue nextExp
+				}
+
+				s.logger.Debug(
+					"custom params group matched",
+					zap.Int64("experiment_id", experiment.Id),
+					zap.Int64("group_id", group.ID),
+				)
+			}
+		}
 
 		group, err := s.PickGroup(parameters, &experiment)
 		if errors.Is(err, shortcut.ErrGroupNotFoundByBucket) {
