@@ -15,6 +15,6 @@ func (h *Handler) SetReadyExperiment(ctx context.Context, req *authv1.SetReadyEx
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Set ready experiment success status experiment id: %s", req.GetExperimentId()),
+		Message:       fmt.Sprintf("Set ready experiment success status experiment id: %v", req.GetExperimentId()),
 	}, nil
 }

@@ -13,7 +13,7 @@ func (s *Storage) GetById(ctx context.Context, id int64) (dto.CustomParams, erro
 			name,
 			namespace_id,
 			type
-		FROM config_app_customparameter
+		FROM customparameter
 		WHERE id = $1
 	`
 

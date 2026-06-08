@@ -8,7 +8,7 @@ import (
 func (s *Storage) CountDistinctNamespaces(ctx context.Context, ids []int64) (int64, error) {
 	query := `
 		SELECT COUNT(DISTINCT namespace_id)
-		FROM config_app_customparameter
+		FROM customparameter
 		WHERE id = ANY($1)
 	`
 

@@ -2,6 +2,7 @@ package shortcut
 
 import (
 	"ab/internal/dto"
+	"fmt"
 )
 
 func CustomParamsGroupValidation(group dto.ParamGroupWithRawParams, reqParams []dto.Parameter) (bool, error) {
@@ -17,6 +18,7 @@ func CustomParamsGroupValidation(group dto.ParamGroupWithRawParams, reqParams []
 				continue
 			}
 
+			fmt.Println("условия: ", param.Condition, "значения с которым будут сравнивать: ", param.Value, "переданные нами значения: ", reqParam.Value, "тип: ", param.ParameterType)
 			ok, err := conditionValueValidation(
 				param.Condition,
 				param.Value,

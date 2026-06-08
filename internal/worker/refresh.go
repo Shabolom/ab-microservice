@@ -16,15 +16,15 @@ func (w *Worker) refresh(ctx context.Context) error {
 	cacheWithCustomGroups := make(map[string]dto.NameSpaceExperiments)
 	cacheWithoutCustomGroups := make(map[string]dto.NameSpaceExperiments)
 
-	expWithCustomParamGroups := make([]dto.RawExperiment, 0)
-	expWithoutCustomParamGroups := make([]dto.RawExperiment, 0)
-
 	nameSpaces, err := w.nameSpaceRepository.GetList(refreshCtx)
 	if err != nil {
 		return fmt.Errorf("get namespaces: %w", err)
 	}
 
 	for _, nameSpace := range nameSpaces {
+		expWithCustomParamGroups := make([]dto.RawExperiment, 0)
+		expWithoutCustomParamGroups := make([]dto.RawExperiment, 0)
+
 		exps, err := w.experimentRepository.GetRawExperiments(refreshCtx, nameSpace.Name)
 		if err != nil {
 			return fmt.Errorf("get raw experiments for namespace %q: %w", nameSpace.Name, err)
@@ -33,6 +33,7 @@ func (w *Worker) refresh(ctx context.Context) error {
 		for _, exp := range exps {
 			if len(exp.CustomParamsGroups) > 0 {
 				expWithCustomParamGroups = append(expWithCustomParamGroups, exp)
+				continue
 			}
 
 			expWithoutCustomParamGroups = append(expWithoutCustomParamGroups, exp)
@@ -58,7 +59,8 @@ func (w *Worker) refresh(ctx context.Context) error {
 
 	w.logger.Info(
 		"experiment worker refreshed",
-		zap.Int("namespaces_count", len(cacheWithCustomGroups)),
+		zap.Int("cacheWithCustomGroups_count", len(cacheWithCustomGroups)),
+		zap.Int("cacheWithoutCustomGroups_count", len(cacheWithoutCustomGroups)),
 	)
 
 	return nil

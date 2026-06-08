@@ -13,42 +13,45 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		SELECT
 			e.id,
 			e.name,
+			e.namespace,
 			e.rollout_percentage,
 			e.status,
 			e.start_date,
 			e.end_date,
-			e.passing_cities,
-			e.excluded_cities,
-			e.passing_stores,
-			e.excluded_stores,
 
 			ns.id,
 			ns.name,
 			ns.description,
 
+			e.passing_cities,
+			e.excluded_cities,
+			e.passing_stores,
+			e.excluded_stores,
+
 			COALESCE(
 				(
-					SELECT array_agg(DISTINCT b ORDER BY b)
-					FROM layer_experiments le2
-					CROSS JOIN LATERAL unnest(le2.bucket) AS b
-					WHERE le2.experiment_id = e.id
+					SELECT array_agg(DISTINCT b::bigint ORDER BY b::bigint)
+					FROM layer_experiments le
+					CROSS JOIN LATERAL unnest(le.bucket) AS b
+					WHERE le.experiment_id = e.id
 				),
-				'{}'::int[]
+				'{}'::bigint[]
 			) AS bucket,
 
 			COALESCE(
 				(
 					SELECT jsonb_agg(
-						DISTINCT jsonb_build_object(
-							'id', l2.id,
-							'namespace_id', l2.namespace_id,
-							'name', l2.name,
-							'description', l2.description
+						jsonb_build_object(
+							'id', l.id,
+							'namespace_id', l.namespace_id,
+							'name', l.name,
+							'description', l.description
 						)
+						ORDER BY l.id
 					)
-					FROM layer_experiments le2
-					JOIN layers l2 ON l2.id = le2.layer_id
-					WHERE le2.experiment_id = e.id
+					FROM layer_experiments le
+					JOIN layers l ON l.id = le.layer_id
+					WHERE le.experiment_id = e.id
 				),
 				'[]'::jsonb
 			) AS layers,
@@ -57,26 +60,9 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 				(
 					SELECT jsonb_agg(
 						jsonb_build_object(
-							'id', g.id,
-							'name', g.name,
-							'rolling_percentage', g.rolling_percentage,
-							'device_id', g.device_ids
-						)
-						ORDER BY g.id
-					)
-					FROM experiment_groups g
-					WHERE g.experiment_id = e.id
-				),
-				'[]'::jsonb
-			) AS groups,
-
-			COALESCE(
-				(
-					SELECT jsonb_agg(
-						jsonb_build_object(
 							'id', pg.id,
 							'percent', pg.percent,
-							'conditions', COALESCE(
+							'params_with_conditions', COALESCE(
 								(
 									SELECT jsonb_agg(
 										jsonb_build_object(
@@ -104,11 +90,29 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 					WHERE pg.experiment_id = e.id
 				),
 				'[]'::jsonb
-			) AS custom_params_groups
+			) AS custom_params_groups,
+
+			COALESCE(
+				(
+					SELECT jsonb_agg(
+						jsonb_build_object(
+							'id', g.id,
+							'name', g.name,
+							'rolling_percentage', g.rolling_percentage,
+							'device_id', g.device_ids
+						)
+						ORDER BY g.id
+					)
+					FROM experiment_groups g
+					WHERE g.experiment_id = e.id
+				),
+				'[]'::jsonb
+			) AS groups
+
 		FROM experiments e
 		JOIN namespaces ns
 			ON ns.name = e.namespace
-		WHERE ns.name = $1
+		WHERE e.namespace = $1
 		ORDER BY e.id
 	`
 
@@ -129,37 +133,38 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			namespaceDescription string
 
 			layersRaw             []byte
-			groupsRaw             []byte
 			customParamsGroupsRaw []byte
+			groupsRaw             []byte
 		)
 
 		err = rows.Scan(
 			&exp.Id,
 			&exp.Name,
+			&exp.NameSpaceName,
 			&exp.RollingPercentage,
 			&exp.Status,
 			&exp.StartDate,
 			&exp.EndDate,
-			&exp.PassingCities,
-			&exp.ExcludedCities,
-			&exp.PassingStores,
-			&exp.ExcludedStores,
 
 			&namespaceID,
 			&namespaceName,
 			&namespaceDescription,
 
+			&exp.PassingCities,
+			&exp.ExcludedCities,
+			&exp.PassingStores,
+			&exp.ExcludedStores,
+
 			&exp.Bucket,
 
 			&layersRaw,
-			&groupsRaw,
 			&customParamsGroupsRaw,
+			&groupsRaw,
 		)
 		if err != nil {
 			return nil, shortcut.MapStorageError(err)
 		}
 
-		exp.NameSpaceName = namespaceName
 		exp.NameSpace = dto.NameSpace{
 			ID:          namespaceID,
 			Name:        namespaceName,
@@ -170,12 +175,12 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 			return nil, fmt.Errorf("unmarshal layers: %w", err)
 		}
 
-		if err = json.Unmarshal(groupsRaw, &exp.Group); err != nil {
-			return nil, fmt.Errorf("unmarshal groups: %w", err)
-		}
-
 		if err = json.Unmarshal(customParamsGroupsRaw, &exp.CustomParamsGroups); err != nil {
 			return nil, fmt.Errorf("unmarshal custom params groups: %w", err)
+		}
+
+		if err = json.Unmarshal(groupsRaw, &exp.Group); err != nil {
+			return nil, fmt.Errorf("unmarshal groups: %w", err)
 		}
 
 		result = append(result, exp)
