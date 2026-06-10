@@ -32,7 +32,7 @@ func compareInt(condition string, conditionValue string, reqValue string) (bool,
 			return reqInt <= conditionInt, nil
 		}
 
-	case "BETWEEN", "NOT BETWEEN":
+	case "BETWEEN":
 		values, err := parseIntArray(conditionValue)
 		if err != nil || len(values) != 2 {
 			return false, ErrValidation
@@ -45,8 +45,19 @@ func compareInt(condition string, conditionValue string, reqValue string) (bool,
 			return false, ErrValidation
 		}
 
-		if condition == "BETWEEN" {
-			return reqInt >= from && reqInt <= to, nil
+		return reqInt >= from && reqInt <= to, nil
+
+	case "NOT BETWEEN":
+		values, err := parseIntArray(conditionValue)
+		if err != nil || len(values) != 2 {
+			return false, ErrValidation
+		}
+
+		from := values[0]
+		to := values[1]
+
+		if from > to {
+			return false, ErrValidation
 		}
 
 		return reqInt < from || reqInt > to, nil

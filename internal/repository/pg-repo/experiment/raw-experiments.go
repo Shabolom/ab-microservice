@@ -140,7 +140,7 @@ func (s *Storage) GetRawExperiments(ctx context.Context, namespace string) ([]dt
 		err = rows.Scan(
 			&exp.Id,
 			&exp.Name,
-			&exp.NameSpaceName,
+			&exp.NamespaceName,
 			&exp.RollingPercentage,
 			&exp.Status,
 			&exp.StartDate,

@@ -9,27 +9,27 @@ import (
 
 type (
 	experimentsHandler = *experiments.Handler
-	nameSpaceHandler   = *namespace.Handler
+	namespaceHandler   = *namespace.Handler
 	layerHandler       = *layer.Handler
 	customParam        = *customParams.Handler
 )
 
 type Handlers struct {
 	experimentsHandler
-	nameSpaceHandler
+	namespaceHandler
 	layerHandler
 	customParam
 }
 
 func New(
 	getExperimentsHandler experimentsHandler,
-	nameSpaceHandler nameSpaceHandler,
+	namespaceHandler namespaceHandler,
 	layerHandler layerHandler,
 	customParam customParam,
 ) *Handlers {
 	return &Handlers{
 		experimentsHandler: getExperimentsHandler,
-		nameSpaceHandler:   nameSpaceHandler,
+		namespaceHandler:   namespaceHandler,
 		layerHandler:       layerHandler,
 		customParam:        customParam,
 	}

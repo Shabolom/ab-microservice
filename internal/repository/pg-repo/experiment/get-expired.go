@@ -36,7 +36,7 @@ func (s *Storage) GetExperimentWithLayers(ctx context.Context, id int64) (*dto.E
 		&experiment.StartDate,
 		&experiment.EndDate,
 		&experiment.Status,
-		&experiment.NameSpace,
+		&experiment.Namespace,
 		&experiment.PassingCities,
 		&experiment.ExcludedCities,
 		&experiment.PassingStores,

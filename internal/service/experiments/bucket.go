@@ -25,7 +25,7 @@ func (s *Service) InExperiment(splitID int64, rawExperiment *dto.RawExperiment) 
 	key := fmt.Sprintf("experiment:%d:SplitID:%v", rawExperiment.Id, splitID)
 
 	bucket := s.Bucket(key)
-	fmt.Println(bucket, "asdasdasd")
+
 	for _, expBucket := range rawExperiment.Bucket {
 		if bucket == expBucket {
 			return true
@@ -89,7 +89,7 @@ func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *d
 		}
 	}
 
-	if !pass {
+	if !pass && len(rawExperiments.PassingStores) != 0 {
 		s.logger.Debug(
 			"experiment filtered by passing cities",
 			zap.String("city", parameters.City),
@@ -108,7 +108,7 @@ func (s *Service) PickGroup(parameters *dto.RequestParameters, rawExperiments *d
 		}
 	}
 
-	if !pass {
+	if !pass && len(rawExperiments.PassingStores) != 0 {
 		s.logger.Debug(
 			"experiment filtered by passing stores",
 			zap.String("store", parameters.Store),

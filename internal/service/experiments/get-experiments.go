@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetExperimentsReply, error) {
-	var nameSpaceExperiments dto.NameSpaceExperiments
+	var namespaceExperiments dto.NameSpaceExperiments
 
 	s.logger.Info(
 		"get experiments started",
@@ -32,25 +32,25 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 	}
 
 	if len(parameters.Parameters) > 0 {
-		nameSpaceExperiments = s.inMemoryStorage.GetExperimentWithCustomGroupsByNamespace(parameters.NameSpace)
+		namespaceExperiments = s.inMemoryStorage.GetExperimentWithCustomGroupsByNamespace(parameters.NameSpace)
 		s.logger.Info(
 			"experiments loaded from worker WithCustomGroups",
 			zap.String("namespace", parameters.NameSpace),
-			zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
+			zap.Int("experiments_count", len(namespaceExperiments.RawExp)),
 		)
 	} else {
-		nameSpaceExperiments = s.inMemoryStorage.GetExperimentWithoutCustomGroupsByNamespace(parameters.NameSpace)
+		namespaceExperiments = s.inMemoryStorage.GetExperimentWithoutCustomGroupsByNamespace(parameters.NameSpace)
 		s.logger.Info(
 			"experiments loaded from worker WithCustomGroups",
 			zap.String("namespace", parameters.NameSpace),
-			zap.Int("experiments_count", len(nameSpaceExperiments.RawExp)),
+			zap.Int("experiments_count", len(namespaceExperiments.RawExp)),
 		)
 	}
 
 	result := make([]*dto.GetExperimentsReply, 0)
 
 nextExp:
-	for _, experiment := range nameSpaceExperiments.RawExp {
+	for _, experiment := range namespaceExperiments.RawExp {
 		s.logger.Debug(
 			"picking group for experiment",
 			zap.Int64("experiment_id", experiment.Id),

@@ -55,12 +55,12 @@ func (s *Service) SetReady(ctx context.Context, targetExpID int64) error {
 	}
 
 	if len(layersBuckets) == 0 {
-		layersBuckets, err = s.createLayerExp(ctx, targetExp.NameSpace, targetExp.ID)
+		layersBuckets, err = s.createLayerExp(ctx, targetExp.Namespace, targetExp.ID)
 		if err != nil {
 			s.logger.Error(
 				"create layer experiments failed",
 				zap.Int64("experiment_id", targetExp.ID),
-				zap.String("namespace", targetExp.NameSpace),
+				zap.String("namespace", targetExp.Namespace),
 				zap.Error(err),
 			)
 
@@ -173,12 +173,12 @@ func (s *Service) generateBuckets(usedBuckets []int64, count int64) []int64 {
 }
 
 func (s *Service) createLayerExp(ctx context.Context, namespaceName string, expID int64) ([]dto.LayerBuckets, error) {
-	nameSpace, err := s.nameSpaceRepo.GetByName(ctx, namespaceName)
+	namespace, err := s.namespaceRepo.GetByName(ctx, namespaceName)
 	if err != nil {
 		return nil, err
 	}
 
-	layersID, err := s.layerRepo.GetIDsByNamespaceId(ctx, nameSpace.ID)
+	layersID, err := s.layerRepo.GetIDsByNamespaceId(ctx, namespace.ID)
 	if err != nil {
 		return nil, err
 	}

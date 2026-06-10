@@ -53,7 +53,7 @@ func (s *Service) Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Expe
 		}
 	}
 
-	namespace, err := s.nameSpaceRepo.GetByID(ctx, namespaceID)
+	namespace, err := s.namespaceRepo.GetByID(ctx, namespaceID)
 	if err != nil {
 		s.logger.Warn(
 			"failed to get namespace",
@@ -71,7 +71,7 @@ func (s *Service) Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Expe
 		}
 	}
 
-	reqExp.NameSpace = namespace.Name
+	reqExp.Namespace = namespace.Name
 
 	if err = s.validate(reqExp); err != nil {
 		s.logger.Warn(
@@ -89,17 +89,17 @@ func (s *Service) Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Expe
 			"create experiment failed",
 			zap.Error(err),
 			zap.String("experiment_name", reqExp.Name),
-			zap.String("namespace", reqExp.NameSpace),
+			zap.String("namespace", reqExp.Namespace),
 		)
 
-		return nil, shortcut.MapStorageError(err)
+		return nil, err
 	}
 
 	s.logger.Info(
 		"experiment created",
 		zap.Int64("experiment_id", createdExperiment.ID),
 		zap.String("experiment_name", createdExperiment.Name),
-		zap.String("namespace", createdExperiment.NameSpace),
+		zap.String("namespace", createdExperiment.Namespace),
 	)
 
 	return createdExperiment, nil
@@ -107,7 +107,7 @@ func (s *Service) Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Expe
 
 func (s *Service) validate(reqExp *dto.Experiment) error {
 	switch {
-	case reqExp.NameSpace == "":
+	case reqExp.Namespace == "":
 		s.logger.Warn("experiment namespace is empty")
 		return shortcut.ErrValidation
 

@@ -5,7 +5,7 @@ import "time"
 type Experiment struct {
 	ID                int64        `json:"id"`
 	Name              string       `json:"name"`
-	NameSpace         string       `json:"namespace"`
+	Namespace         string       `json:"namespace"`
 	Status            string       `json:"status"`
 	RolloutPercentage int64        `json:"rollout_percentage"`
 	StartDate         time.Time    `json:"start_date"`

@@ -81,6 +81,7 @@ func MapStorageError(err error) error {
 
 	case errors.Is(err, context.Canceled):
 		return ErrCanceled
+
 	}
 
 	var pgErr *pgconn.PgError
@@ -98,10 +99,28 @@ func MapStorageError(err error) error {
 		case "23P01":
 			return ErrExclusionViolation
 
-		case "23502", "22001", "22P02", "22003":
+		case "23502",
+			"22001",
+			"22P02",
+			"22003",
+			"22007",
+			"22008",
+			"22023":
 			return ErrValidation
 
-		case "40001", "40P01":
+		case "42P01",
+			"42703",
+			"42883",
+			"42P10",
+			"42601":
+			return ErrStorage
+
+		case "40001",
+			"40P01",
+			"53300",
+			"08000",
+			"08003",
+			"08006": // connection_failure
 			return ErrRetryable
 
 		case "57014":

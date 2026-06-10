@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type nameSpaceRepository interface {
+type namespaceRepository interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
 }
 
@@ -23,22 +23,28 @@ type rawExperimentCache interface {
 	ReplaceWithoutCustomGroups(newCash map[string]dto.NameSpaceExperiments)
 }
 type Worker struct {
-	nameSpaceRepository  nameSpaceRepository
+	namespaceRepository  namespaceRepository
 	experimentRepository experimentRepository
 	rawExperimentCache   rawExperimentCache
+	ctxInterval          int
+	operatingInterval    int
 	logger               *zap.Logger
 }
 
 func New(
-	nameSpaceRepository nameSpaceRepository,
+	namespaceRepository namespaceRepository,
 	experimentRepository experimentRepository,
 	rawExperimentCache rawExperimentCache,
+	ctxInterval int,
+	operatingInterval int,
 	logger *zap.Logger,
 ) *Worker {
 	return &Worker{
-		nameSpaceRepository:  nameSpaceRepository,
+		namespaceRepository:  namespaceRepository,
 		experimentRepository: experimentRepository,
 		rawExperimentCache:   rawExperimentCache,
+		ctxInterval:          ctxInterval,
+		operatingInterval:    operatingInterval,
 		logger:               logger,
 	}
 }

@@ -9,9 +9,10 @@ func CustomParamsGroupValidation(group dto.ParamGroupWithRawParams, reqParams []
 	if len(group.ParamsWithConditions) > len(reqParams) {
 		return false, ErrValidation
 	}
+	found := 0
 
 	for _, param := range group.ParamsWithConditions {
-		found := false
+		found++
 
 		for _, reqParam := range reqParams {
 			if param.ParameterName != reqParam.ParamName {
@@ -33,11 +34,10 @@ func CustomParamsGroupValidation(group dto.ParamGroupWithRawParams, reqParams []
 				continue
 			}
 
-			found = true
-			break
+			found--
 		}
 
-		if !found {
+		if found != 0 {
 			return false, nil
 		}
 	}

@@ -13,7 +13,7 @@ type inMemoryStorage interface {
 	GetExperimentWithoutCustomGroupsByNamespace(namespace string) dto.NameSpaceExperiments
 }
 
-type nameSpaceRepo interface {
+type namespaceRepo interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
 	GetByID(ctx context.Context, namespaceID int64) (*dto.NameSpace, error)
 	GetByName(ctx context.Context, name string) (*dto.NameSpace, error)
@@ -52,20 +52,22 @@ type customParamRepo interface {
 }
 
 type Service struct {
-	groupRepo       groupRepo
-	experimentRepo  experimentRepo
-	nameSpaceRepo   nameSpaceRepo
-	inMemoryStorage inMemoryStorage
-	layerRepo       layerRepo
-	kafkaProducer   kafkaProducer
-	customParamRepo customParamRepo
-	logger          *zap.Logger
+	groupRepo         groupRepo
+	experimentRepo    experimentRepo
+	namespaceRepo     namespaceRepo
+	inMemoryStorage   inMemoryStorage
+	layerRepo         layerRepo
+	kafkaProducer     kafkaProducer
+	customParamRepo   customParamRepo
+	ctxInterval       int
+	operatingInterval int
+	logger            *zap.Logger
 }
 
 func New(
 	groupRepo groupRepo,
 	experimentRepo experimentRepo,
-	nameSpaceRepo nameSpaceRepo,
+	namespaceRepo namespaceRepo,
 	inMemoryStorage inMemoryStorage,
 	layerRepo layerRepo,
 	kafkaProducer kafkaProducer,
@@ -75,7 +77,7 @@ func New(
 	return &Service{
 		groupRepo:       groupRepo,
 		experimentRepo:  experimentRepo,
-		nameSpaceRepo:   nameSpaceRepo,
+		namespaceRepo:   namespaceRepo,
 		inMemoryStorage: inMemoryStorage,
 		layerRepo:       layerRepo,
 		kafkaProducer:   kafkaProducer,

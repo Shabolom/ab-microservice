@@ -10,45 +10,45 @@ import (
 )
 
 func (w *Worker) refresh(ctx context.Context) error {
-	refreshCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	refreshCtx, cancel := context.WithTimeout(ctx, time.Duration(w.ctxInterval)*time.Second)
 	defer cancel()
 
 	cacheWithCustomGroups := make(map[string]dto.NameSpaceExperiments)
 	cacheWithoutCustomGroups := make(map[string]dto.NameSpaceExperiments)
 
-	nameSpaces, err := w.nameSpaceRepository.GetList(refreshCtx)
+	namespaces, err := w.namespaceRepository.GetList(refreshCtx)
 	if err != nil {
 		return fmt.Errorf("get namespaces: %w", err)
 	}
 
-	for _, nameSpace := range nameSpaces {
+	for _, namespace := range namespaces {
 		expWithCustomParamGroups := make([]dto.RawExperiment, 0)
 		expWithoutCustomParamGroups := make([]dto.RawExperiment, 0)
 
-		exps, err := w.experimentRepository.GetRawExperiments(refreshCtx, nameSpace.Name)
+		exps, err := w.experimentRepository.GetRawExperiments(refreshCtx, namespace.Name)
 		if err != nil {
-			return fmt.Errorf("get raw experiments for namespace %q: %w", nameSpace.Name, err)
+			return fmt.Errorf("get raw experiments for namespace %q: %w", namespace.Name, err)
 		}
 
 		for _, exp := range exps {
 			if len(exp.CustomParamsGroups) > 0 {
 				expWithCustomParamGroups = append(expWithCustomParamGroups, exp)
 				continue
+			} else {
+				expWithoutCustomParamGroups = append(expWithoutCustomParamGroups, exp)
 			}
-
-			expWithoutCustomParamGroups = append(expWithoutCustomParamGroups, exp)
 		}
 
 		if len(expWithCustomParamGroups) > 0 {
-			cacheWithCustomGroups[nameSpace.Name] = dto.NameSpaceExperiments{
-				NameSpace: nameSpace.Name,
+			cacheWithCustomGroups[namespace.Name] = dto.NameSpaceExperiments{
+				NameSpace: namespace.Name,
 				RawExp:    expWithCustomParamGroups,
 			}
 		}
 
 		if len(expWithoutCustomParamGroups) > 0 {
-			cacheWithoutCustomGroups[nameSpace.Name] = dto.NameSpaceExperiments{
-				NameSpace: nameSpace.Name,
+			cacheWithoutCustomGroups[namespace.Name] = dto.NameSpaceExperiments{
+				NameSpace: namespace.Name,
 				RawExp:    expWithoutCustomParamGroups,
 			}
 		}

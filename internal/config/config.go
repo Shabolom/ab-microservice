@@ -6,6 +6,11 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+type MagickNumbers struct {
+	OperatingInterval int `envconfig:"OPERATING_INTERVAL" default:"5"`
+	ContextInterval   int `envconfig:"CONTEXT_INTERVAL" default:"30"`
+}
+
 type PgDB struct {
 	Host          string `envconfig:"POSTGRES_HOST"`
 	Port          string `envconfig:"POSTGRES_PORT"`
@@ -25,6 +30,7 @@ type Config struct {
 	Kafka          Kafka
 	KafkaSerialize KafkaSerialize
 	PostgresDB     PgDB
+	MagickNumbers  MagickNumbers
 }
 
 type KafkaSerialize struct {
