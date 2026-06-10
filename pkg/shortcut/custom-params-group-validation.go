@@ -30,7 +30,7 @@ func CustomParamsGroupValidation(group dto.ParamGroupWithRawParams, reqParams []
 			}
 
 			if !ok {
-				return false, nil
+				continue
 			}
 
 			found = true

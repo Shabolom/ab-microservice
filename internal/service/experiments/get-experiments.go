@@ -49,6 +49,7 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 
 	result := make([]*dto.GetExperimentsReply, 0)
 
+nextExp:
 	for _, experiment := range nameSpaceExperiments.RawExp {
 		s.logger.Debug(
 			"picking group for experiment",
@@ -59,6 +60,7 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 		)
 
 		if len(experiment.CustomParamsGroups) > 0 {
+			pass := false
 			s.logger.Debug(
 				"start custom params groups validation",
 				zap.Int64("experiment_id", experiment.Id),
@@ -102,12 +104,17 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 					continue
 				}
 
+				pass = true
 				s.logger.Debug(
 					"custom params group matched",
 					zap.Int64("experiment_id", experiment.Id),
 					zap.Int64("group_id", group.ID),
 					zap.Any("group_conditions", group.ParamsWithConditions),
 				)
+			}
+
+			if !pass {
+				continue nextExp
 			}
 		}
 
