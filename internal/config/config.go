@@ -21,12 +21,17 @@ type PgDB struct {
 	MaxConnection int    `envconfig:"POSTGRES_MAX_CONNECTION" default:"10"`
 	MinConnection int    `envconfig:"POSTGRES_MIN_CONNECTION" default:"0"`
 }
+
+type Prometheus struct {
+	Port string `envconfig:"PROMETHEUS_PORT" default:"2112"`
+}
 type Config struct {
 	ServiceName    string `envconfig:"APP_NAME"`
 	Debug          bool   `envconfig:"APP_DEBUG"`
 	GRPCPort       string `envconfig:"APP_GRPC_ADDRESS"`
 	Secret         string `envconfig:"APP_SECRET"`
 	ResendAppKey   string `envconfig:"RESEND_API_KEY"`
+	Prometheus     Prometheus
 	Kafka          Kafka
 	KafkaSerialize KafkaSerialize
 	PostgresDB     PgDB

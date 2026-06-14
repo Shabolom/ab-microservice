@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net"
+	"net/http"
 	"os/signal"
 	"syscall"
 
@@ -25,6 +26,7 @@ func main() {
 	}
 
 	container := di.New(ctx)
+	config := container.Config()
 
 	go func() {
 		container.GetWorker().Start(ctx)
@@ -32,8 +34,14 @@ func main() {
 
 	grpcServer := container.NewAuthGRPCServer()
 
+	metricsMux := container.GetMetrics().MetricsMux()
+
 	go func() {
-		lis, err := net.Listen("tcp", container.Config().GRPCPort)
+		_ = http.ListenAndServe(":"+config.Prometheus.Port, metricsMux)
+	}()
+
+	go func() {
+		lis, err := net.Listen("tcp", config.GRPCPort)
 		if err != nil {
 			container.Logger().Fatal(error.Error(err))
 		}
