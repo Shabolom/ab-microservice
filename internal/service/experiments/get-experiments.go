@@ -111,6 +111,8 @@ nextExp:
 					zap.Int64("group_id", group.ID),
 					zap.Any("group_conditions", group.ParamsWithConditions),
 				)
+
+				break
 			}
 
 			if !pass {

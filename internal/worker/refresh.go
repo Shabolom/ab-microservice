@@ -10,6 +10,9 @@ import (
 )
 
 func (w *Worker) refresh(ctx context.Context) error {
+	start := time.Now()
+	defer w.metrics.ObserveCacheRefresh(start)
+
 	refreshCtx, cancel := context.WithTimeout(ctx, time.Duration(w.ctxInterval)*time.Second)
 	defer cancel()
 
@@ -56,6 +59,9 @@ func (w *Worker) refresh(ctx context.Context) error {
 
 	w.rawExperimentCache.ReplaceWithCustomGroups(cacheWithCustomGroups)
 	w.rawExperimentCache.ReplaceWithoutCustomGroups(cacheWithoutCustomGroups)
+
+	w.metrics.SetActiveExperimentsWithGroup(len(cacheWithCustomGroups))
+	w.metrics.SetActiveExperimentsWithoutGroup(len(cacheWithoutCustomGroups))
 
 	w.logger.Info(
 		"experiment worker refreshed",

@@ -8,6 +8,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type metrics interface {
+	SetActiveExperimentsWithGroup(count int)
+	SetActiveExperimentsWithoutGroup(count int)
+	ObserveCacheRefresh(startedAt time.Time)
+}
+
 type namespaceRepository interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
 }
@@ -26,6 +32,7 @@ type Worker struct {
 	namespaceRepository  namespaceRepository
 	experimentRepository experimentRepository
 	rawExperimentCache   rawExperimentCache
+	metrics              metrics
 	ctxInterval          int
 	operatingInterval    int
 	logger               *zap.Logger
@@ -35,6 +42,7 @@ func New(
 	namespaceRepository namespaceRepository,
 	experimentRepository experimentRepository,
 	rawExperimentCache rawExperimentCache,
+	metrics metrics,
 	ctxInterval int,
 	operatingInterval int,
 	logger *zap.Logger,
@@ -43,6 +51,7 @@ func New(
 		namespaceRepository:  namespaceRepository,
 		experimentRepository: experimentRepository,
 		rawExperimentCache:   rawExperimentCache,
+		metrics:              metrics,
 		ctxInterval:          ctxInterval,
 		operatingInterval:    operatingInterval,
 		logger:               logger,

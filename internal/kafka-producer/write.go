@@ -4,11 +4,23 @@ import (
 	"ab/internal/dto/kafka-messege-dto"
 	"ab/pkg/shortcut"
 	"fmt"
+	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
-func (k *Kafka) WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) error {
+func (k *Kafka) WriteEvent(event *kafkaMessageDto.UserInExperimentMessage) (err error) {
+	start := time.Now()
+
+	defer func() {
+		k.metrics.ObserveKafkaPublish(
+			start,
+			k.topic,
+			"UserInExperimentMessage",
+			err,
+		)
+	}()
+
 	payload, err := k.serializer.Serialize(
 		k.topic,
 		event,

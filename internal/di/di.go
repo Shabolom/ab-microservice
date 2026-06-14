@@ -3,6 +3,7 @@ package di
 import (
 	inMemmoryCashe "ab/internal/in-memory-cache"
 	KafkaProducer "ab/internal/kafka-producer"
+	"ab/internal/metrics"
 	"context"
 	"fmt"
 
@@ -10,6 +11,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 type DI struct {
@@ -21,6 +23,10 @@ type DI struct {
 	inMemoryCache *inMemmoryCashe.RawExperimentSessionStorage
 
 	pgConn *pgxpool.Pool
+
+	grpcServer *grpc.Server
+
+	metrics *metrics.Metrics
 }
 
 func New(ctx context.Context) *DI {
@@ -69,4 +75,21 @@ func (d *DI) Logger() *zap.Logger {
 	_ = zap.ReplaceGlobals(logger)
 
 	return d.logger
+}
+
+func (d *DI) ShotDown() {
+	d.Logger().Info("Shutting kafka...")
+	err := d.kafka.Close()
+	if err != nil {
+		d.Logger().Info("Failed to shut down kafka", zap.Error(err))
+	}
+	d.Logger().Info("Kafka closed")
+
+	d.Logger().Info("pgDB shutting down...")
+	d.pgConn.Close()
+	d.Logger().Info("pgConn closed")
+
+	d.Logger().Info("Grpc server shutting down...")
+	d.grpcServer.Stop()
+	d.Logger().Info("Grpc server stoped")
 }

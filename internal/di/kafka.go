@@ -7,5 +7,12 @@ func (d *DI) GetKafka() *KafkaProducer.Kafka {
 		return d.kafka
 	}
 
-	return KafkaProducer.New(d.NewKafkaProducer(), d.NewKafkaJSONSerializer(), d.Config().Kafka.Topic)
+	d.kafka = KafkaProducer.New(
+		d.NewKafkaProducer(),
+		d.NewKafkaJSONSerializer(),
+		d.GetMetrics(),
+		d.Config().Kafka.Topic,
+	)
+
+	return d.kafka
 }
