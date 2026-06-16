@@ -197,11 +197,122 @@ http://localhost:2112/metrics
 * `ended` — эксперимент завершен;
 * `stopped` — эксперимент остановлен вручную.
 
+## Health Checks
+
+Сервис предоставляет HTTP и gRPC health check endpoints для мониторинга состояния приложения и его зависимостей.
+
+### HTTP Endpoints
+
+#### Liveness Probe
+
+Проверяет, что процесс приложения запущен и отвечает на запросы.
+
+```bash
+curl http://localhost:8092/healthz
+```
+
+Ответ:
+
+```text
+ok
+```
+
+---
+
+#### Readiness Probe
+
+Проверяет готовность сервиса обрабатывать запросы.
+
+В текущей реализации проверяется доступность PostgreSQL.
+
+```bash
+curl http://localhost:8092/readyz
+```
+
+Ответ:
+
+```text
+ready
+```
+
+При недоступности PostgreSQL:
+
+```text
+postgres unavailable
+```
+
+HTTP статус:
+
+```text
+503 Service Unavailable
+```
+
+---
+
+#### Kafka Health Check
+
+Проверяет состояние Kafka Producer и возможность взаимодействия с Kafka кластером.
+
+```bash
+curl http://localhost:8092/healthz/kafka
+```
+
+Ответ:
+
+```text
+kafka ok
+```
+
+При ошибке инициализации или недоступности Kafka возвращается:
+
+```text
+503 Service Unavailable
+```
+
+---
+
+### gRPC Health Check
+
+Сервис поддерживает стандартный gRPC Health Checking Protocol.
+
+Проверка состояния сервиса:
+
+```bash
+grpcurl -plaintext localhost:8015 grpc.health.v1.Health/Check
+```
+
+Ответ:
+
+```json
+{
+  "status": "SERVING"
+}
+```
+
+---
+
+### Проверка всех health endpoints
+
+```bash
+curl http://localhost:8092/healthz
+curl http://localhost:8092/readyz
+curl http://localhost:8092/healthz/kafka
+grpcurl -plaintext localhost:8015 grpc.health.v1.Health/Check
+```
+
+Ожидаемый результат:
+
+```text
+ok
+ready
+kafka ok
+SERVING
+```
+
 ## Замечания
 
 Проект находится в разработке. Перед использованием в production стоит дополнить:
 
-* healthcheck endpoint;
 * CI pipeline;
 * тесты;
 * OpenAPI/gRPC examples;

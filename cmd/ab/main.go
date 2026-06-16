@@ -37,21 +37,37 @@ func main() {
 	metricsMux := container.GetMetrics().MetricsMux()
 
 	go func() {
-		_ = http.ListenAndServe(":"+config.Prometheus.Port, metricsMux)
+		addr := ":" + config.Prometheus.Port
+
+		container.Logger().Info(
+			"prometheus server started",
+			zap.String("addr", addr),
+		)
+
+		if err := http.ListenAndServe(addr, metricsMux); err != nil {
+			container.Logger().Fatal(
+				"prometheus server failed",
+				zap.String("addr", addr),
+				zap.Error(err),
+			)
+		}
 	}()
+
+	container.Healthcheck()
 
 	go func() {
 		lis, err := net.Listen("tcp", config.GRPCPort)
 		if err != nil {
-			container.Logger().Fatal(error.Error(err))
+			container.Logger().Fatal("failed to listen grpc", zap.Error(err))
 		}
 
 		container.Logger().Info(
-			"grpc server started",
-			zap.String("port", container.Config().GRPCPort),
+			"grpc server starting",
+			zap.String("addr", container.Config().GRPCPort),
 		)
+
 		if err = grpcServer.Serve(lis); err != nil {
-			container.Logger().Fatal(error.Error(err))
+			container.Logger().Fatal("grpc server failed", zap.Error(err))
 		}
 	}()
 

@@ -8,6 +8,8 @@ import (
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	grpcHealth "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -25,9 +27,17 @@ func (d *DI) NewAuthGRPCServer() *grpc.Server {
 
 	authv1.RegisterABExperimentServer(grpcServer, d.GetGRPCHandlers())
 
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus(
+		"",
+		grpcHealth.HealthCheckResponse_SERVING,
+	)
+	grpcHealth.RegisterHealthServer(grpcServer, healthServer)
+
 	reflection.Register(grpcServer)
 
 	d.grpcServer = grpcServer
+
 	d.Logger().Info("grpc server initialized")
 
 	return grpcServer
