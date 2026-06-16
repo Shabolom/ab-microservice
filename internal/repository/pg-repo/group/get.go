@@ -33,10 +33,10 @@ func (s *Storage) GetByID(ctx context.Context, id int64) (*dto.Group, error) {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, shortcut.ErrNotFound
+			return nil, shortcut.MapStorageError(err)
 		}
 
-		return nil, shortcut.ErrFailedToGetGroup
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return group, nil

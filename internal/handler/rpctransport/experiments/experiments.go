@@ -6,7 +6,10 @@ import (
 )
 
 type experimentService interface {
-	GetExperiments(ctx context.Context, splitID int64) ([]*dto.GetExperimentsReply, error)
+	GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetExperimentsReply, error)
+	Create(ctx context.Context, reqExp *dto.Experiment) (*dto.Experiment, error)
+	SetReady(ctx context.Context, targetExpID int64) error
+	SetStopedStatus(ctx context.Context, expID int64) error
 }
 type Handler struct {
 	experimentService experimentService

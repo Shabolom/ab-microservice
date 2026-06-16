@@ -1,8 +1,8 @@
 package experiment
 
 import (
+	"ab/pkg/shortcut"
 	"context"
-	"errors"
 )
 
 func (s *Storage) Delete(ctx context.Context, id string) error {
@@ -13,11 +13,11 @@ func (s *Storage) Delete(ctx context.Context, id string) error {
 
 	tag, err := s.conn.Exec(ctx, query, id)
 	if err != nil {
-		return err
+		return shortcut.MapStorageError(err)
 	}
 
 	if tag.RowsAffected() == 0 {
-		return errors.New("experiment does not exist")
+		return shortcut.ErrNotFound
 	}
 
 	return nil

@@ -5,7 +5,6 @@ import (
 	"ab/pkg/shortcut"
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -39,10 +38,10 @@ func (s *Storage) Update(ctx context.Context, group *dto.UpdateGroup) (*dto.Grou
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, shortcut.ErrNotFound
+			return nil, shortcut.MapStorageError(err)
 		}
 
-		return nil, fmt.Errorf("%w: %v", shortcut.ErrFailedToUpdateGroup, err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return updatedGroup, nil

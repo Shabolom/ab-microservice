@@ -2,7 +2,7 @@ package di
 
 import (
 	authv1 "ab/gen"
-	"ab/internal/handler/rpctransport"
+	"ab/internal/metrics"
 	"context"
 	"time"
 
@@ -11,16 +11,24 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func (d *DI) NewAuthGRPCServer(logger *zap.Logger, handlers *rpctransport.Handlers) *grpc.Server {
+func (d *DI) NewAuthGRPCServer() *grpc.Server {
+	if d.grpcServer != nil {
+		return d.grpcServer
+	}
+
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(d.loggingInterceptor(logger)),
+		grpc.ChainUnaryInterceptor(
+			d.loggingInterceptor(d.Logger()),
+			d.metricsInterceptor(d.GetMetrics()),
+		),
 	)
 
-	authv1.RegisterABExperimentServer(grpcServer, handlers)
+	authv1.RegisterABExperimentServer(grpcServer, d.GetGRPCHandlers())
 
 	reflection.Register(grpcServer)
 
-	logger.Info("grpc server initialized")
+	d.grpcServer = grpcServer
+	d.Logger().Info("grpc server initialized")
 
 	return grpcServer
 }
@@ -48,6 +56,29 @@ func (d *DI) loggingInterceptor(logger *zap.Logger) grpc.UnaryServerInterceptor 
 			)
 		}()
 
-		return handler(ctx, req)
+		resp, err = handler(ctx, req)
+
+		return resp, err
+	}
+}
+
+func (d *DI) metricsInterceptor(
+	m *metrics.Metrics,
+) grpc.UnaryServerInterceptor {
+	return func(
+		ctx context.Context,
+		req any,
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (resp any, err error) {
+		start := time.Now()
+
+		defer func() {
+			m.ObserveGRPCRequest(start, info.FullMethod, err)
+		}()
+
+		resp, err = handler(ctx, req)
+
+		return resp, err
 	}
 }

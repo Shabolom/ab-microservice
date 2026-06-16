@@ -2,8 +2,8 @@ package group
 
 import (
 	"ab/internal/dto"
+	"ab/pkg/shortcut"
 	"context"
-	"fmt"
 )
 
 func (s *Storage) GetListByExperimentID(ctx context.Context, experimentID string) ([]*dto.Group, error) {
@@ -23,7 +23,7 @@ func (s *Storage) GetListByExperimentID(ctx context.Context, experimentID string
 		experimentID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get groups list: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 	defer rows.Close()
 
@@ -38,14 +38,14 @@ func (s *Storage) GetListByExperimentID(ctx context.Context, experimentID string
 			&group.RollingPercentage,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to scan group: %w", err)
+			return nil, shortcut.MapStorageError(err)
 		}
 
 		groups = append(groups, group)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows iteration error: %w", err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
 	return groups, nil

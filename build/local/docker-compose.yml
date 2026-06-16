@@ -1,5 +1,3 @@
-version: '3.9'
-
 name: ab
 
 services:
@@ -18,8 +16,58 @@ services:
     networks:
       - ab-db-network
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ab-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - ab-db-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ab-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - ab-db-network
+
+  loki:
+    image: grafana/loki:latest
+    container_name: ab-loki
+    restart: always
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - ab-db-network
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: ab-alloy
+    restart: always
+    volumes:
+      - ./monitoring/alloy.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - run
+      - /etc/alloy/config.alloy
+    networks:
+      - ab-db-network
+
 volumes:
   postgres_data:
+  grafana_data:
 
 networks:
   ab-db-network:

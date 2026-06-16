@@ -76,12 +76,12 @@ func (d *DI) NewKafkaJSONSerializer() *jsonschema.Serializer {
 		schemaregistry.NewConfig(d.Config().SchemaRegisterDSN()),
 	)
 	if err != nil {
-		d.logger.Fatal("failed to create schema registry client")
+		d.logger.Fatal("failed to create schema registry client", zap.Error(err))
 	}
 
 	cfg := jsonschema.NewSerializerConfig()
-	cfg.AutoRegisterSchemas = false
-	cfg.UseLatestVersion = true
+	cfg.AutoRegisterSchemas = true
+	cfg.UseLatestVersion = false
 
 	serializer, err := jsonschema.NewSerializer(
 		srClient,
@@ -89,7 +89,7 @@ func (d *DI) NewKafkaJSONSerializer() *jsonschema.Serializer {
 		cfg,
 	)
 	if err != nil {
-		d.logger.Fatal("failed to create kafka json schema serializer")
+		d.logger.Fatal("failed to create kafka json schema serializer", zap.Error(err))
 	}
 
 	return serializer
