@@ -10,11 +10,7 @@ func (m *Metrics) ObserveGRPCRequest(now time.Time, fullMethod string, err error
 		statusName = "error"
 	}
 
-	m.requestsTotal.
-		WithLabelValues(fullMethod, statusName).
-		Inc()
+	m.requestsTotal.WithLabelValues(fullMethod, statusName).Inc()
 
-	m.requestDuration.
-		WithLabelValues(fullMethod).
-		Observe(duration.Seconds())
+	m.requestDuration.WithLabelValues(fullMethod).Observe(duration.Seconds())
 }
