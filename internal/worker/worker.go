@@ -18,6 +18,10 @@ type namespaceRepository interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
 }
 
+type featureToggleRepo interface {
+	GetActiveByNamespaceID(ctx context.Context, id int64) ([]dto.RawFeatureToggle, error)
+}
+
 type experimentRepository interface {
 	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
 	UpdateReadyToStart(ctx context.Context, startDate time.Time) ([]int64, error)
@@ -27,11 +31,14 @@ type experimentRepository interface {
 type rawExperimentCache interface {
 	ReplaceWithCustomGroups(newCash map[string]dto.NameSpaceExperiments)
 	ReplaceWithoutCustomGroups(newCash map[string]dto.NameSpaceExperiments)
+	ReplaceFeatureToggle(newCash map[string]dto.NamespaceFeatureToggle)
 }
+
 type Worker struct {
 	namespaceRepository  namespaceRepository
 	experimentRepository experimentRepository
 	rawExperimentCache   rawExperimentCache
+	featureToggleRepo    featureToggleRepo
 	metrics              metrics
 	ctxInterval          int
 	operatingInterval    int
@@ -42,6 +49,7 @@ func New(
 	namespaceRepository namespaceRepository,
 	experimentRepository experimentRepository,
 	rawExperimentCache rawExperimentCache,
+	featureToggleRepo featureToggleRepo,
 	metrics metrics,
 	ctxInterval int,
 	operatingInterval int,
@@ -51,6 +59,7 @@ func New(
 		namespaceRepository:  namespaceRepository,
 		experimentRepository: experimentRepository,
 		rawExperimentCache:   rawExperimentCache,
+		featureToggleRepo:    featureToggleRepo,
 		metrics:              metrics,
 		ctxInterval:          ctxInterval,
 		operatingInterval:    operatingInterval,

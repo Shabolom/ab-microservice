@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) SetFeatureToggleStatus(ctx context.Context, req *authv1.SetFeatureToggleStatusRequest) (*authv1.StockReply, error) {
-	id := int(req.GetFeatureToggleId())
+	id := req.GetFeatureToggleId()
 	status := req.GetStatus()
 
 	err := h.featureTogglesService.SetStatus(ctx, id, status)

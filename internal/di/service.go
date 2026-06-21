@@ -3,6 +3,7 @@ package di
 import (
 	customParams "ab/internal/service/custom-params"
 	"ab/internal/service/experiments"
+	featureToggles "ab/internal/service/feature-toggles"
 	"ab/internal/service/layer"
 	"ab/internal/service/namespace"
 )
@@ -15,7 +16,7 @@ func (d *DI) GetExperimentService() *experiments.Service {
 		d.GetInMemoryCache(),
 		d.GetLayerPgRepo(),
 		d.GetKafka(),
-		d.GetCustomParamsPgDatabase(),
+		d.GetCustomParamsPgRepo(),
 		d.Logger(),
 	)
 }
@@ -29,5 +30,9 @@ func (d *DI) GetNamespaceService() *namespace.Service {
 }
 
 func (d *DI) GetCustomParamsService() *customParams.Service {
-	return customParams.New(d.Logger(), d.GetCustomParamsPgDatabase())
+	return customParams.New(d.Logger(), d.GetCustomParamsPgRepo())
+}
+
+func (d *DI) GetFeatureTogglesService() *featureToggles.Service {
+	return featureToggles.New(d.GetFeatureTogglePgRepo(), d.Logger())
 }

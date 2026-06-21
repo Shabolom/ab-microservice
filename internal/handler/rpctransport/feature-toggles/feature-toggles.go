@@ -7,8 +7,9 @@ import (
 
 type featureTogglesService interface {
 	Create(ctx context.Context, featureToggle *dto.FeatureToggle) error
-	SetStatus(ctx context.Context, id int, status string) error
-	UpdateRolloutPercentage(ctx context.Context, id int, percentage int) error
+	SetStatus(ctx context.Context, id int64, status string) error
+	UpdateRolloutPercentage(ctx context.Context, id int64, percentage int64) error
+	IsEnable(ctx context.Context, id int64) error
 }
 type Handler struct {
 	featureTogglesService featureTogglesService

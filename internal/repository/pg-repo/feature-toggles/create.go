@@ -11,9 +11,10 @@ func (s *Storage) Create(ctx context.Context, featureToggle *dto.FeatureToggle) 
 		INSERT INTO feature_toggles (
 			namespace_id,
 			name,
+			rollout_percentage,
 			status
 		)
-		VALUES ($1, $2, $3)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, updated_at
 	`
 
@@ -22,6 +23,7 @@ func (s *Storage) Create(ctx context.Context, featureToggle *dto.FeatureToggle) 
 		query,
 		featureToggle.NamespaceID,
 		featureToggle.Name,
+		featureToggle.RolloutPercentage,
 		featureToggle.Status,
 	).Scan(
 		&featureToggle.ID,

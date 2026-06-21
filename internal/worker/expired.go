@@ -8,7 +8,7 @@ import (
 )
 
 func (w *Worker) startExpiredExperimentWorker(ctx context.Context) {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(time.Duration(w.operatingInterval) * time.Second)
 	defer ticker.Stop()
 
 	if err := w.expiredExperimentWorker(ctx); err != nil {

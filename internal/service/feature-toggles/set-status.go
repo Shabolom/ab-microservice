@@ -3,24 +3,27 @@ package featureToggles
 import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
+	"ab/pkg/utils"
 	"context"
 	"strings"
 
 	"go.uber.org/zap"
 )
 
-func (s *Service) SetStatus(ctx context.Context, id int, status string) error {
+func (s *Service) SetStatus(ctx context.Context, id int64, status string) error {
 	s.logger.Info(
 		"set feature toggle status started",
-		zap.Int("id", id),
+		zap.Int64("id", id),
 		zap.String("status", status),
 	)
+
+	status = strings.TrimSpace(strings.ToLower(status))
 
 	err := s.statusValidation(id, status)
 	if err != nil {
 		s.logger.Warn(
 			"set feature toggle status validation failed",
-			zap.Int("id", id),
+			zap.Int64("id", id),
 			zap.String("status", status),
 			zap.Error(err),
 		)
@@ -28,11 +31,11 @@ func (s *Service) SetStatus(ctx context.Context, id int, status string) error {
 		return err
 	}
 
-	err = s.featureTogglesRepo.SetStatus(ctx, id, status)
+	err = s.setStatus(ctx, id, status)
 	if err != nil {
 		s.logger.Error(
 			"set feature toggle status failed",
-			zap.Int("id", id),
+			zap.Int64("id", id),
 			zap.String("status", status),
 			zap.Error(err),
 		)
@@ -42,17 +45,14 @@ func (s *Service) SetStatus(ctx context.Context, id int, status string) error {
 
 	s.logger.Info(
 		"set feature toggle status finished",
-		zap.Int("id", id),
+		zap.Int64("id", id),
 		zap.String("status", status),
 	)
 
 	return nil
 }
 
-func (s *Service) statusValidation(id int, status string) error {
-	status = strings.TrimSpace(status)
-	status = strings.ToLower(status)
-
+func (s *Service) statusValidation(id int64, status string) error {
 	switch {
 	case status == "" ||
 		status != dto.FeatureToggleStatusActive &&
@@ -61,9 +61,83 @@ func (s *Service) statusValidation(id int, status string) error {
 			status != dto.FeatureToggleStatusDraft:
 		return shortcut.ErrFeatureToggleInvalidStatus
 
-	case id == 0:
-		return shortcut.ErrFeatureToggleNamespaceIDRequired
+	case id <= 0:
+		return shortcut.ErrValidation
 	}
 
 	return nil
+}
+
+func (s *Service) setStatus(ctx context.Context, id int64, status string) error {
+	switch status {
+	case dto.FeatureToggleStatusActive:
+		feature, err := s.featureTogglesRepo.GetByID(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		activeFeaturesByNamespace, err := s.featureTogglesRepo.GetActiveByNamespaceID(
+			ctx,
+			feature.NamespaceID,
+		)
+		if err != nil {
+			return err
+		}
+
+		if len(activeFeaturesByNamespace) == 0 {
+			newUsedBuckets := utils.GenerateBuckets([]int64{}, feature.RolloutPercentage)
+			err = s.featureTogglesRepo.SetStatusActive(ctx, id, newUsedBuckets)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		}
+
+		usedBuckets := make([]int64, 0, 100)
+		for _, activeFeature := range activeFeaturesByNamespace {
+			for _, bucket := range activeFeature.Buckets {
+				usedBuckets = append(usedBuckets, bucket)
+			}
+		}
+
+		if len(usedBuckets)+int(feature.RolloutPercentage) > 100 {
+			return shortcut.ErrFeatureToggleNotEnoughBuckets
+		}
+
+		addedUsedBuckets := utils.GenerateBuckets(usedBuckets, feature.RolloutPercentage)
+
+		err = s.featureTogglesRepo.SetStatusActive(ctx, id, addedUsedBuckets)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	case dto.FeatureToggleStatusArchived:
+		err := s.featureTogglesRepo.SetStatusArchived(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	case dto.FeatureToggleStatusDisabled:
+		err := s.featureTogglesRepo.SetStatusDisabled(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
+	case dto.FeatureToggleStatusDraft:
+		err := s.featureTogglesRepo.SetStatusDraft(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return shortcut.ErrFeatureToggleInvalidStatus
+	}
 }

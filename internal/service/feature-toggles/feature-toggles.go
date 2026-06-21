@@ -9,8 +9,19 @@ import (
 
 type featureTogglesRepo interface {
 	Create(ctx context.Context, featureToggle *dto.FeatureToggle) error
-	SetStatus(ctx context.Context, id int, status string) error
-	UpdateRolloutPercentage(ctx context.Context, id int, rolloutPercentage int) error
+	UpdatePercentageAndBuckets(ctx context.Context, id int64, buckets []int64) error
+	IsFeatureTogglesEnable(ctx context.Context, id int64) (string, error)
+	GetActiveByNamespaceID(ctx context.Context, id int64) ([]dto.RawFeatureToggle, error)
+	GetByID(ctx context.Context, id int64) (*dto.RawFeatureToggle, error)
+	SetStatusActive(ctx context.Context, id int64, buckets []int64) error
+	SetStatusDisabled(ctx context.Context, id int64) error
+	SetStatusArchived(ctx context.Context, id int64) error
+	SetStatusDraft(ctx context.Context, id int64) error
+	UpdatePercentage(ctx context.Context, id int64, percentage int64) error
+}
+
+type inMemoryStorage interface {
+	GetFeatureTogglesByNamespace(namespace string) dto.NamespaceFeatureToggle
 }
 
 type Service struct {

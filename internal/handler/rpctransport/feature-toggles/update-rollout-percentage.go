@@ -8,8 +8,8 @@ import (
 )
 
 func (h *Handler) UpdateFeatureToggleRollout(ctx context.Context, req *authv1.UpdateFeatureToggleRolloutRequest) (*authv1.StockReply, error) {
-	id := int(req.GetFeatureToggleId())
-	rolloutPercentage := int(req.GetRolloutPercentage())
+	id := req.GetFeatureToggleId()
+	rolloutPercentage := req.GetRolloutPercentage()
 
 	err := h.featureTogglesService.UpdateRolloutPercentage(ctx, id, rolloutPercentage)
 	if err != nil {

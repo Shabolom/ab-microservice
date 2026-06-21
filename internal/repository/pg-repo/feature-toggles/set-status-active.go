@@ -1,23 +1,26 @@
 package featureToggles
 
 import (
+	"ab/internal/dto"
 	"ab/pkg/shortcut"
 	"context"
 )
 
-func (s *Storage) UpdatePercentage(ctx context.Context, id int64, percentage int64) error {
+func (s *Storage) SetStatusActive(ctx context.Context, id int64, buckets []int64) error {
 	query := `
 		UPDATE feature_toggles
 		SET
-			rollout_percentage = $1,
+			status = $1,
+			buckets = $2,
 			updated_at = now()
-		WHERE id = $2
+		WHERE id = $3
 	`
 
 	result, err := s.conn.Exec(
 		ctx,
 		query,
-		percentage,
+		dto.FeatureToggleStatusActive,
+		buckets,
 		id,
 	)
 
