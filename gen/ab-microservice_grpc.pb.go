@@ -19,13 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ABExperiment_UserExperiment_FullMethodName      = "/platform.mvp.ABExperiment/UserExperiment"
-	ABExperiment_CreateExperiment_FullMethodName    = "/platform.mvp.ABExperiment/CreateExperiment"
-	ABExperiment_CreateNamespace_FullMethodName     = "/platform.mvp.ABExperiment/CreateNamespace"
-	ABExperiment_CreateLayer_FullMethodName         = "/platform.mvp.ABExperiment/CreateLayer"
-	ABExperiment_SetReadyExperiment_FullMethodName  = "/platform.mvp.ABExperiment/SetReadyExperiment"
-	ABExperiment_SetStopedExperiment_FullMethodName = "/platform.mvp.ABExperiment/SetStopedExperiment"
-	ABExperiment_CreateCustomParam_FullMethodName   = "/platform.mvp.ABExperiment/CreateCustomParam"
+	ABExperiment_UserExperiment_FullMethodName             = "/platform.mvp.ABExperiment/UserExperiment"
+	ABExperiment_CreateExperiment_FullMethodName           = "/platform.mvp.ABExperiment/CreateExperiment"
+	ABExperiment_CreateNamespace_FullMethodName            = "/platform.mvp.ABExperiment/CreateNamespace"
+	ABExperiment_CreateLayer_FullMethodName                = "/platform.mvp.ABExperiment/CreateLayer"
+	ABExperiment_SetReadyExperiment_FullMethodName         = "/platform.mvp.ABExperiment/SetReadyExperiment"
+	ABExperiment_SetStopedExperiment_FullMethodName        = "/platform.mvp.ABExperiment/SetStopedExperiment"
+	ABExperiment_CreateCustomParam_FullMethodName          = "/platform.mvp.ABExperiment/CreateCustomParam"
+	ABExperiment_CreateFeatureToggle_FullMethodName        = "/platform.mvp.ABExperiment/CreateFeatureToggle"
+	ABExperiment_UpdateFeatureToggleRollout_FullMethodName = "/platform.mvp.ABExperiment/UpdateFeatureToggleRollout"
+	ABExperiment_SetFeatureToggleStatus_FullMethodName     = "/platform.mvp.ABExperiment/SetFeatureToggleStatus"
+	ABExperiment_IsFeatureEnabled_FullMethodName           = "/platform.mvp.ABExperiment/IsFeatureEnabled"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
@@ -39,6 +43,10 @@ type ABExperimentClient interface {
 	SetReadyExperiment(ctx context.Context, in *SetReadyExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
 	SetStopedExperiment(ctx context.Context, in *SetStopedExperimentRequest, opts ...grpc.CallOption) (*StockReply, error)
 	CreateCustomParam(ctx context.Context, in *CreateCustomParamRequest, opts ...grpc.CallOption) (*StockReply, error)
+	CreateFeatureToggle(ctx context.Context, in *CreateFeatureToggleRequest, opts ...grpc.CallOption) (*StockReply, error)
+	UpdateFeatureToggleRollout(ctx context.Context, in *UpdateFeatureToggleRolloutRequest, opts ...grpc.CallOption) (*StockReply, error)
+	SetFeatureToggleStatus(ctx context.Context, in *SetFeatureToggleStatusRequest, opts ...grpc.CallOption) (*StockReply, error)
+	IsFeatureEnabled(ctx context.Context, in *IsFeatureEnabledRequest, opts ...grpc.CallOption) (*StockReply, error)
 }
 
 type aBExperimentClient struct {
@@ -119,6 +127,46 @@ func (c *aBExperimentClient) CreateCustomParam(ctx context.Context, in *CreateCu
 	return out, nil
 }
 
+func (c *aBExperimentClient) CreateFeatureToggle(ctx context.Context, in *CreateFeatureToggleRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_CreateFeatureToggle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) UpdateFeatureToggleRollout(ctx context.Context, in *UpdateFeatureToggleRolloutRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_UpdateFeatureToggleRollout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) SetFeatureToggleStatus(ctx context.Context, in *SetFeatureToggleStatusRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_SetFeatureToggleStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) IsFeatureEnabled(ctx context.Context, in *IsFeatureEnabledRequest, opts ...grpc.CallOption) (*StockReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockReply)
+	err := c.cc.Invoke(ctx, ABExperiment_IsFeatureEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
@@ -130,6 +178,10 @@ type ABExperimentServer interface {
 	SetReadyExperiment(context.Context, *SetReadyExperimentRequest) (*StockReply, error)
 	SetStopedExperiment(context.Context, *SetStopedExperimentRequest) (*StockReply, error)
 	CreateCustomParam(context.Context, *CreateCustomParamRequest) (*StockReply, error)
+	CreateFeatureToggle(context.Context, *CreateFeatureToggleRequest) (*StockReply, error)
+	UpdateFeatureToggleRollout(context.Context, *UpdateFeatureToggleRolloutRequest) (*StockReply, error)
+	SetFeatureToggleStatus(context.Context, *SetFeatureToggleStatusRequest) (*StockReply, error)
+	IsFeatureEnabled(context.Context, *IsFeatureEnabledRequest) (*StockReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -159,6 +211,18 @@ func (UnimplementedABExperimentServer) SetStopedExperiment(context.Context, *Set
 }
 func (UnimplementedABExperimentServer) CreateCustomParam(context.Context, *CreateCustomParamRequest) (*StockReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCustomParam not implemented")
+}
+func (UnimplementedABExperimentServer) CreateFeatureToggle(context.Context, *CreateFeatureToggleRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateFeatureToggle not implemented")
+}
+func (UnimplementedABExperimentServer) UpdateFeatureToggleRollout(context.Context, *UpdateFeatureToggleRolloutRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateFeatureToggleRollout not implemented")
+}
+func (UnimplementedABExperimentServer) SetFeatureToggleStatus(context.Context, *SetFeatureToggleStatusRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetFeatureToggleStatus not implemented")
+}
+func (UnimplementedABExperimentServer) IsFeatureEnabled(context.Context, *IsFeatureEnabledRequest) (*StockReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method IsFeatureEnabled not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -306,6 +370,78 @@ func _ABExperiment_CreateCustomParam_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_CreateFeatureToggle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateFeatureToggleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).CreateFeatureToggle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_CreateFeatureToggle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).CreateFeatureToggle(ctx, req.(*CreateFeatureToggleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_UpdateFeatureToggleRollout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateFeatureToggleRolloutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).UpdateFeatureToggleRollout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_UpdateFeatureToggleRollout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).UpdateFeatureToggleRollout(ctx, req.(*UpdateFeatureToggleRolloutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_SetFeatureToggleStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetFeatureToggleStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).SetFeatureToggleStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_SetFeatureToggleStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).SetFeatureToggleStatus(ctx, req.(*SetFeatureToggleStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_IsFeatureEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsFeatureEnabledRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).IsFeatureEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_IsFeatureEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).IsFeatureEnabled(ctx, req.(*IsFeatureEnabledRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -340,6 +476,22 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCustomParam",
 			Handler:    _ABExperiment_CreateCustomParam_Handler,
+		},
+		{
+			MethodName: "CreateFeatureToggle",
+			Handler:    _ABExperiment_CreateFeatureToggle_Handler,
+		},
+		{
+			MethodName: "UpdateFeatureToggleRollout",
+			Handler:    _ABExperiment_UpdateFeatureToggleRollout_Handler,
+		},
+		{
+			MethodName: "SetFeatureToggleStatus",
+			Handler:    _ABExperiment_SetFeatureToggleStatus_Handler,
+		},
+		{
+			MethodName: "IsFeatureEnabled",
+			Handler:    _ABExperiment_IsFeatureEnabled_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

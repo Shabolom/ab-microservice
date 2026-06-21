@@ -13,6 +13,10 @@ service ABExperiment {
   rpc SetReadyExperiment(SetReadyExperimentRequest) returns (StockReply) {}
   rpc SetStopedExperiment(SetStopedExperimentRequest) returns (StockReply) {}
   rpc CreateCustomParam(CreateCustomParamRequest) returns (StockReply) {}
+  rpc CreateFeatureToggle(CreateFeatureToggleRequest) returns (StockReply) {}
+  rpc UpdateFeatureToggleRollout(UpdateFeatureToggleRolloutRequest) returns (StockReply) {}
+  rpc SetFeatureToggleStatus(SetFeatureToggleStatusRequest) returns (StockReply) {}
+  rpc IsFeatureEnabled(IsFeatureEnabledRequest) returns (StockReply) {}
 }
 
 message StockReply {
@@ -80,6 +84,26 @@ message CreateCustomParamRequest {
   string name = 1;
   int64 namespace_id = 2;
   string type = 3;
+}
+
+message CreateFeatureToggleRequest {
+  string name = 1;
+  int64 namespace_id = 2;
+  int64 rollout_percentage  = 3;
+}
+
+message UpdateFeatureToggleRolloutRequest {
+  int64 feature_toggle_id = 1;
+  int64 rollout_percentage = 2;
+}
+
+message SetFeatureToggleStatusRequest {
+  int64 feature_toggle_id = 1;
+  string status = 2;
+}
+
+message IsFeatureEnabledRequest {
+  int64 feature_toggle_id = 1;
 }
 
 message ExperimentRequest {

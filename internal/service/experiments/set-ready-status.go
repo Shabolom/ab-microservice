@@ -5,6 +5,7 @@ import (
 	"ab/pkg/shortcut"
 	"context"
 	"math/rand"
+	"slices"
 
 	"go.uber.org/zap"
 )
@@ -169,7 +170,15 @@ func (s *Service) generateBuckets(usedBuckets []int64, count int64) []int64 {
 		freeBuckets[i], freeBuckets[j] = freeBuckets[j], freeBuckets[i]
 	})
 
-	return freeBuckets[:count]
+	if count > int64(len(freeBuckets)) {
+		count = int64(len(freeBuckets))
+	}
+
+	result := freeBuckets[:count]
+
+	slices.Sort(result)
+
+	return result
 }
 
 func (s *Service) createLayerExp(ctx context.Context, namespaceName string, expID int64) ([]dto.LayerBuckets, error) {

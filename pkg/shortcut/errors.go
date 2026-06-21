@@ -57,6 +57,11 @@ var (
 
 	ErrNotSupportedConditions = errors.New("not supported conditions")
 	ErrNotSupportedType       = errors.New("not supported type")
+
+	ErrFeatureToggleNameRequired        = errors.New("feature toggle name required")
+	ErrFeatureToggleNamespaceIDRequired = errors.New("feature toggle namespace id required")
+	ErrFeatureToggleRolloutOutOfRange   = errors.New("feature toggle rollout percentage out of range")
+	ErrFeatureToggleInvalidStatus       = errors.New("feature toggle status is invalid")
 )
 
 const (
