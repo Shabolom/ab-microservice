@@ -34,5 +34,5 @@ func (d *DI) GetCustomParamsService() *customParams.Service {
 }
 
 func (d *DI) GetFeatureTogglesService() *featureToggles.Service {
-	return featureToggles.New(d.GetFeatureTogglePgRepo(), d.Logger())
+	return featureToggles.New(d.GetFeatureTogglePgRepo(), d.GetInMemoryCache(), d.Logger())
 }

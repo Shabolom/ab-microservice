@@ -76,36 +76,7 @@ func (s *Service) setStatus(ctx context.Context, id int64, status string) error 
 			return err
 		}
 
-		activeFeaturesByNamespace, err := s.featureTogglesRepo.GetActiveByNamespaceID(
-			ctx,
-			feature.NamespaceID,
-		)
-		if err != nil {
-			return err
-		}
-
-		if len(activeFeaturesByNamespace) == 0 {
-			newUsedBuckets := utils.GenerateBuckets([]int64{}, feature.RolloutPercentage)
-			err = s.featureTogglesRepo.SetStatusActive(ctx, id, newUsedBuckets)
-			if err != nil {
-				return err
-			}
-
-			return nil
-		}
-
-		usedBuckets := make([]int64, 0, 100)
-		for _, activeFeature := range activeFeaturesByNamespace {
-			for _, bucket := range activeFeature.Buckets {
-				usedBuckets = append(usedBuckets, bucket)
-			}
-		}
-
-		if len(usedBuckets)+int(feature.RolloutPercentage) > 100 {
-			return shortcut.ErrFeatureToggleNotEnoughBuckets
-		}
-
-		addedUsedBuckets := utils.GenerateBuckets(usedBuckets, feature.RolloutPercentage)
+		addedUsedBuckets := utils.GenerateBuckets([]int64{}, feature.RolloutPercentage)
 
 		err = s.featureTogglesRepo.SetStatusActive(ctx, id, addedUsedBuckets)
 		if err != nil {

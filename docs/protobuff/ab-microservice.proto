@@ -17,6 +17,7 @@ service ABExperiment {
   rpc UpdateFeatureToggleRollout(UpdateFeatureToggleRolloutRequest) returns (StockReply) {}
   rpc SetFeatureToggleStatus(SetFeatureToggleStatusRequest) returns (StockReply) {}
   rpc IsFeatureEnabled(IsFeatureEnabledRequest) returns (StockReply) {}
+  rpc IsUserInFeature(IsUserInFeatureRequest) returns (IsUserInFeatureReply) {}
 }
 
 message StockReply {
@@ -28,6 +29,22 @@ message StockReply {
   }
   ERR_INFO_REASON err_info_reason = 1;
   string message = 2;
+}
+
+message IsUserInFeatureReply {
+  enum ERR_INFO_REASON {
+    UNSPECIFIED = 0;
+    VALIDATION_ERROR = 1;
+    INVALID_REQUEST = 2;
+    STATUS_OK = 3;
+  }
+  ERR_INFO_REASON err_info_reason = 1;
+  repeated Feature features = 2;
+}
+
+message Feature {
+  int64 feature_id = 1;
+  string feature_name = 2;
 }
 
 message CreateExperimentRequest {
@@ -104,6 +121,11 @@ message SetFeatureToggleStatusRequest {
 
 message IsFeatureEnabledRequest {
   int64 feature_toggle_id = 1;
+}
+
+message IsUserInFeatureRequest {
+  int64 user_id = 1;
+  string namespace = 2;
 }
 
 message ExperimentRequest {

@@ -5,7 +5,6 @@ import (
 	"ab/internal/dto/kafka-messege-dto"
 	"ab/pkg/shortcut"
 	"errors"
-	"fmt"
 	"time"
 
 	"go.uber.org/zap"
@@ -50,7 +49,6 @@ func (s *Service) GetExperiments(parameters *dto.RequestParameters) ([]*dto.GetE
 
 	result := make([]*dto.GetExperimentsReply, 0)
 
-	fmt.Println(namespaceExperiments, 123123123)
 nextExp:
 	for _, experiment := range namespaceExperiments.RawExp {
 		s.logger.Debug(

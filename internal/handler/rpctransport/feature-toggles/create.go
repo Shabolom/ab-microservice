@@ -22,6 +22,6 @@ func (h *Handler) CreateFeatureToggle(ctx context.Context, req *authv1.CreateFea
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Feature toggle %v with id %d was created", featureToggle.Name, featureToggle.ID),
+		Message:       fmt.Sprintf("feature toggle %v with id %d was created", featureToggle.Name, featureToggle.ID),
 	}, nil
 }

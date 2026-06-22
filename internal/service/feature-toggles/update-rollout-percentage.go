@@ -77,30 +77,20 @@ func (s *Service) UpdateRolloutPercentage(ctx context.Context, id int64, percent
 func (s *Service) updateRolloutPercentage(ctx context.Context, feature *dto.RawFeatureToggle, newRolloutPercentage int64) error {
 	switch feature.Status {
 	case dto.FeatureToggleStatusActive:
-		activeFeaturesByNamespace, err := s.featureTogglesRepo.GetActiveByNamespaceID(ctx, feature.NamespaceID)
-		if err != nil {
-			return err
-		}
-
-		usedBuckets := make([]int64, 0, 100)
-		for _, activeFeature := range activeFeaturesByNamespace {
-			usedBuckets = append(usedBuckets, activeFeature.Buckets...)
-		}
-
 		if newRolloutPercentage > feature.RolloutPercentage {
 			difference := newRolloutPercentage - feature.RolloutPercentage
 
-			if int64(len(usedBuckets))+difference > 100 {
+			if int64(len(feature.Buckets))+difference > 100 {
 				return shortcut.ErrFeatureToggleNotEnoughBuckets
 			}
 
-			newBuckets := utils.GenerateBuckets(usedBuckets, difference)
+			newBuckets := utils.GenerateBuckets(feature.Buckets, difference)
 			feature.Buckets = append(feature.Buckets, newBuckets...)
 		} else {
 			feature.Buckets = feature.Buckets[:int(newRolloutPercentage)]
 		}
 
-		err = s.featureTogglesRepo.UpdatePercentageAndBuckets(ctx, feature.ID, feature.Buckets)
+		err := s.featureTogglesRepo.UpdatePercentageAndBuckets(ctx, feature.ID, feature.Buckets)
 		if err != nil {
 			return err
 		}

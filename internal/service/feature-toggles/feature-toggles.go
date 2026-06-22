@@ -26,15 +26,18 @@ type inMemoryStorage interface {
 
 type Service struct {
 	featureTogglesRepo featureTogglesRepo
+	inMemoryStorage    inMemoryStorage
 	logger             *zap.Logger
 }
 
 func New(
 	featureTogglesRepo featureTogglesRepo,
+	inMemoryStorage inMemoryStorage,
 	logger *zap.Logger,
 ) *Service {
 	return &Service{
 		logger:             logger,
+		inMemoryStorage:    inMemoryStorage,
 		featureTogglesRepo: featureTogglesRepo,
 	}
 }

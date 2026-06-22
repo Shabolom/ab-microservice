@@ -18,6 +18,6 @@ func (h *Handler) UpdateFeatureToggleRollout(ctx context.Context, req *authv1.Up
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Feature toggle rollout set to %d", id),
+		Message:       fmt.Sprintf("feature toggle rollout set to %d", id),
 	}, nil
 }

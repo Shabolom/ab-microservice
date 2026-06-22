@@ -30,6 +30,7 @@ const (
 	ABExperiment_UpdateFeatureToggleRollout_FullMethodName = "/platform.mvp.ABExperiment/UpdateFeatureToggleRollout"
 	ABExperiment_SetFeatureToggleStatus_FullMethodName     = "/platform.mvp.ABExperiment/SetFeatureToggleStatus"
 	ABExperiment_IsFeatureEnabled_FullMethodName           = "/platform.mvp.ABExperiment/IsFeatureEnabled"
+	ABExperiment_IsUserInFeature_FullMethodName            = "/platform.mvp.ABExperiment/IsUserInFeature"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
@@ -47,6 +48,7 @@ type ABExperimentClient interface {
 	UpdateFeatureToggleRollout(ctx context.Context, in *UpdateFeatureToggleRolloutRequest, opts ...grpc.CallOption) (*StockReply, error)
 	SetFeatureToggleStatus(ctx context.Context, in *SetFeatureToggleStatusRequest, opts ...grpc.CallOption) (*StockReply, error)
 	IsFeatureEnabled(ctx context.Context, in *IsFeatureEnabledRequest, opts ...grpc.CallOption) (*StockReply, error)
+	IsUserInFeature(ctx context.Context, in *IsUserInFeatureRequest, opts ...grpc.CallOption) (*IsUserInFeatureReply, error)
 }
 
 type aBExperimentClient struct {
@@ -167,6 +169,16 @@ func (c *aBExperimentClient) IsFeatureEnabled(ctx context.Context, in *IsFeature
 	return out, nil
 }
 
+func (c *aBExperimentClient) IsUserInFeature(ctx context.Context, in *IsUserInFeatureRequest, opts ...grpc.CallOption) (*IsUserInFeatureReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IsUserInFeatureReply)
+	err := c.cc.Invoke(ctx, ABExperiment_IsUserInFeature_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
@@ -182,6 +194,7 @@ type ABExperimentServer interface {
 	UpdateFeatureToggleRollout(context.Context, *UpdateFeatureToggleRolloutRequest) (*StockReply, error)
 	SetFeatureToggleStatus(context.Context, *SetFeatureToggleStatusRequest) (*StockReply, error)
 	IsFeatureEnabled(context.Context, *IsFeatureEnabledRequest) (*StockReply, error)
+	IsUserInFeature(context.Context, *IsUserInFeatureRequest) (*IsUserInFeatureReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -223,6 +236,9 @@ func (UnimplementedABExperimentServer) SetFeatureToggleStatus(context.Context, *
 }
 func (UnimplementedABExperimentServer) IsFeatureEnabled(context.Context, *IsFeatureEnabledRequest) (*StockReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsFeatureEnabled not implemented")
+}
+func (UnimplementedABExperimentServer) IsUserInFeature(context.Context, *IsUserInFeatureRequest) (*IsUserInFeatureReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method IsUserInFeature not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -442,6 +458,24 @@ func _ABExperiment_IsFeatureEnabled_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_IsUserInFeature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsUserInFeatureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).IsUserInFeature(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_IsUserInFeature_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).IsUserInFeature(ctx, req.(*IsUserInFeatureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -492,6 +526,10 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsFeatureEnabled",
 			Handler:    _ABExperiment_IsFeatureEnabled_Handler,
+		},
+		{
+			MethodName: "IsUserInFeature",
+			Handler:    _ABExperiment_IsUserInFeature_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

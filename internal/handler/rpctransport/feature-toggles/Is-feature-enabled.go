@@ -12,11 +12,12 @@ func (h *Handler) IsFeatureEnabled(ctx context.Context, req *authv1.IsFeatureEna
 
 	err := h.featureTogglesService.IsEnable(ctx, id)
 	if err != nil {
+		fmt.Println(err, 123123)
 		return nil, render.ErrorValidator(err)
 	}
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Feature toggles enabled with id %d", id),
+		Message:       fmt.Sprintf("feature toggle is enable id %d", id),
 	}, nil
 }

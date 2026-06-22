@@ -18,6 +18,6 @@ func (h *Handler) SetFeatureToggleStatus(ctx context.Context, req *authv1.SetFea
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Set status %v for feature toggle %d", status, id),
+		Message:       fmt.Sprintf("set status %v for feature toggle %d", status, id),
 	}, nil
 }
