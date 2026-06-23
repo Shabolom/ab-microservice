@@ -10,11 +10,13 @@ func (s *Storage) GetByID(ctx context.Context, id int64) (*dto.RawFeatureToggle,
 	query := `
 		SELECT
 			id,
-			rollout_percentage,
 			namespace_id,
 			name,
-			buckets,
 			status,
+			rollout_percentage,
+			ios,
+			android,
+			web,
 			created_at,
 			updated_at,
 			deleted_at
@@ -25,22 +27,19 @@ func (s *Storage) GetByID(ctx context.Context, id int64) (*dto.RawFeatureToggle,
 
 	featureToggle := &dto.RawFeatureToggle{}
 
-	err := s.conn.QueryRow(
-		ctx,
-		query,
-		id,
-	).Scan(
+	err := s.conn.QueryRow(ctx, query, id).Scan(
 		&featureToggle.ID,
-		&featureToggle.RolloutPercentage,
 		&featureToggle.NamespaceID,
 		&featureToggle.Name,
-		&featureToggle.Buckets,
 		&featureToggle.Status,
+		&featureToggle.RolloutPercentage,
+		&featureToggle.IOS,
+		&featureToggle.Android,
+		&featureToggle.Web,
 		&featureToggle.CreatedAt,
 		&featureToggle.UpdatedAt,
 		&featureToggle.DeletedAt,
 	)
-
 	if err != nil {
 		return nil, shortcut.MapStorageError(err)
 	}

@@ -10,9 +10,12 @@ import (
 
 func (h *Handler) CreateFeatureToggle(ctx context.Context, req *authv1.CreateFeatureToggleRequest) (*authv1.StockReply, error) {
 	featureToggle := &dto.FeatureToggle{
-		RolloutPercentage: int(req.GetRolloutPercentage()),
 		NamespaceID:       req.GetNamespaceId(),
 		Name:              req.GetName(),
+		RolloutPercentage: req.RolloutPercentage,
+		IOS:               req.IosRolloutPercentage,
+		Android:           req.AndroidRolloutPercentage,
+		Web:               req.WebRolloutPercentage,
 	}
 
 	err := h.featureTogglesService.Create(ctx, featureToggle)

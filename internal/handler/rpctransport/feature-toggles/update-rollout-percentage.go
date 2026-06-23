@@ -2,6 +2,7 @@ package featureToggles
 
 import (
 	authv1 "ab/gen"
+	"ab/internal/dto"
 	"ab/internal/render"
 	"context"
 	"fmt"
@@ -9,9 +10,14 @@ import (
 
 func (h *Handler) UpdateFeatureToggleRollout(ctx context.Context, req *authv1.UpdateFeatureToggleRolloutRequest) (*authv1.StockReply, error) {
 	id := req.GetFeatureToggleId()
-	rolloutPercentage := req.GetRolloutPercentage()
 
-	err := h.featureTogglesService.UpdateRolloutPercentage(ctx, id, rolloutPercentage)
+	err := h.featureTogglesService.UpdateRolloutPercentage(ctx, &dto.FeatureTogglePercentageUpdate{
+		FeatureID:  id,
+		Percentage: req.RolloutPercentage,
+		Ios:        req.IosRolloutPercentage,
+		Android:    req.AndroidRolloutPercentage,
+		Web:        req.WebRolloutPercentage,
+	})
 	if err != nil {
 		return nil, render.ErrorValidator(err)
 	}

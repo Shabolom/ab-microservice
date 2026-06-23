@@ -26,3 +26,15 @@ func getBucket(key string) int64 {
 
 	return bucket
 }
+
+func IsUserInRolloutPercentageWithoutBuckets(id, splitID, percentage int64) bool {
+	hash := fmt.Sprintf("experiment:%d:SplitID:%v", id, splitID)
+
+	key := getBucket(hash)
+
+	if key < percentage {
+		return true
+	}
+
+	return false
+}

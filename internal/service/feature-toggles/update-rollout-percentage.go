@@ -9,56 +9,58 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Service) UpdateRolloutPercentage(ctx context.Context, id int64, percentage int64) error {
+func (s *Service) UpdateRolloutPercentage(ctx context.Context, update *dto.FeatureTogglePercentageUpdate) error {
 	s.logger.Info(
 		"update feature toggle rollout percentage started",
-		zap.Int64("id", id),
-		zap.Int64("rollout_percentage", percentage),
+		zap.Int64("id", update.FeatureID),
+		zap.Any("rollout_percentage", update.Percentage),
+		zap.Any("ios", update.Ios),
+		zap.Any("android", update.Android),
+		zap.Any("web", update.Web),
 	)
 
-	switch {
-	case id <= 0:
+	if update.FeatureID <= 0 {
 		s.logger.Warn(
 			"update feature toggle rollout percentage validation failed",
-			zap.Int64("id", id),
-			zap.Int64("rollout_percentage", percentage),
+			zap.Int64("id", update.FeatureID),
 			zap.Error(shortcut.ErrFeatureToggleIDRequired),
 		)
 
 		return shortcut.ErrFeatureToggleIDRequired
-
-	case percentage < 0 || percentage > 100:
-		s.logger.Warn(
-			"update feature toggle rollout percentage validation failed",
-			zap.Int64("id", id),
-			zap.Int64("rollout_percentage", percentage),
-			zap.Error(shortcut.ErrFeatureToggleRolloutOutOfRange),
-		)
-
-		return shortcut.ErrFeatureToggleRolloutOutOfRange
 	}
 
-	feature, err := s.featureTogglesRepo.GetByID(ctx, id)
+	if err := utils.ValidatePercentage(update.Percentage); err != nil {
+		return err
+	}
+
+	if err := utils.ValidatePercentage(update.Ios); err != nil {
+		return err
+	}
+
+	if err := utils.ValidatePercentage(update.Android); err != nil {
+		return err
+	}
+
+	if err := utils.ValidatePercentage(update.Web); err != nil {
+		return err
+	}
+
+	feature, err := s.featureTogglesRepo.GetByID(ctx, update.FeatureID)
 	if err != nil {
 		s.logger.Error(
 			"failed to get feature toggle",
-			zap.Int64("id", id),
+			zap.Int64("id", update.FeatureID),
 			zap.Error(err),
 		)
 
 		return err
 	}
 
-	if feature.RolloutPercentage == percentage {
-		return shortcut.ErrFeatureToggleSameRolloutPercentage
-	}
-
-	err = s.updateRolloutPercentage(ctx, feature, percentage)
+	err = s.updateRolloutPercentage(ctx, feature, update)
 	if err != nil {
 		s.logger.Error(
 			"update feature toggle rollout percentage failed",
-			zap.Int64("id", id),
-			zap.Int64("rollout_percentage", percentage),
+			zap.Int64("id", update.FeatureID),
 			zap.Error(err),
 		)
 
@@ -67,48 +69,30 @@ func (s *Service) UpdateRolloutPercentage(ctx context.Context, id int64, percent
 
 	s.logger.Info(
 		"update feature toggle rollout percentage finished",
-		zap.Int64("id", id),
-		zap.Int64("rollout_percentage", percentage),
+		zap.Int64("id", update.FeatureID),
 	)
 
 	return nil
 }
 
-func (s *Service) updateRolloutPercentage(ctx context.Context, feature *dto.RawFeatureToggle, newRolloutPercentage int64) error {
+func (s *Service) updateRolloutPercentage(
+	ctx context.Context,
+	feature *dto.RawFeatureToggle,
+	update *dto.FeatureTogglePercentageUpdate,
+) error {
 	switch feature.Status {
-	case dto.FeatureToggleStatusActive:
-		if newRolloutPercentage > feature.RolloutPercentage {
-			difference := newRolloutPercentage - feature.RolloutPercentage
-
-			if int64(len(feature.Buckets))+difference > 100 {
-				return shortcut.ErrFeatureToggleNotEnoughBuckets
-			}
-
-			newBuckets := utils.GenerateBuckets(feature.Buckets, difference)
-			feature.Buckets = append(feature.Buckets, newBuckets...)
-		} else {
-			feature.Buckets = feature.Buckets[:int(newRolloutPercentage)]
-		}
-
-		err := s.featureTogglesRepo.UpdatePercentageAndBuckets(ctx, feature.ID, feature.Buckets)
-		if err != nil {
-			return err
-		}
-
-		return nil
-
-	case
-		dto.FeatureToggleStatusArchived,
+	case dto.FeatureToggleStatusArchived,
 		dto.FeatureToggleStatusDisabled,
-		dto.FeatureToggleStatusDraft:
-		err := s.featureTogglesRepo.UpdatePercentage(ctx, feature.ID, newRolloutPercentage)
+		dto.FeatureToggleStatusDraft,
+		dto.FeatureToggleStatusActive:
+		err := s.featureTogglesRepo.UpdatePercentage(ctx, update)
 		if err != nil {
 			return err
 		}
-
 		return nil
 
 	default:
 		return shortcut.ErrFeatureToggleInvalidStatus
 	}
+	
 }

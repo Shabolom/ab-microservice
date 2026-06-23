@@ -1,0 +1,4 @@
+ALTER TABLE feature_toggles
+DROP COLUMN IF EXISTS ios,
+    DROP COLUMN IF EXISTS android,
+    DROP COLUMN IF EXISTS web;

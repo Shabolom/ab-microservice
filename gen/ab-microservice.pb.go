@@ -891,12 +891,15 @@ func (x *CreateCustomParamRequest) GetType() string {
 }
 
 type CreateFeatureToggleRequest struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Name              string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	NamespaceId       int64                  `protobuf:"varint,2,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id,omitempty"`
-	RolloutPercentage int64                  `protobuf:"varint,3,opt,name=rollout_percentage,json=rolloutPercentage,proto3" json:"rollout_percentage,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"open.v1"`
+	Name                     string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	NamespaceId              int64                  `protobuf:"varint,5,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id,omitempty"`
+	IosRolloutPercentage     *int64                 `protobuf:"varint,6,opt,name=ios_rollout_percentage,json=iosRolloutPercentage,proto3,oneof" json:"ios_rollout_percentage,omitempty"`
+	AndroidRolloutPercentage *int64                 `protobuf:"varint,7,opt,name=android_rollout_percentage,json=androidRolloutPercentage,proto3,oneof" json:"android_rollout_percentage,omitempty"`
+	WebRolloutPercentage     *int64                 `protobuf:"varint,8,opt,name=web_rollout_percentage,json=webRolloutPercentage,proto3,oneof" json:"web_rollout_percentage,omitempty"`
+	RolloutPercentage        *int64                 `protobuf:"varint,9,opt,name=rollout_percentage,json=rolloutPercentage,proto3,oneof" json:"rollout_percentage,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *CreateFeatureToggleRequest) Reset() {
@@ -943,19 +946,43 @@ func (x *CreateFeatureToggleRequest) GetNamespaceId() int64 {
 	return 0
 }
 
+func (x *CreateFeatureToggleRequest) GetIosRolloutPercentage() int64 {
+	if x != nil && x.IosRolloutPercentage != nil {
+		return *x.IosRolloutPercentage
+	}
+	return 0
+}
+
+func (x *CreateFeatureToggleRequest) GetAndroidRolloutPercentage() int64 {
+	if x != nil && x.AndroidRolloutPercentage != nil {
+		return *x.AndroidRolloutPercentage
+	}
+	return 0
+}
+
+func (x *CreateFeatureToggleRequest) GetWebRolloutPercentage() int64 {
+	if x != nil && x.WebRolloutPercentage != nil {
+		return *x.WebRolloutPercentage
+	}
+	return 0
+}
+
 func (x *CreateFeatureToggleRequest) GetRolloutPercentage() int64 {
-	if x != nil {
-		return x.RolloutPercentage
+	if x != nil && x.RolloutPercentage != nil {
+		return *x.RolloutPercentage
 	}
 	return 0
 }
 
 type UpdateFeatureToggleRolloutRequest struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	FeatureToggleId   int64                  `protobuf:"varint,1,opt,name=feature_toggle_id,json=featureToggleId,proto3" json:"feature_toggle_id,omitempty"`
-	RolloutPercentage int64                  `protobuf:"varint,2,opt,name=rollout_percentage,json=rolloutPercentage,proto3" json:"rollout_percentage,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"open.v1"`
+	FeatureToggleId          int64                  `protobuf:"varint,1,opt,name=feature_toggle_id,json=featureToggleId,proto3" json:"feature_toggle_id,omitempty"`
+	IosRolloutPercentage     *int64                 `protobuf:"varint,2,opt,name=ios_rollout_percentage,json=iosRolloutPercentage,proto3,oneof" json:"ios_rollout_percentage,omitempty"`
+	AndroidRolloutPercentage *int64                 `protobuf:"varint,3,opt,name=android_rollout_percentage,json=androidRolloutPercentage,proto3,oneof" json:"android_rollout_percentage,omitempty"`
+	WebRolloutPercentage     *int64                 `protobuf:"varint,4,opt,name=web_rollout_percentage,json=webRolloutPercentage,proto3,oneof" json:"web_rollout_percentage,omitempty"`
+	RolloutPercentage        *int64                 `protobuf:"varint,5,opt,name=rollout_percentage,json=rolloutPercentage,proto3,oneof" json:"rollout_percentage,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *UpdateFeatureToggleRolloutRequest) Reset() {
@@ -995,9 +1022,30 @@ func (x *UpdateFeatureToggleRolloutRequest) GetFeatureToggleId() int64 {
 	return 0
 }
 
+func (x *UpdateFeatureToggleRolloutRequest) GetIosRolloutPercentage() int64 {
+	if x != nil && x.IosRolloutPercentage != nil {
+		return *x.IosRolloutPercentage
+	}
+	return 0
+}
+
+func (x *UpdateFeatureToggleRolloutRequest) GetAndroidRolloutPercentage() int64 {
+	if x != nil && x.AndroidRolloutPercentage != nil {
+		return *x.AndroidRolloutPercentage
+	}
+	return 0
+}
+
+func (x *UpdateFeatureToggleRolloutRequest) GetWebRolloutPercentage() int64 {
+	if x != nil && x.WebRolloutPercentage != nil {
+		return *x.WebRolloutPercentage
+	}
+	return 0
+}
+
 func (x *UpdateFeatureToggleRolloutRequest) GetRolloutPercentage() int64 {
-	if x != nil {
-		return x.RolloutPercentage
+	if x != nil && x.RolloutPercentage != nil {
+		return *x.RolloutPercentage
 	}
 	return 0
 }
@@ -1102,6 +1150,7 @@ type IsUserInFeatureRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Namespace     string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Platform      string                 `protobuf:"bytes,3,opt,name=platform,proto3" json:"platform,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1146,6 +1195,13 @@ func (x *IsUserInFeatureRequest) GetUserId() int64 {
 func (x *IsUserInFeatureRequest) GetNamespace() string {
 	if x != nil {
 		return x.Namespace
+	}
+	return ""
+}
+
+func (x *IsUserInFeatureRequest) GetPlatform() string {
+	if x != nil {
+		return x.Platform
 	}
 	return ""
 }
@@ -1458,22 +1514,37 @@ const file_ab_microservice_proto_rawDesc = "" +
 	"\x18CreateCustomParamRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
 	"\fnamespace_id\x18\x02 \x01(\x03R\vnamespaceId\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\"\x82\x01\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\"\xac\x03\n" +
 	"\x1aCreateFeatureToggleRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
-	"\fnamespace_id\x18\x02 \x01(\x03R\vnamespaceId\x12-\n" +
-	"\x12rollout_percentage\x18\x03 \x01(\x03R\x11rolloutPercentage\"~\n" +
+	"\fnamespace_id\x18\x05 \x01(\x03R\vnamespaceId\x129\n" +
+	"\x16ios_rollout_percentage\x18\x06 \x01(\x03H\x00R\x14iosRolloutPercentage\x88\x01\x01\x12A\n" +
+	"\x1aandroid_rollout_percentage\x18\a \x01(\x03H\x01R\x18androidRolloutPercentage\x88\x01\x01\x129\n" +
+	"\x16web_rollout_percentage\x18\b \x01(\x03H\x02R\x14webRolloutPercentage\x88\x01\x01\x122\n" +
+	"\x12rollout_percentage\x18\t \x01(\x03H\x03R\x11rolloutPercentage\x88\x01\x01B\x19\n" +
+	"\x17_ios_rollout_percentageB\x1d\n" +
+	"\x1b_android_rollout_percentageB\x19\n" +
+	"\x17_web_rollout_percentageB\x15\n" +
+	"\x13_rollout_percentage\"\xa8\x03\n" +
 	"!UpdateFeatureToggleRolloutRequest\x12*\n" +
-	"\x11feature_toggle_id\x18\x01 \x01(\x03R\x0ffeatureToggleId\x12-\n" +
-	"\x12rollout_percentage\x18\x02 \x01(\x03R\x11rolloutPercentage\"c\n" +
+	"\x11feature_toggle_id\x18\x01 \x01(\x03R\x0ffeatureToggleId\x129\n" +
+	"\x16ios_rollout_percentage\x18\x02 \x01(\x03H\x00R\x14iosRolloutPercentage\x88\x01\x01\x12A\n" +
+	"\x1aandroid_rollout_percentage\x18\x03 \x01(\x03H\x01R\x18androidRolloutPercentage\x88\x01\x01\x129\n" +
+	"\x16web_rollout_percentage\x18\x04 \x01(\x03H\x02R\x14webRolloutPercentage\x88\x01\x01\x122\n" +
+	"\x12rollout_percentage\x18\x05 \x01(\x03H\x03R\x11rolloutPercentage\x88\x01\x01B\x19\n" +
+	"\x17_ios_rollout_percentageB\x1d\n" +
+	"\x1b_android_rollout_percentageB\x19\n" +
+	"\x17_web_rollout_percentageB\x15\n" +
+	"\x13_rollout_percentage\"c\n" +
 	"\x1dSetFeatureToggleStatusRequest\x12*\n" +
 	"\x11feature_toggle_id\x18\x01 \x01(\x03R\x0ffeatureToggleId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\"E\n" +
 	"\x17IsFeatureEnabledRequest\x12*\n" +
-	"\x11feature_toggle_id\x18\x01 \x01(\x03R\x0ffeatureToggleId\"O\n" +
+	"\x11feature_toggle_id\x18\x01 \x01(\x03R\x0ffeatureToggleId\"k\n" +
 	"\x16IsUserInFeatureRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1c\n" +
-	"\tnamespace\x18\x02 \x01(\tR\tnamespace\"\xc0\x01\n" +
+	"\tnamespace\x18\x02 \x01(\tR\tnamespace\x12\x1a\n" +
+	"\bplatform\x18\x03 \x01(\tR\bplatform\"\xc0\x01\n" +
 	"\x11ExperimentRequest\x12\x19\n" +
 	"\bsplit_id\x18\x01 \x01(\x03R\asplitId\x12\x1b\n" +
 	"\tdevice_id\x18\x02 \x01(\x03R\bdeviceId\x12\x1c\n" +
@@ -1600,6 +1671,8 @@ func file_ab_microservice_proto_init() {
 	if File_ab_microservice_proto != nil {
 		return
 	}
+	file_ab_microservice_proto_msgTypes[12].OneofWrappers = []any{}
+	file_ab_microservice_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

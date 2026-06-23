@@ -2,15 +2,19 @@ package featureToggles
 
 import (
 	authv1 "ab/gen"
+	"ab/internal/dto"
 	"ab/internal/render"
 	"context"
 )
 
 func (h *Handler) IsUserInFeature(ctx context.Context, req *authv1.IsUserInFeatureRequest) (*authv1.IsUserInFeatureReply, error) {
-	id := req.GetUserId()
-	namespace := req.GetNamespace()
+	reqInfo := &dto.UserInFeatureReq{
+		UserId:    req.GetUserId(),
+		Namespace: req.GetNamespace(),
+		Platform:  req.GetPlatform(),
+	}
 
-	features, err := h.featureTogglesService.IsUserInFeature(ctx, id, namespace)
+	features, err := h.featureTogglesService.IsUserInFeature(ctx, reqInfo)
 	if err != nil {
 		return nil, render.ErrorValidator(err)
 	}

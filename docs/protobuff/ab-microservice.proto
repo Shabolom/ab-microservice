@@ -105,13 +105,21 @@ message CreateCustomParamRequest {
 
 message CreateFeatureToggleRequest {
   string name = 1;
-  int64 namespace_id = 2;
-  int64 rollout_percentage  = 3;
+  int64 namespace_id = 5;
+
+  optional  int64 ios_rollout_percentage  = 6;
+  optional int64 android_rollout_percentage  = 7;
+  optional int64 web_rollout_percentage  = 8;
+  optional int64 rollout_percentage  = 9;
 }
 
 message UpdateFeatureToggleRolloutRequest {
   int64 feature_toggle_id = 1;
-  int64 rollout_percentage = 2;
+
+  optional int64 ios_rollout_percentage  = 2;
+  optional int64 android_rollout_percentage  = 3;
+  optional int64 web_rollout_percentage  = 4;
+  optional int64 rollout_percentage = 5;
 }
 
 message SetFeatureToggleStatusRequest {
@@ -126,6 +134,7 @@ message IsFeatureEnabledRequest {
 message IsUserInFeatureRequest {
   int64 user_id = 1;
   string namespace = 2;
+  string platform = 3;
 }
 
 message ExperimentRequest {

@@ -3,7 +3,6 @@ package featureToggles
 import (
 	"ab/internal/dto"
 	"ab/pkg/shortcut"
-	"ab/pkg/utils"
 	"context"
 	"strings"
 
@@ -31,7 +30,7 @@ func (s *Service) SetStatus(ctx context.Context, id int64, status string) error 
 		return err
 	}
 
-	err = s.setStatus(ctx, id, status)
+	err = s.featureTogglesRepo.SetStatus(ctx, id, status)
 	if err != nil {
 		s.logger.Error(
 			"set feature toggle status failed",
@@ -66,49 +65,4 @@ func (s *Service) statusValidation(id int64, status string) error {
 	}
 
 	return nil
-}
-
-func (s *Service) setStatus(ctx context.Context, id int64, status string) error {
-	switch status {
-	case dto.FeatureToggleStatusActive:
-		feature, err := s.featureTogglesRepo.GetByID(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		addedUsedBuckets := utils.GenerateBuckets([]int64{}, feature.RolloutPercentage)
-
-		err = s.featureTogglesRepo.SetStatusActive(ctx, id, addedUsedBuckets)
-		if err != nil {
-			return err
-		}
-
-		return nil
-
-	case dto.FeatureToggleStatusArchived:
-		err := s.featureTogglesRepo.SetStatusArchived(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		return nil
-
-	case dto.FeatureToggleStatusDisabled:
-		err := s.featureTogglesRepo.SetStatusDisabled(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		return nil
-
-	case dto.FeatureToggleStatusDraft:
-		err := s.featureTogglesRepo.SetStatusDraft(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	default:
-		return shortcut.ErrFeatureToggleInvalidStatus
-	}
 }
