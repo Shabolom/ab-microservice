@@ -21,3 +21,12 @@ func (r *RawExperimentSessionStorage) GetExperimentWithoutCustomGroupsByNamespac
 
 	return experiments
 }
+
+func (r *RawExperimentSessionStorage) GetFeatureTogglesByNamespace(namespace string) dto.NamespaceFeatureToggle {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	experiments := r.sessionFeatureToggle[namespace]
+
+	return experiments
+}

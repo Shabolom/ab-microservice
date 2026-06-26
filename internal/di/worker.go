@@ -7,6 +7,7 @@ func (d *DI) GetWorker() *worker.Worker {
 		d.GetNamespacePgRepo(),
 		d.GetExperimentPgRepo(),
 		d.GetInMemoryCache(),
+		d.GetFeatureTogglePgRepo(),
 		d.GetMetrics(),
 		d.Config().MagickNumbers.ContextInterval,
 		d.Config().MagickNumbers.OperatingInterval,

@@ -34,7 +34,14 @@ func ErrorValidator(err error) error {
 		errors.Is(err, shortcut.ErrCustomParamsNamespaceMismatch),
 		errors.Is(err, shortcut.ErrNotSupportedConditions),
 		errors.Is(err, shortcut.ErrNotSupportedType),
-		errors.Is(err, shortcut.ErrExperimentLayerRolloutTooBig):
+		errors.Is(err, shortcut.ErrExperimentLayerRolloutTooBig),
+		errors.Is(err, shortcut.ErrFeatureToggleNameRequired),
+		errors.Is(err, shortcut.ErrFeatureToggleNamespaceIDRequired),
+		errors.Is(err, shortcut.ErrFeatureToggleRolloutOutOfRange),
+		errors.Is(err, shortcut.ErrFeatureToggleInvalidStatus),
+		errors.Is(err, shortcut.ErrFeatureToggleIDRequired),
+		errors.Is(err, shortcut.ErrFeatureToggleSameRolloutPercentage),
+		errors.Is(err, shortcut.ErrFeatureToggleNotEnoughBuckets):
 		return status.Error(codes.InvalidArgument, err.Error())
 
 	case errors.Is(err, shortcut.ErrDuplicateKey),

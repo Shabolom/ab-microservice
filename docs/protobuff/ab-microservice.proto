@@ -13,6 +13,11 @@ service ABExperiment {
   rpc SetReadyExperiment(SetReadyExperimentRequest) returns (StockReply) {}
   rpc SetStopedExperiment(SetStopedExperimentRequest) returns (StockReply) {}
   rpc CreateCustomParam(CreateCustomParamRequest) returns (StockReply) {}
+  rpc CreateFeatureToggle(CreateFeatureToggleRequest) returns (StockReply) {}
+  rpc UpdateFeatureToggleRollout(UpdateFeatureToggleRolloutRequest) returns (StockReply) {}
+  rpc SetFeatureToggleStatus(SetFeatureToggleStatusRequest) returns (StockReply) {}
+  rpc IsFeatureEnabled(IsFeatureEnabledRequest) returns (StockReply) {}
+  rpc IsUserInFeature(IsUserInFeatureRequest) returns (IsUserInFeatureReply) {}
 }
 
 message StockReply {
@@ -24,6 +29,22 @@ message StockReply {
   }
   ERR_INFO_REASON err_info_reason = 1;
   string message = 2;
+}
+
+message IsUserInFeatureReply {
+  enum ERR_INFO_REASON {
+    UNSPECIFIED = 0;
+    VALIDATION_ERROR = 1;
+    INVALID_REQUEST = 2;
+    STATUS_OK = 3;
+  }
+  ERR_INFO_REASON err_info_reason = 1;
+  repeated Feature features = 2;
+}
+
+message Feature {
+  int64 feature_id = 1;
+  string feature_name = 2;
 }
 
 message CreateExperimentRequest {
@@ -80,6 +101,40 @@ message CreateCustomParamRequest {
   string name = 1;
   int64 namespace_id = 2;
   string type = 3;
+}
+
+message CreateFeatureToggleRequest {
+  string name = 1;
+  int64 namespace_id = 5;
+
+  optional  int64 ios_rollout_percentage  = 6;
+  optional int64 android_rollout_percentage  = 7;
+  optional int64 web_rollout_percentage  = 8;
+  optional int64 rollout_percentage  = 9;
+}
+
+message UpdateFeatureToggleRolloutRequest {
+  int64 feature_toggle_id = 1;
+
+  optional int64 ios_rollout_percentage  = 2;
+  optional int64 android_rollout_percentage  = 3;
+  optional int64 web_rollout_percentage  = 4;
+  optional int64 rollout_percentage = 5;
+}
+
+message SetFeatureToggleStatusRequest {
+  int64 feature_toggle_id = 1;
+  string status = 2;
+}
+
+message IsFeatureEnabledRequest {
+  int64 feature_toggle_id = 1;
+}
+
+message IsUserInFeatureRequest {
+  int64 user_id = 1;
+  string namespace = 2;
+  string platform = 3;
 }
 
 message ExperimentRequest {

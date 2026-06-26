@@ -1,0 +1,4 @@
+ALTER TABLE feature_toggles
+ALTER COLUMN ios TYPE INT USING ios::INT,
+    ALTER COLUMN android TYPE INT USING android::INT,
+    ALTER COLUMN web TYPE INT USING web::INT;

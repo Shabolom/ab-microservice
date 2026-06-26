@@ -4,6 +4,7 @@ import (
 	"ab/internal/handler/rpctransport"
 	"ab/internal/handler/rpctransport/custom-params"
 	"ab/internal/handler/rpctransport/experiments"
+	featureToggles "ab/internal/handler/rpctransport/feature-toggles"
 	"ab/internal/handler/rpctransport/layer"
 	"ab/internal/handler/rpctransport/namespace"
 )
@@ -14,6 +15,7 @@ func (d *DI) GetGRPCHandlers() *rpctransport.Handlers {
 		d.GetNamespaceHandler(),
 		d.GetLayerHandler(),
 		d.GetCustomParamsHandler(),
+		d.GetFeatureTogglesHandler(),
 	)
 }
 
@@ -31,4 +33,8 @@ func (d *DI) GetExperimentHandler() *experiments.Handler {
 
 func (d *DI) GetCustomParamsHandler() *customParams.Handler {
 	return customParams.New(d.GetCustomParamsService())
+}
+
+func (d *DI) GetFeatureTogglesHandler() *featureToggles.Handler {
+	return featureToggles.New(d.GetFeatureTogglesService())
 }

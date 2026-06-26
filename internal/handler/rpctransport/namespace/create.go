@@ -21,6 +21,6 @@ func (h *Handler) CreateNamespace(ctx context.Context, req *authv1.CreateNamespa
 
 	return &authv1.StockReply{
 		ErrInfoReason: authv1.StockReply_STATUS_OK,
-		Message:       fmt.Sprintf("Created namespace: %s, id: %v", createdNamespace.Name, createdNamespace.ID),
+		Message:       fmt.Sprintf("created namespace: %s, id: %v", createdNamespace.Name, createdNamespace.ID),
 	}, nil
 }

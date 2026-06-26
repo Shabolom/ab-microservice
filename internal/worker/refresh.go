@@ -21,6 +21,7 @@ func (w *Worker) refresh(ctx context.Context) error {
 
 	namespaces, err := w.namespaceRepository.GetList(refreshCtx)
 	if err != nil {
+		w.logger.Error("error getting namespaces", zap.Error(err))
 		return fmt.Errorf("get namespaces: %w", err)
 	}
 
@@ -30,6 +31,12 @@ func (w *Worker) refresh(ctx context.Context) error {
 
 		exps, err := w.experimentRepository.GetRawExperiments(refreshCtx, namespace.Name)
 		if err != nil {
+			w.logger.Error(
+				"error getting raw experiments",
+				zap.String("namespace", namespace.Name),
+				zap.Error(err),
+			)
+
 			return fmt.Errorf("get raw experiments for namespace %q: %w", namespace.Name, err)
 		}
 

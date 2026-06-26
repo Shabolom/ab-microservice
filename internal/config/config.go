@@ -26,16 +26,17 @@ type Prometheus struct {
 	Port string `envconfig:"PROMETHEUS_PORT" default:"2112"`
 }
 type Config struct {
-	ServiceName    string `envconfig:"APP_NAME"`
-	Debug          bool   `envconfig:"APP_DEBUG"`
-	GRPCPort       string `envconfig:"APP_GRPC_ADDRESS"`
-	Secret         string `envconfig:"APP_SECRET"`
-	ResendAppKey   string `envconfig:"RESEND_API_KEY"`
-	Prometheus     Prometheus
-	Kafka          Kafka
-	KafkaSerialize KafkaSerialize
-	PostgresDB     PgDB
-	MagickNumbers  MagickNumbers
+	ServiceName     string `envconfig:"APP_NAME"`
+	Debug           bool   `envconfig:"APP_DEBUG"`
+	GRPCPort        string `envconfig:"APP_GRPC_ADDRESS"`
+	Secret          string `envconfig:"APP_SECRET"`
+	ResendAppKey    string `envconfig:"RESEND_API_KEY"`
+	HealthcheckPort string `envconfig:"HEALTHCHECK_PORT" default:"8092"`
+	Prometheus      Prometheus
+	Kafka           Kafka
+	KafkaSerialize  KafkaSerialize
+	PostgresDB      PgDB
+	MagickNumbers   MagickNumbers
 }
 
 type KafkaSerialize struct {

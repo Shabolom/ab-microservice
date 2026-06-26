@@ -57,6 +57,15 @@ var (
 
 	ErrNotSupportedConditions = errors.New("not supported conditions")
 	ErrNotSupportedType       = errors.New("not supported type")
+
+	ErrFeatureToggleNameRequired          = errors.New("feature toggle name required")
+	ErrFeatureToggleNamespaceIDRequired   = errors.New("feature toggle namespace id required")
+	ErrFeatureToggleRolloutOutOfRange     = errors.New("feature toggle rollout percentage out of range")
+	ErrFeatureToggleInvalidStatus         = errors.New("feature toggle status is invalid")
+	ErrFeatureToggleIDRequired            = errors.New("feature toggle id required")
+	ErrFeatureToggleNotEnoughBuckets      = errors.New("not enough free buckets for feature toggle rollout")
+	ErrFeatureToggleSameRolloutPercentage = errors.New("same rollout percentage is different")
+	ErrFeatureToggleNotActive             = errors.New("feature toggle is not active")
 )
 
 const (
