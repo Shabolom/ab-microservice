@@ -9,6 +9,8 @@ import (
 
 type namespaceRepo interface {
 	Create(ctx context.Context, namespace *dto.NameSpace) (*dto.NameSpace, error)
+	GetList(ctx context.Context) ([]*dto.NameSpace, error)
+	GetByID(ctx context.Context, namespaceID int64) (*dto.NameSpace, error)
 }
 
 type Service struct {

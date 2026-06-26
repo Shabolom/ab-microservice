@@ -6,7 +6,7 @@ import (
 	"context"
 )
 
-func (s *Storage) GetById(ctx context.Context, id int64) (dto.CustomParams, error) {
+func (s *Storage) GetById(ctx context.Context, id int64) (*dto.CustomParams, error) {
 	query := `
 		SELECT
 			id,
@@ -26,8 +26,8 @@ func (s *Storage) GetById(ctx context.Context, id int64) (dto.CustomParams, erro
 		&param.Type,
 	)
 	if err != nil {
-		return dto.CustomParams{}, shortcut.MapStorageError(err)
+		return nil, shortcut.MapStorageError(err)
 	}
 
-	return param, nil
+	return &param, nil
 }

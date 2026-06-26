@@ -1,4 +1,4 @@
-package namespace
+package layer
 
 import (
 	"ab/internal/dto"
@@ -6,13 +6,14 @@ import (
 	"context"
 )
 
-func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
+func (s *Storage) GetList(ctx context.Context) ([]*dto.Layer, error) {
 	query := `
 		SELECT
 			id,
+			namespace_id,
 			name,
 			description
-		FROM namespaces
+		FROM layers
 		ORDER BY id
 	`
 
@@ -22,26 +23,27 @@ func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
 	}
 	defer rows.Close()
 
-	result := make([]*dto.NameSpace, 0)
+	var layers []*dto.Layer
 
 	for rows.Next() {
-		var namespace dto.NameSpace
+		var layer dto.Layer
 
 		err = rows.Scan(
-			&namespace.ID,
-			&namespace.Name,
-			&namespace.Description,
+			&layer.ID,
+			&layer.NameSpaceID,
+			&layer.Name,
+			&layer.Description,
 		)
 		if err != nil {
 			return nil, shortcut.MapStorageError(err)
 		}
 
-		result = append(result, &namespace)
+		layers = append(layers, &layer)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, shortcut.MapStorageError(err)
 	}
 
-	return result, nil
+	return layers, nil
 }

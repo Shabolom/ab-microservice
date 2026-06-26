@@ -11,6 +11,8 @@ type featureTogglesService interface {
 	UpdateRolloutPercentage(ctx context.Context, update *dto.FeatureTogglePercentageUpdate) error
 	IsEnable(ctx context.Context, id int64) error
 	IsUserInFeature(ctx context.Context, req *dto.UserInFeatureReq) ([]*dto.FeatureReply, error)
+	GetByID(ctx context.Context, id int64) (*dto.RawFeatureToggle, error)
+	GetList(ctx context.Context) ([]*dto.RawFeatureToggle, error)
 }
 type Handler struct {
 	featureTogglesService featureTogglesService

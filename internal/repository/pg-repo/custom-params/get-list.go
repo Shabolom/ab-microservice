@@ -1,4 +1,4 @@
-package namespace
+package customParams
 
 import (
 	"ab/internal/dto"
@@ -6,13 +6,14 @@ import (
 	"context"
 )
 
-func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
+func (s *Storage) GetList(ctx context.Context) ([]*dto.CustomParams, error) {
 	query := `
 		SELECT
 			id,
 			name,
-			description
-		FROM namespaces
+			namespace_id,
+			type
+		FROM customparameter
 		ORDER BY id
 	`
 
@@ -22,26 +23,27 @@ func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
 	}
 	defer rows.Close()
 
-	result := make([]*dto.NameSpace, 0)
+	var params []*dto.CustomParams
 
 	for rows.Next() {
-		var namespace dto.NameSpace
+		var param dto.CustomParams
 
 		err = rows.Scan(
-			&namespace.ID,
-			&namespace.Name,
-			&namespace.Description,
+			&param.ID,
+			&param.Name,
+			&param.NameSpaceID,
+			&param.Type,
 		)
 		if err != nil {
 			return nil, shortcut.MapStorageError(err)
 		}
 
-		result = append(result, &namespace)
+		params = append(params, &param)
 	}
 
 	if err = rows.Err(); err != nil {
 		return nil, shortcut.MapStorageError(err)
 	}
 
-	return result, nil
+	return params, nil
 }

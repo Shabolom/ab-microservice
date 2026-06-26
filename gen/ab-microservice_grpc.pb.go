@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -31,6 +32,16 @@ const (
 	ABExperiment_SetFeatureToggleStatus_FullMethodName     = "/platform.mvp.ABExperiment/SetFeatureToggleStatus"
 	ABExperiment_IsFeatureEnabled_FullMethodName           = "/platform.mvp.ABExperiment/IsFeatureEnabled"
 	ABExperiment_IsUserInFeature_FullMethodName            = "/platform.mvp.ABExperiment/IsUserInFeature"
+	ABExperiment_GetExperimentByID_FullMethodName          = "/platform.mvp.ABExperiment/GetExperimentByID"
+	ABExperiment_GetNamespaceByID_FullMethodName           = "/platform.mvp.ABExperiment/GetNamespaceByID"
+	ABExperiment_GetLayerByID_FullMethodName               = "/platform.mvp.ABExperiment/GetLayerByID"
+	ABExperiment_GetCustomParamByID_FullMethodName         = "/platform.mvp.ABExperiment/GetCustomParamByID"
+	ABExperiment_GetFeatureToggleByID_FullMethodName       = "/platform.mvp.ABExperiment/GetFeatureToggleByID"
+	ABExperiment_GetExperiments_FullMethodName             = "/platform.mvp.ABExperiment/GetExperiments"
+	ABExperiment_GetNamespaces_FullMethodName              = "/platform.mvp.ABExperiment/GetNamespaces"
+	ABExperiment_GetLayers_FullMethodName                  = "/platform.mvp.ABExperiment/GetLayers"
+	ABExperiment_GetCustomParams_FullMethodName            = "/platform.mvp.ABExperiment/GetCustomParams"
+	ABExperiment_GetFeatureToggles_FullMethodName          = "/platform.mvp.ABExperiment/GetFeatureToggles"
 )
 
 // ABExperimentClient is the client API for ABExperiment service.
@@ -49,6 +60,16 @@ type ABExperimentClient interface {
 	SetFeatureToggleStatus(ctx context.Context, in *SetFeatureToggleStatusRequest, opts ...grpc.CallOption) (*StockReply, error)
 	IsFeatureEnabled(ctx context.Context, in *IsFeatureEnabledRequest, opts ...grpc.CallOption) (*StockReply, error)
 	IsUserInFeature(ctx context.Context, in *IsUserInFeatureRequest, opts ...grpc.CallOption) (*IsUserInFeatureReply, error)
+	GetExperimentByID(ctx context.Context, in *GetExperimentByIDRequest, opts ...grpc.CallOption) (*GetExperimentByIDReply, error)
+	GetNamespaceByID(ctx context.Context, in *GetNamespaceByIDRequest, opts ...grpc.CallOption) (*GetNamespaceByIDReply, error)
+	GetLayerByID(ctx context.Context, in *GetLayerByIDRequest, opts ...grpc.CallOption) (*GetLayerByIDReply, error)
+	GetCustomParamByID(ctx context.Context, in *GetCustomParamByIDRequest, opts ...grpc.CallOption) (*GetCustomParamByIDReply, error)
+	GetFeatureToggleByID(ctx context.Context, in *GetFeatureToggleByIDRequest, opts ...grpc.CallOption) (*GetFeatureToggleByIDReply, error)
+	GetExperiments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetExperimentsReply, error)
+	GetNamespaces(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNamespaceBysReply, error)
+	GetLayers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLayerBysReply, error)
+	GetCustomParams(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetCustomParamBysReply, error)
+	GetFeatureToggles(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetFeatureToggleBysReply, error)
 }
 
 type aBExperimentClient struct {
@@ -179,6 +200,106 @@ func (c *aBExperimentClient) IsUserInFeature(ctx context.Context, in *IsUserInFe
 	return out, nil
 }
 
+func (c *aBExperimentClient) GetExperimentByID(ctx context.Context, in *GetExperimentByIDRequest, opts ...grpc.CallOption) (*GetExperimentByIDReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetExperimentByIDReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetExperimentByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetNamespaceByID(ctx context.Context, in *GetNamespaceByIDRequest, opts ...grpc.CallOption) (*GetNamespaceByIDReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNamespaceByIDReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetNamespaceByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetLayerByID(ctx context.Context, in *GetLayerByIDRequest, opts ...grpc.CallOption) (*GetLayerByIDReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLayerByIDReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetLayerByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetCustomParamByID(ctx context.Context, in *GetCustomParamByIDRequest, opts ...grpc.CallOption) (*GetCustomParamByIDReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCustomParamByIDReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetCustomParamByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetFeatureToggleByID(ctx context.Context, in *GetFeatureToggleByIDRequest, opts ...grpc.CallOption) (*GetFeatureToggleByIDReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFeatureToggleByIDReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetFeatureToggleByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetExperiments(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetExperimentsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetExperimentsReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetExperiments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetNamespaces(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNamespaceBysReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNamespaceBysReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetNamespaces_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetLayers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetLayerBysReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLayerBysReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetLayers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetCustomParams(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetCustomParamBysReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCustomParamBysReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetCustomParams_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aBExperimentClient) GetFeatureToggles(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetFeatureToggleBysReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFeatureToggleBysReply)
+	err := c.cc.Invoke(ctx, ABExperiment_GetFeatureToggles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ABExperimentServer is the server API for ABExperiment service.
 // All implementations should embed UnimplementedABExperimentServer
 // for forward compatibility.
@@ -195,6 +316,16 @@ type ABExperimentServer interface {
 	SetFeatureToggleStatus(context.Context, *SetFeatureToggleStatusRequest) (*StockReply, error)
 	IsFeatureEnabled(context.Context, *IsFeatureEnabledRequest) (*StockReply, error)
 	IsUserInFeature(context.Context, *IsUserInFeatureRequest) (*IsUserInFeatureReply, error)
+	GetExperimentByID(context.Context, *GetExperimentByIDRequest) (*GetExperimentByIDReply, error)
+	GetNamespaceByID(context.Context, *GetNamespaceByIDRequest) (*GetNamespaceByIDReply, error)
+	GetLayerByID(context.Context, *GetLayerByIDRequest) (*GetLayerByIDReply, error)
+	GetCustomParamByID(context.Context, *GetCustomParamByIDRequest) (*GetCustomParamByIDReply, error)
+	GetFeatureToggleByID(context.Context, *GetFeatureToggleByIDRequest) (*GetFeatureToggleByIDReply, error)
+	GetExperiments(context.Context, *emptypb.Empty) (*GetExperimentsReply, error)
+	GetNamespaces(context.Context, *emptypb.Empty) (*GetNamespaceBysReply, error)
+	GetLayers(context.Context, *emptypb.Empty) (*GetLayerBysReply, error)
+	GetCustomParams(context.Context, *emptypb.Empty) (*GetCustomParamBysReply, error)
+	GetFeatureToggles(context.Context, *emptypb.Empty) (*GetFeatureToggleBysReply, error)
 }
 
 // UnimplementedABExperimentServer should be embedded to have
@@ -239,6 +370,36 @@ func (UnimplementedABExperimentServer) IsFeatureEnabled(context.Context, *IsFeat
 }
 func (UnimplementedABExperimentServer) IsUserInFeature(context.Context, *IsUserInFeatureRequest) (*IsUserInFeatureReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsUserInFeature not implemented")
+}
+func (UnimplementedABExperimentServer) GetExperimentByID(context.Context, *GetExperimentByIDRequest) (*GetExperimentByIDReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetExperimentByID not implemented")
+}
+func (UnimplementedABExperimentServer) GetNamespaceByID(context.Context, *GetNamespaceByIDRequest) (*GetNamespaceByIDReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNamespaceByID not implemented")
+}
+func (UnimplementedABExperimentServer) GetLayerByID(context.Context, *GetLayerByIDRequest) (*GetLayerByIDReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLayerByID not implemented")
+}
+func (UnimplementedABExperimentServer) GetCustomParamByID(context.Context, *GetCustomParamByIDRequest) (*GetCustomParamByIDReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCustomParamByID not implemented")
+}
+func (UnimplementedABExperimentServer) GetFeatureToggleByID(context.Context, *GetFeatureToggleByIDRequest) (*GetFeatureToggleByIDReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFeatureToggleByID not implemented")
+}
+func (UnimplementedABExperimentServer) GetExperiments(context.Context, *emptypb.Empty) (*GetExperimentsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetExperiments not implemented")
+}
+func (UnimplementedABExperimentServer) GetNamespaces(context.Context, *emptypb.Empty) (*GetNamespaceBysReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNamespaces not implemented")
+}
+func (UnimplementedABExperimentServer) GetLayers(context.Context, *emptypb.Empty) (*GetLayerBysReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLayers not implemented")
+}
+func (UnimplementedABExperimentServer) GetCustomParams(context.Context, *emptypb.Empty) (*GetCustomParamBysReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCustomParams not implemented")
+}
+func (UnimplementedABExperimentServer) GetFeatureToggles(context.Context, *emptypb.Empty) (*GetFeatureToggleBysReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFeatureToggles not implemented")
 }
 func (UnimplementedABExperimentServer) testEmbeddedByValue() {}
 
@@ -476,6 +637,186 @@ func _ABExperiment_IsUserInFeature_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ABExperiment_GetExperimentByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExperimentByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetExperimentByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetExperimentByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetExperimentByID(ctx, req.(*GetExperimentByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetNamespaceByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNamespaceByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetNamespaceByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetNamespaceByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetNamespaceByID(ctx, req.(*GetNamespaceByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetLayerByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLayerByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetLayerByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetLayerByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetLayerByID(ctx, req.(*GetLayerByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetCustomParamByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCustomParamByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetCustomParamByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetCustomParamByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetCustomParamByID(ctx, req.(*GetCustomParamByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetFeatureToggleByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFeatureToggleByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetFeatureToggleByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetFeatureToggleByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetFeatureToggleByID(ctx, req.(*GetFeatureToggleByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetExperiments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetExperiments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetExperiments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetExperiments(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetNamespaces_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetNamespaces(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetNamespaces_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetNamespaces(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetLayers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetLayers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetLayers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetLayers(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetCustomParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetCustomParams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetCustomParams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetCustomParams(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ABExperiment_GetFeatureToggles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ABExperimentServer).GetFeatureToggles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ABExperiment_GetFeatureToggles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ABExperimentServer).GetFeatureToggles(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ABExperiment_ServiceDesc is the grpc.ServiceDesc for ABExperiment service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -530,6 +871,46 @@ var ABExperiment_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsUserInFeature",
 			Handler:    _ABExperiment_IsUserInFeature_Handler,
+		},
+		{
+			MethodName: "GetExperimentByID",
+			Handler:    _ABExperiment_GetExperimentByID_Handler,
+		},
+		{
+			MethodName: "GetNamespaceByID",
+			Handler:    _ABExperiment_GetNamespaceByID_Handler,
+		},
+		{
+			MethodName: "GetLayerByID",
+			Handler:    _ABExperiment_GetLayerByID_Handler,
+		},
+		{
+			MethodName: "GetCustomParamByID",
+			Handler:    _ABExperiment_GetCustomParamByID_Handler,
+		},
+		{
+			MethodName: "GetFeatureToggleByID",
+			Handler:    _ABExperiment_GetFeatureToggleByID_Handler,
+		},
+		{
+			MethodName: "GetExperiments",
+			Handler:    _ABExperiment_GetExperiments_Handler,
+		},
+		{
+			MethodName: "GetNamespaces",
+			Handler:    _ABExperiment_GetNamespaces_Handler,
+		},
+		{
+			MethodName: "GetLayers",
+			Handler:    _ABExperiment_GetLayers_Handler,
+		},
+		{
+			MethodName: "GetCustomParams",
+			Handler:    _ABExperiment_GetCustomParams_Handler,
+		},
+		{
+			MethodName: "GetFeatureToggles",
+			Handler:    _ABExperiment_GetFeatureToggles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

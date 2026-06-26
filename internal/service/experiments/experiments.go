@@ -35,6 +35,8 @@ type experimentRepo interface {
 	SetReadyStatus(ctx context.Context, experimentID int64, status string, layerBuckets []dto.LayerBuckets) error
 	SetStatusStopped(ctx context.Context, expID int64) error
 	CreateAndGetLayerExperiment(ctx context.Context, layerIDs []int64, expID int64) ([]dto.LayerBuckets, error)
+	GetByID(ctx context.Context, id int64) (*dto.Experiment, error)
+	GetList(ctx context.Context) ([]*dto.Experiment, error)
 }
 
 type layerRepo interface {
