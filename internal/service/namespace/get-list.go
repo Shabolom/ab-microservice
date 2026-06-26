@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Service) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
+func (s *Service) GetList(ctx context.Context) ([]dto.NameSpace, error) {
 	s.logger.Info("GetList namespaces Started")
 
 	namespaces, err := s.namespaceRepo.GetList(ctx)

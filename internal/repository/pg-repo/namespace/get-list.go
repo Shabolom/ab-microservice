@@ -6,7 +6,7 @@ import (
 	"context"
 )
 
-func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
+func (s *Storage) GetList(ctx context.Context) ([]dto.NameSpace, error) {
 	query := `
 		SELECT
 			id,
@@ -22,7 +22,7 @@ func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
 	}
 	defer rows.Close()
 
-	result := make([]*dto.NameSpace, 0)
+	result := make([]dto.NameSpace, 0)
 
 	for rows.Next() {
 		var namespace dto.NameSpace
@@ -36,7 +36,7 @@ func (s *Storage) GetList(ctx context.Context) ([]*dto.NameSpace, error) {
 			return nil, shortcut.MapStorageError(err)
 		}
 
-		result = append(result, &namespace)
+		result = append(result, namespace)
 	}
 
 	if err = rows.Err(); err != nil {

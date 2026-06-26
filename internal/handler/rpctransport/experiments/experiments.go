@@ -11,7 +11,7 @@ type experimentService interface {
 	SetReady(ctx context.Context, targetExpID int64) error
 	SetStopedStatus(ctx context.Context, expID int64) error
 	GetById(ctx context.Context, id int64) (*dto.Experiment, error)
-	GetList(ctx context.Context) ([]*dto.Experiment, error)
+	GetList(ctx context.Context) ([]dto.Experiment, error)
 }
 type Handler struct {
 	experimentService experimentService

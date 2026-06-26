@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Service) GetList(ctx context.Context) ([]*dto.Experiment, error) {
+func (s *Service) GetList(ctx context.Context) ([]dto.Experiment, error) {
 	s.logger.Info("GetList started")
 
 	experiments, err := s.experimentRepo.GetList(ctx)

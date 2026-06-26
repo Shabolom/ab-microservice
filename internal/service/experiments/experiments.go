@@ -15,8 +15,8 @@ type inMemoryStorage interface {
 
 type namespaceRepo interface {
 	GetList(ctx context.Context) ([]dto.NameSpace, error)
-	GetByID(ctx context.Context, namespaceID int64) (*dto.NameSpace, error)
 	GetByName(ctx context.Context, name string) (*dto.NameSpace, error)
+	GetByID(ctx context.Context, namespaceID int64) (*dto.NameSpace, error)
 }
 
 type groupRepo interface {
@@ -29,14 +29,14 @@ type groupRepo interface {
 
 type experimentRepo interface {
 	GetExperimentWithLayers(ctx context.Context, id int64) (*dto.Experiment, error)
-	CreateExperiment(ctx context.Context, experiment *dto.Experiment) (*dto.Experiment, error)
-	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
-	GetLayerBucketsInPeriod(ctx context.Context, experiment *dto.Experiment) ([]dto.LayerBuckets, error)
-	SetReadyStatus(ctx context.Context, experimentID int64, status string, layerBuckets []dto.LayerBuckets) error
 	SetStatusStopped(ctx context.Context, expID int64) error
 	CreateAndGetLayerExperiment(ctx context.Context, layerIDs []int64, expID int64) ([]dto.LayerBuckets, error)
+	SetReadyStatus(ctx context.Context, experimentID int64, status string, layerBuckets []dto.LayerBuckets) error
+	GetLayerBucketsInPeriod(ctx context.Context, experiment *dto.Experiment) ([]dto.LayerBuckets, error)
+	CreateExperiment(ctx context.Context, experiment *dto.Experiment) (*dto.Experiment, error)
+	GetRawExperiments(ctx context.Context, namespace string) ([]dto.RawExperiment, error)
 	GetByID(ctx context.Context, id int64) (*dto.Experiment, error)
-	GetList(ctx context.Context) ([]*dto.Experiment, error)
+	GetList(ctx context.Context) ([]dto.Experiment, error)
 }
 
 type layerRepo interface {
@@ -49,8 +49,8 @@ type kafkaProducer interface {
 }
 
 type customParamRepo interface {
-	GetById(ctx context.Context, id int64) (dto.CustomParams, error)
 	CountDistinctNamespaces(ctx context.Context, ids []int64) (int64, error)
+	GetById(ctx context.Context, id int64) (*dto.CustomParams, error)
 }
 
 type Service struct {

@@ -42,15 +42,15 @@ func (h *Handler) CreateExperiment(ctx context.Context, req *authv1.CreateExperi
 	}
 
 	for _, reqCustomParamGroup := range req.GetCustomParamGroups() {
-		customParams := reqCustomParamGroup.GetCustomParam()
+		customParams := reqCustomParamGroup.GetParamsWithConditions()
 		customParamGroup := dto.ParamGroup{
-			Percent:              reqCustomParamGroup.GetPercentage(),
+			Percent:              reqCustomParamGroup.GetPercent(),
 			ParamsWithConditions: make([]dto.CustomParamWithCondition, 0, len(customParams)),
 		}
 
 		for _, param := range customParams {
 			customParamWithCondition := dto.CustomParamWithCondition{
-				ParameterID: param.GetParametrId(),
+				ParameterID: param.GetParameterId(),
 				Value:       param.GetValue(),
 				Condition:   param.GetCondition(),
 			}
