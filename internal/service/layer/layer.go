@@ -9,6 +9,8 @@ import (
 
 type layerRepo interface {
 	Create(ctx context.Context, layer *dto.Layer) error
+	GetByID(ctx context.Context, id int64) (*dto.Layer, error)
+	GetList(ctx context.Context) ([]*dto.Layer, error)
 }
 
 type Service struct {

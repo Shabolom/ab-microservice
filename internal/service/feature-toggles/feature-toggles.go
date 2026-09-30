@@ -14,6 +14,7 @@ type featureTogglesRepo interface {
 	GetByID(ctx context.Context, id int64) (*dto.RawFeatureToggle, error)
 	SetStatus(ctx context.Context, id int64, status string) error
 	UpdatePercentage(ctx context.Context, update *dto.FeatureTogglePercentageUpdate) error
+	GetList(ctx context.Context) ([]*dto.RawFeatureToggle, error)
 }
 
 type inMemoryStorage interface {
