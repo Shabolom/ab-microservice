@@ -16,10 +16,10 @@ func (h *Handler) GetExperimentByID(ctx context.Context, req *authv1.GetExperime
 
 	var customParamGroups []*authv1.ParamGroup
 	for _, group := range exp.ParamsGroups {
-		var params []*authv1.CustomParamWithCondition
+		var params []*authv1.GetCustomParamWithCondition
 
 		for _, param := range group.ParamsWithConditions {
-			params = append(params, &authv1.CustomParamWithCondition{
+			params = append(params, &authv1.GetCustomParamWithCondition{
 				Id:               param.ID,
 				ParameterId:      param.ParameterID,
 				ParameterGroupId: param.ParameterGroupID,

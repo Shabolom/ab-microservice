@@ -31,9 +31,9 @@ func (h *Handler) GetExperiments(ctx context.Context, req *emptypb.Empty) (*auth
 		var customGroups []*authv1.ParamGroup
 		for _, customGroup := range e.ParamsGroups {
 
-			var params []*authv1.CustomParamWithCondition
+			var params []*authv1.GetCustomParamWithCondition
 			for _, param := range customGroup.ParamsWithConditions {
-				params = append(params, &authv1.CustomParamWithCondition{
+				params = append(params, &authv1.GetCustomParamWithCondition{
 					Id:               param.ID,
 					ParameterId:      param.ParameterID,
 					ParameterGroupId: param.ParameterGroupID,

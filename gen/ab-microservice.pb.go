@@ -696,7 +696,7 @@ func (x ExperimentsReply_ERR_INFO_REASON) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ExperimentsReply_ERR_INFO_REASON.Descriptor instead.
 func (ExperimentsReply_ERR_INFO_REASON) EnumDescriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{41, 0}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{42, 0}
 }
 
 type StockReply struct {
@@ -2388,10 +2388,10 @@ func (x *CustomParamCondition) GetValue() string {
 }
 
 type ParamGroup struct {
-	state                protoimpl.MessageState      `protogen:"open.v1"`
-	Id                   int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Percent              int64                       `protobuf:"varint,2,opt,name=percent,proto3" json:"percent,omitempty"`
-	ParamsWithConditions []*CustomParamWithCondition `protobuf:"bytes,3,rep,name=params_with_conditions,json=paramsWithConditions,proto3" json:"params_with_conditions,omitempty"`
+	state                protoimpl.MessageState         `protogen:"open.v1"`
+	Id                   int64                          `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Percent              int64                          `protobuf:"varint,2,opt,name=percent,proto3" json:"percent,omitempty"`
+	ParamsWithConditions []*GetCustomParamWithCondition `protobuf:"bytes,3,rep,name=params_with_conditions,json=paramsWithConditions,proto3" json:"params_with_conditions,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -2440,14 +2440,14 @@ func (x *ParamGroup) GetPercent() int64 {
 	return 0
 }
 
-func (x *ParamGroup) GetParamsWithConditions() []*CustomParamWithCondition {
+func (x *ParamGroup) GetParamsWithConditions() []*GetCustomParamWithCondition {
 	if x != nil {
 		return x.ParamsWithConditions
 	}
 	return nil
 }
 
-type CustomParamWithCondition struct {
+type GetCustomParamWithCondition struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ParameterId      int64                  `protobuf:"varint,2,opt,name=parameter_id,json=parameterId,proto3" json:"parameter_id,omitempty"`
@@ -2458,9 +2458,83 @@ type CustomParamWithCondition struct {
 	sizeCache        protoimpl.SizeCache
 }
 
+func (x *GetCustomParamWithCondition) Reset() {
+	*x = GetCustomParamWithCondition{}
+	mi := &file_ab_microservice_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCustomParamWithCondition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCustomParamWithCondition) ProtoMessage() {}
+
+func (x *GetCustomParamWithCondition) ProtoReflect() protoreflect.Message {
+	mi := &file_ab_microservice_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCustomParamWithCondition.ProtoReflect.Descriptor instead.
+func (*GetCustomParamWithCondition) Descriptor() ([]byte, []int) {
+	return file_ab_microservice_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *GetCustomParamWithCondition) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *GetCustomParamWithCondition) GetParameterId() int64 {
+	if x != nil {
+		return x.ParameterId
+	}
+	return 0
+}
+
+func (x *GetCustomParamWithCondition) GetParameterGroupId() int64 {
+	if x != nil {
+		return x.ParameterGroupId
+	}
+	return 0
+}
+
+func (x *GetCustomParamWithCondition) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *GetCustomParamWithCondition) GetCondition() string {
+	if x != nil {
+		return x.Condition
+	}
+	return ""
+}
+
+type CustomParamWithCondition struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ParameterId   int64                  `protobuf:"varint,1,opt,name=parameter_id,json=parameterId,proto3" json:"parameter_id,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Condition     string                 `protobuf:"bytes,3,opt,name=condition,proto3" json:"condition,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
 func (x *CustomParamWithCondition) Reset() {
 	*x = CustomParamWithCondition{}
-	mi := &file_ab_microservice_proto_msgTypes[27]
+	mi := &file_ab_microservice_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2472,7 +2546,7 @@ func (x *CustomParamWithCondition) String() string {
 func (*CustomParamWithCondition) ProtoMessage() {}
 
 func (x *CustomParamWithCondition) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[27]
+	mi := &file_ab_microservice_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2485,26 +2559,12 @@ func (x *CustomParamWithCondition) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CustomParamWithCondition.ProtoReflect.Descriptor instead.
 func (*CustomParamWithCondition) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{27}
-}
-
-func (x *CustomParamWithCondition) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
+	return file_ab_microservice_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CustomParamWithCondition) GetParameterId() int64 {
 	if x != nil {
 		return x.ParameterId
-	}
-	return 0
-}
-
-func (x *CustomParamWithCondition) GetParameterGroupId() int64 {
-	if x != nil {
-		return x.ParameterGroupId
 	}
 	return 0
 }
@@ -2535,7 +2595,7 @@ type Group struct {
 
 func (x *Group) Reset() {
 	*x = Group{}
-	mi := &file_ab_microservice_proto_msgTypes[28]
+	mi := &file_ab_microservice_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2547,7 +2607,7 @@ func (x *Group) String() string {
 func (*Group) ProtoMessage() {}
 
 func (x *Group) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[28]
+	mi := &file_ab_microservice_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2560,7 +2620,7 @@ func (x *Group) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Group.ProtoReflect.Descriptor instead.
 func (*Group) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{28}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *Group) GetId() int64 {
@@ -2601,7 +2661,7 @@ type CreateNamespaceRequest struct {
 
 func (x *CreateNamespaceRequest) Reset() {
 	*x = CreateNamespaceRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[29]
+	mi := &file_ab_microservice_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2613,7 +2673,7 @@ func (x *CreateNamespaceRequest) String() string {
 func (*CreateNamespaceRequest) ProtoMessage() {}
 
 func (x *CreateNamespaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[29]
+	mi := &file_ab_microservice_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2626,7 +2686,7 @@ func (x *CreateNamespaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateNamespaceRequest.ProtoReflect.Descriptor instead.
 func (*CreateNamespaceRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{29}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CreateNamespaceRequest) GetName() string {
@@ -2654,7 +2714,7 @@ type CreateLayerRequest struct {
 
 func (x *CreateLayerRequest) Reset() {
 	*x = CreateLayerRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[30]
+	mi := &file_ab_microservice_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2666,7 +2726,7 @@ func (x *CreateLayerRequest) String() string {
 func (*CreateLayerRequest) ProtoMessage() {}
 
 func (x *CreateLayerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[30]
+	mi := &file_ab_microservice_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2679,7 +2739,7 @@ func (x *CreateLayerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLayerRequest.ProtoReflect.Descriptor instead.
 func (*CreateLayerRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{30}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreateLayerRequest) GetNamespaceId() int64 {
@@ -2712,7 +2772,7 @@ type SetReadyExperimentRequest struct {
 
 func (x *SetReadyExperimentRequest) Reset() {
 	*x = SetReadyExperimentRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[31]
+	mi := &file_ab_microservice_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2724,7 +2784,7 @@ func (x *SetReadyExperimentRequest) String() string {
 func (*SetReadyExperimentRequest) ProtoMessage() {}
 
 func (x *SetReadyExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[31]
+	mi := &file_ab_microservice_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2737,7 +2797,7 @@ func (x *SetReadyExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetReadyExperimentRequest.ProtoReflect.Descriptor instead.
 func (*SetReadyExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{31}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *SetReadyExperimentRequest) GetExperimentId() int64 {
@@ -2756,7 +2816,7 @@ type SetStopedExperimentRequest struct {
 
 func (x *SetStopedExperimentRequest) Reset() {
 	*x = SetStopedExperimentRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[32]
+	mi := &file_ab_microservice_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2768,7 +2828,7 @@ func (x *SetStopedExperimentRequest) String() string {
 func (*SetStopedExperimentRequest) ProtoMessage() {}
 
 func (x *SetStopedExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[32]
+	mi := &file_ab_microservice_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2781,7 +2841,7 @@ func (x *SetStopedExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetStopedExperimentRequest.ProtoReflect.Descriptor instead.
 func (*SetStopedExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{32}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *SetStopedExperimentRequest) GetExperimentId() int64 {
@@ -2802,7 +2862,7 @@ type CreateCustomParamRequest struct {
 
 func (x *CreateCustomParamRequest) Reset() {
 	*x = CreateCustomParamRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[33]
+	mi := &file_ab_microservice_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2814,7 +2874,7 @@ func (x *CreateCustomParamRequest) String() string {
 func (*CreateCustomParamRequest) ProtoMessage() {}
 
 func (x *CreateCustomParamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[33]
+	mi := &file_ab_microservice_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2827,7 +2887,7 @@ func (x *CreateCustomParamRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCustomParamRequest.ProtoReflect.Descriptor instead.
 func (*CreateCustomParamRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{33}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateCustomParamRequest) GetName() string {
@@ -2865,7 +2925,7 @@ type CreateFeatureToggleRequest struct {
 
 func (x *CreateFeatureToggleRequest) Reset() {
 	*x = CreateFeatureToggleRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[34]
+	mi := &file_ab_microservice_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2877,7 +2937,7 @@ func (x *CreateFeatureToggleRequest) String() string {
 func (*CreateFeatureToggleRequest) ProtoMessage() {}
 
 func (x *CreateFeatureToggleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[34]
+	mi := &file_ab_microservice_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2890,7 +2950,7 @@ func (x *CreateFeatureToggleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateFeatureToggleRequest.ProtoReflect.Descriptor instead.
 func (*CreateFeatureToggleRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{34}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreateFeatureToggleRequest) GetName() string {
@@ -2948,7 +3008,7 @@ type UpdateFeatureToggleRolloutRequest struct {
 
 func (x *UpdateFeatureToggleRolloutRequest) Reset() {
 	*x = UpdateFeatureToggleRolloutRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[35]
+	mi := &file_ab_microservice_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2960,7 +3020,7 @@ func (x *UpdateFeatureToggleRolloutRequest) String() string {
 func (*UpdateFeatureToggleRolloutRequest) ProtoMessage() {}
 
 func (x *UpdateFeatureToggleRolloutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[35]
+	mi := &file_ab_microservice_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2973,7 +3033,7 @@ func (x *UpdateFeatureToggleRolloutRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateFeatureToggleRolloutRequest.ProtoReflect.Descriptor instead.
 func (*UpdateFeatureToggleRolloutRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{35}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UpdateFeatureToggleRolloutRequest) GetFeatureToggleId() int64 {
@@ -3021,7 +3081,7 @@ type SetFeatureToggleStatusRequest struct {
 
 func (x *SetFeatureToggleStatusRequest) Reset() {
 	*x = SetFeatureToggleStatusRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[36]
+	mi := &file_ab_microservice_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3033,7 +3093,7 @@ func (x *SetFeatureToggleStatusRequest) String() string {
 func (*SetFeatureToggleStatusRequest) ProtoMessage() {}
 
 func (x *SetFeatureToggleStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[36]
+	mi := &file_ab_microservice_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3046,7 +3106,7 @@ func (x *SetFeatureToggleStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFeatureToggleStatusRequest.ProtoReflect.Descriptor instead.
 func (*SetFeatureToggleStatusRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{36}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *SetFeatureToggleStatusRequest) GetFeatureToggleId() int64 {
@@ -3072,7 +3132,7 @@ type IsFeatureEnabledRequest struct {
 
 func (x *IsFeatureEnabledRequest) Reset() {
 	*x = IsFeatureEnabledRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[37]
+	mi := &file_ab_microservice_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3084,7 +3144,7 @@ func (x *IsFeatureEnabledRequest) String() string {
 func (*IsFeatureEnabledRequest) ProtoMessage() {}
 
 func (x *IsFeatureEnabledRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[37]
+	mi := &file_ab_microservice_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3097,7 +3157,7 @@ func (x *IsFeatureEnabledRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsFeatureEnabledRequest.ProtoReflect.Descriptor instead.
 func (*IsFeatureEnabledRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{37}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *IsFeatureEnabledRequest) GetFeatureToggleId() int64 {
@@ -3118,7 +3178,7 @@ type IsUserInFeatureRequest struct {
 
 func (x *IsUserInFeatureRequest) Reset() {
 	*x = IsUserInFeatureRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[38]
+	mi := &file_ab_microservice_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3130,7 +3190,7 @@ func (x *IsUserInFeatureRequest) String() string {
 func (*IsUserInFeatureRequest) ProtoMessage() {}
 
 func (x *IsUserInFeatureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[38]
+	mi := &file_ab_microservice_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3143,7 +3203,7 @@ func (x *IsUserInFeatureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsUserInFeatureRequest.ProtoReflect.Descriptor instead.
 func (*IsUserInFeatureRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{38}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *IsUserInFeatureRequest) GetUserId() int64 {
@@ -3181,7 +3241,7 @@ type ExperimentRequest struct {
 
 func (x *ExperimentRequest) Reset() {
 	*x = ExperimentRequest{}
-	mi := &file_ab_microservice_proto_msgTypes[39]
+	mi := &file_ab_microservice_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3193,7 +3253,7 @@ func (x *ExperimentRequest) String() string {
 func (*ExperimentRequest) ProtoMessage() {}
 
 func (x *ExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[39]
+	mi := &file_ab_microservice_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3206,7 +3266,7 @@ func (x *ExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExperimentRequest.ProtoReflect.Descriptor instead.
 func (*ExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{39}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ExperimentRequest) GetSplitId() int64 {
@@ -3261,7 +3321,7 @@ type Param struct {
 
 func (x *Param) Reset() {
 	*x = Param{}
-	mi := &file_ab_microservice_proto_msgTypes[40]
+	mi := &file_ab_microservice_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3273,7 +3333,7 @@ func (x *Param) String() string {
 func (*Param) ProtoMessage() {}
 
 func (x *Param) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[40]
+	mi := &file_ab_microservice_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3286,7 +3346,7 @@ func (x *Param) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Param.ProtoReflect.Descriptor instead.
 func (*Param) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{40}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *Param) GetParamName() string {
@@ -3314,7 +3374,7 @@ type ExperimentsReply struct {
 
 func (x *ExperimentsReply) Reset() {
 	*x = ExperimentsReply{}
-	mi := &file_ab_microservice_proto_msgTypes[41]
+	mi := &file_ab_microservice_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3326,7 +3386,7 @@ func (x *ExperimentsReply) String() string {
 func (*ExperimentsReply) ProtoMessage() {}
 
 func (x *ExperimentsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[41]
+	mi := &file_ab_microservice_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3339,7 +3399,7 @@ func (x *ExperimentsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExperimentsReply.ProtoReflect.Descriptor instead.
 func (*ExperimentsReply) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{41}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ExperimentsReply) GetErrInfoReason() ExperimentsReply_ERR_INFO_REASON {
@@ -3373,7 +3433,7 @@ type ExperimentReply struct {
 
 func (x *ExperimentReply) Reset() {
 	*x = ExperimentReply{}
-	mi := &file_ab_microservice_proto_msgTypes[42]
+	mi := &file_ab_microservice_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3385,7 +3445,7 @@ func (x *ExperimentReply) String() string {
 func (*ExperimentReply) ProtoMessage() {}
 
 func (x *ExperimentReply) ProtoReflect() protoreflect.Message {
-	mi := &file_ab_microservice_proto_msgTypes[42]
+	mi := &file_ab_microservice_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3398,7 +3458,7 @@ func (x *ExperimentReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExperimentReply.ProtoReflect.Descriptor instead.
 func (*ExperimentReply) Descriptor() ([]byte, []int) {
-	return file_ab_microservice_proto_rawDescGZIP(), []int{42}
+	return file_ab_microservice_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *ExperimentReply) GetExperimentName() string {
@@ -3619,18 +3679,22 @@ const file_ab_microservice_proto_rawDesc = "" +
 	"\x14CustomParamCondition\x12!\n" +
 	"\fparameter_id\x18\x01 \x01(\x03R\vparameterId\x12\x1c\n" +
 	"\tcondition\x18\x02 \x01(\tR\tcondition\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\"\x94\x01\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\"\x97\x01\n" +
 	"\n" +
 	"ParamGroup\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
-	"\apercent\x18\x02 \x01(\x03R\apercent\x12\\\n" +
-	"\x16params_with_conditions\x18\x03 \x03(\v2&.platform.mvp.CustomParamWithConditionR\x14paramsWithConditions\"\xaf\x01\n" +
-	"\x18CustomParamWithCondition\x12\x0e\n" +
+	"\apercent\x18\x02 \x01(\x03R\apercent\x12_\n" +
+	"\x16params_with_conditions\x18\x03 \x03(\v2).platform.mvp.GetCustomParamWithConditionR\x14paramsWithConditions\"\xb2\x01\n" +
+	"\x1bGetCustomParamWithCondition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fparameter_id\x18\x02 \x01(\x03R\vparameterId\x12,\n" +
 	"\x12parameter_group_id\x18\x03 \x01(\x03R\x10parameterGroupId\x12\x14\n" +
 	"\x05value\x18\x04 \x01(\tR\x05value\x12\x1c\n" +
-	"\tcondition\x18\x05 \x01(\tR\tcondition\"w\n" +
+	"\tcondition\x18\x05 \x01(\tR\tcondition\"q\n" +
+	"\x18CustomParamWithCondition\x12!\n" +
+	"\fparameter_id\x18\x01 \x01(\x03R\vparameterId\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1c\n" +
+	"\tcondition\x18\x03 \x01(\tR\tcondition\"w\n" +
 	"\x05Group\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12-\n" +
@@ -3742,7 +3806,7 @@ func file_ab_microservice_proto_rawDescGZIP() []byte {
 }
 
 var file_ab_microservice_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
-var file_ab_microservice_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
+var file_ab_microservice_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
 var file_ab_microservice_proto_goTypes = []any{
 	(StockReply_ERR_INFO_REASON)(0),                // 0: platform.mvp.StockReply.ERR_INFO_REASON
 	(GetExperimentByIDReply_ERR_INFO_REASON)(0),    // 1: platform.mvp.GetExperimentByIDReply.ERR_INFO_REASON
@@ -3784,24 +3848,25 @@ var file_ab_microservice_proto_goTypes = []any{
 	(*CustomParamGroup)(nil),                       // 37: platform.mvp.CustomParamGroup
 	(*CustomParamCondition)(nil),                   // 38: platform.mvp.CustomParamCondition
 	(*ParamGroup)(nil),                             // 39: platform.mvp.ParamGroup
-	(*CustomParamWithCondition)(nil),               // 40: platform.mvp.CustomParamWithCondition
-	(*Group)(nil),                                  // 41: platform.mvp.Group
-	(*CreateNamespaceRequest)(nil),                 // 42: platform.mvp.CreateNamespaceRequest
-	(*CreateLayerRequest)(nil),                     // 43: platform.mvp.CreateLayerRequest
-	(*SetReadyExperimentRequest)(nil),              // 44: platform.mvp.SetReadyExperimentRequest
-	(*SetStopedExperimentRequest)(nil),             // 45: platform.mvp.SetStopedExperimentRequest
-	(*CreateCustomParamRequest)(nil),               // 46: platform.mvp.CreateCustomParamRequest
-	(*CreateFeatureToggleRequest)(nil),             // 47: platform.mvp.CreateFeatureToggleRequest
-	(*UpdateFeatureToggleRolloutRequest)(nil),      // 48: platform.mvp.UpdateFeatureToggleRolloutRequest
-	(*SetFeatureToggleStatusRequest)(nil),          // 49: platform.mvp.SetFeatureToggleStatusRequest
-	(*IsFeatureEnabledRequest)(nil),                // 50: platform.mvp.IsFeatureEnabledRequest
-	(*IsUserInFeatureRequest)(nil),                 // 51: platform.mvp.IsUserInFeatureRequest
-	(*ExperimentRequest)(nil),                      // 52: platform.mvp.ExperimentRequest
-	(*Param)(nil),                                  // 53: platform.mvp.Param
-	(*ExperimentsReply)(nil),                       // 54: platform.mvp.ExperimentsReply
-	(*ExperimentReply)(nil),                        // 55: platform.mvp.ExperimentReply
-	(*timestamppb.Timestamp)(nil),                  // 56: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                          // 57: google.protobuf.Empty
+	(*GetCustomParamWithCondition)(nil),            // 40: platform.mvp.GetCustomParamWithCondition
+	(*CustomParamWithCondition)(nil),               // 41: platform.mvp.CustomParamWithCondition
+	(*Group)(nil),                                  // 42: platform.mvp.Group
+	(*CreateNamespaceRequest)(nil),                 // 43: platform.mvp.CreateNamespaceRequest
+	(*CreateLayerRequest)(nil),                     // 44: platform.mvp.CreateLayerRequest
+	(*SetReadyExperimentRequest)(nil),              // 45: platform.mvp.SetReadyExperimentRequest
+	(*SetStopedExperimentRequest)(nil),             // 46: platform.mvp.SetStopedExperimentRequest
+	(*CreateCustomParamRequest)(nil),               // 47: platform.mvp.CreateCustomParamRequest
+	(*CreateFeatureToggleRequest)(nil),             // 48: platform.mvp.CreateFeatureToggleRequest
+	(*UpdateFeatureToggleRolloutRequest)(nil),      // 49: platform.mvp.UpdateFeatureToggleRolloutRequest
+	(*SetFeatureToggleStatusRequest)(nil),          // 50: platform.mvp.SetFeatureToggleStatusRequest
+	(*IsFeatureEnabledRequest)(nil),                // 51: platform.mvp.IsFeatureEnabledRequest
+	(*IsUserInFeatureRequest)(nil),                 // 52: platform.mvp.IsUserInFeatureRequest
+	(*ExperimentRequest)(nil),                      // 53: platform.mvp.ExperimentRequest
+	(*Param)(nil),                                  // 54: platform.mvp.Param
+	(*ExperimentsReply)(nil),                       // 55: platform.mvp.ExperimentsReply
+	(*ExperimentReply)(nil),                        // 56: platform.mvp.ExperimentReply
+	(*timestamppb.Timestamp)(nil),                  // 57: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                          // 58: google.protobuf.Empty
 }
 var file_ab_microservice_proto_depIdxs = []int32{
 	0,  // 0: platform.mvp.StockReply.err_info_reason:type_name -> platform.mvp.StockReply.ERR_INFO_REASON
@@ -3825,47 +3890,47 @@ var file_ab_microservice_proto_depIdxs = []int32{
 	32, // 18: platform.mvp.GetCustomParamBysReply.custom_params:type_name -> platform.mvp.CustomParam
 	10, // 19: platform.mvp.GetFeatureToggleBysReply.err_info_reason:type_name -> platform.mvp.GetFeatureToggleBysReply.ERR_INFO_REASON
 	33, // 20: platform.mvp.GetFeatureToggleBysReply.feature_toggles:type_name -> platform.mvp.FeatureToggle
-	56, // 21: platform.mvp.Experiment.start_date:type_name -> google.protobuf.Timestamp
-	56, // 22: platform.mvp.Experiment.end_date:type_name -> google.protobuf.Timestamp
+	57, // 21: platform.mvp.Experiment.start_date:type_name -> google.protobuf.Timestamp
+	57, // 22: platform.mvp.Experiment.end_date:type_name -> google.protobuf.Timestamp
 	39, // 23: platform.mvp.Experiment.params_groups:type_name -> platform.mvp.ParamGroup
-	41, // 24: platform.mvp.Experiment.groups:type_name -> platform.mvp.Group
-	56, // 25: platform.mvp.FeatureToggle.created_at:type_name -> google.protobuf.Timestamp
-	56, // 26: platform.mvp.FeatureToggle.updated_at:type_name -> google.protobuf.Timestamp
-	56, // 27: platform.mvp.FeatureToggle.deleted_at:type_name -> google.protobuf.Timestamp
+	42, // 24: platform.mvp.Experiment.groups:type_name -> platform.mvp.Group
+	57, // 25: platform.mvp.FeatureToggle.created_at:type_name -> google.protobuf.Timestamp
+	57, // 26: platform.mvp.FeatureToggle.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 27: platform.mvp.FeatureToggle.deleted_at:type_name -> google.protobuf.Timestamp
 	11, // 28: platform.mvp.IsUserInFeatureReply.err_info_reason:type_name -> platform.mvp.IsUserInFeatureReply.ERR_INFO_REASON
 	34, // 29: platform.mvp.IsUserInFeatureReply.features:type_name -> platform.mvp.Feature
-	56, // 30: platform.mvp.CreateExperimentRequest.start_date:type_name -> google.protobuf.Timestamp
-	56, // 31: platform.mvp.CreateExperimentRequest.end_date:type_name -> google.protobuf.Timestamp
-	41, // 32: platform.mvp.CreateExperimentRequest.groups:type_name -> platform.mvp.Group
+	57, // 30: platform.mvp.CreateExperimentRequest.start_date:type_name -> google.protobuf.Timestamp
+	57, // 31: platform.mvp.CreateExperimentRequest.end_date:type_name -> google.protobuf.Timestamp
+	42, // 32: platform.mvp.CreateExperimentRequest.groups:type_name -> platform.mvp.Group
 	37, // 33: platform.mvp.CreateExperimentRequest.custom_param_groups:type_name -> platform.mvp.CustomParamGroup
-	40, // 34: platform.mvp.CustomParamGroup.params_with_conditions:type_name -> platform.mvp.CustomParamWithCondition
-	40, // 35: platform.mvp.ParamGroup.params_with_conditions:type_name -> platform.mvp.CustomParamWithCondition
-	53, // 36: platform.mvp.ExperimentRequest.params:type_name -> platform.mvp.Param
+	41, // 34: platform.mvp.CustomParamGroup.params_with_conditions:type_name -> platform.mvp.CustomParamWithCondition
+	40, // 35: platform.mvp.ParamGroup.params_with_conditions:type_name -> platform.mvp.GetCustomParamWithCondition
+	54, // 36: platform.mvp.ExperimentRequest.params:type_name -> platform.mvp.Param
 	12, // 37: platform.mvp.ExperimentsReply.err_info_reason:type_name -> platform.mvp.ExperimentsReply.ERR_INFO_REASON
-	55, // 38: platform.mvp.ExperimentsReply.experiments_reply:type_name -> platform.mvp.ExperimentReply
-	52, // 39: platform.mvp.ABExperiment.UserExperiment:input_type -> platform.mvp.ExperimentRequest
+	56, // 38: platform.mvp.ExperimentsReply.experiments_reply:type_name -> platform.mvp.ExperimentReply
+	53, // 39: platform.mvp.ABExperiment.UserExperiment:input_type -> platform.mvp.ExperimentRequest
 	36, // 40: platform.mvp.ABExperiment.CreateExperiment:input_type -> platform.mvp.CreateExperimentRequest
-	42, // 41: platform.mvp.ABExperiment.CreateNamespace:input_type -> platform.mvp.CreateNamespaceRequest
-	43, // 42: platform.mvp.ABExperiment.CreateLayer:input_type -> platform.mvp.CreateLayerRequest
-	44, // 43: platform.mvp.ABExperiment.SetReadyExperiment:input_type -> platform.mvp.SetReadyExperimentRequest
-	45, // 44: platform.mvp.ABExperiment.SetStopedExperiment:input_type -> platform.mvp.SetStopedExperimentRequest
-	46, // 45: platform.mvp.ABExperiment.CreateCustomParam:input_type -> platform.mvp.CreateCustomParamRequest
-	47, // 46: platform.mvp.ABExperiment.CreateFeatureToggle:input_type -> platform.mvp.CreateFeatureToggleRequest
-	48, // 47: platform.mvp.ABExperiment.UpdateFeatureToggleRollout:input_type -> platform.mvp.UpdateFeatureToggleRolloutRequest
-	49, // 48: platform.mvp.ABExperiment.SetFeatureToggleStatus:input_type -> platform.mvp.SetFeatureToggleStatusRequest
-	50, // 49: platform.mvp.ABExperiment.IsFeatureEnabled:input_type -> platform.mvp.IsFeatureEnabledRequest
-	51, // 50: platform.mvp.ABExperiment.IsUserInFeature:input_type -> platform.mvp.IsUserInFeatureRequest
+	43, // 41: platform.mvp.ABExperiment.CreateNamespace:input_type -> platform.mvp.CreateNamespaceRequest
+	44, // 42: platform.mvp.ABExperiment.CreateLayer:input_type -> platform.mvp.CreateLayerRequest
+	45, // 43: platform.mvp.ABExperiment.SetReadyExperiment:input_type -> platform.mvp.SetReadyExperimentRequest
+	46, // 44: platform.mvp.ABExperiment.SetStopedExperiment:input_type -> platform.mvp.SetStopedExperimentRequest
+	47, // 45: platform.mvp.ABExperiment.CreateCustomParam:input_type -> platform.mvp.CreateCustomParamRequest
+	48, // 46: platform.mvp.ABExperiment.CreateFeatureToggle:input_type -> platform.mvp.CreateFeatureToggleRequest
+	49, // 47: platform.mvp.ABExperiment.UpdateFeatureToggleRollout:input_type -> platform.mvp.UpdateFeatureToggleRolloutRequest
+	50, // 48: platform.mvp.ABExperiment.SetFeatureToggleStatus:input_type -> platform.mvp.SetFeatureToggleStatusRequest
+	51, // 49: platform.mvp.ABExperiment.IsFeatureEnabled:input_type -> platform.mvp.IsFeatureEnabledRequest
+	52, // 50: platform.mvp.ABExperiment.IsUserInFeature:input_type -> platform.mvp.IsUserInFeatureRequest
 	14, // 51: platform.mvp.ABExperiment.GetExperimentByID:input_type -> platform.mvp.GetExperimentByIDRequest
 	16, // 52: platform.mvp.ABExperiment.GetNamespaceByID:input_type -> platform.mvp.GetNamespaceByIDRequest
 	18, // 53: platform.mvp.ABExperiment.GetLayerByID:input_type -> platform.mvp.GetLayerByIDRequest
 	20, // 54: platform.mvp.ABExperiment.GetCustomParamByID:input_type -> platform.mvp.GetCustomParamByIDRequest
 	22, // 55: platform.mvp.ABExperiment.GetFeatureToggleByID:input_type -> platform.mvp.GetFeatureToggleByIDRequest
-	57, // 56: platform.mvp.ABExperiment.GetExperiments:input_type -> google.protobuf.Empty
-	57, // 57: platform.mvp.ABExperiment.GetNamespaces:input_type -> google.protobuf.Empty
-	57, // 58: platform.mvp.ABExperiment.GetLayers:input_type -> google.protobuf.Empty
-	57, // 59: platform.mvp.ABExperiment.GetCustomParams:input_type -> google.protobuf.Empty
-	57, // 60: platform.mvp.ABExperiment.GetFeatureToggles:input_type -> google.protobuf.Empty
-	54, // 61: platform.mvp.ABExperiment.UserExperiment:output_type -> platform.mvp.ExperimentsReply
+	58, // 56: platform.mvp.ABExperiment.GetExperiments:input_type -> google.protobuf.Empty
+	58, // 57: platform.mvp.ABExperiment.GetNamespaces:input_type -> google.protobuf.Empty
+	58, // 58: platform.mvp.ABExperiment.GetLayers:input_type -> google.protobuf.Empty
+	58, // 59: platform.mvp.ABExperiment.GetCustomParams:input_type -> google.protobuf.Empty
+	58, // 60: platform.mvp.ABExperiment.GetFeatureToggles:input_type -> google.protobuf.Empty
+	55, // 61: platform.mvp.ABExperiment.UserExperiment:output_type -> platform.mvp.ExperimentsReply
 	13, // 62: platform.mvp.ABExperiment.CreateExperiment:output_type -> platform.mvp.StockReply
 	13, // 63: platform.mvp.ABExperiment.CreateNamespace:output_type -> platform.mvp.StockReply
 	13, // 64: platform.mvp.ABExperiment.CreateLayer:output_type -> platform.mvp.StockReply
@@ -3900,15 +3965,15 @@ func file_ab_microservice_proto_init() {
 		return
 	}
 	file_ab_microservice_proto_msgTypes[20].OneofWrappers = []any{}
-	file_ab_microservice_proto_msgTypes[34].OneofWrappers = []any{}
 	file_ab_microservice_proto_msgTypes[35].OneofWrappers = []any{}
+	file_ab_microservice_proto_msgTypes[36].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ab_microservice_proto_rawDesc), len(file_ab_microservice_proto_rawDesc)),
 			NumEnums:      13,
-			NumMessages:   43,
+			NumMessages:   44,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

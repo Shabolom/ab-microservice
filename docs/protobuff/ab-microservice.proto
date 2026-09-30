@@ -295,15 +295,21 @@ message CustomParamCondition {
 message ParamGroup {
   int64 id = 1;
   int64 percent = 2;
-  repeated CustomParamWithCondition params_with_conditions = 3;
+  repeated GetCustomParamWithCondition params_with_conditions = 3;
 }
 
-message CustomParamWithCondition {
+message GetCustomParamWithCondition {
   int64 id = 1;
   int64 parameter_id = 2;
   int64 parameter_group_id = 3;
   string value = 4;
   string condition = 5;
+}
+
+message CustomParamWithCondition {
+  int64 parameter_id = 1;
+  string value = 2;
+  string condition = 3;
 }
 
 message Group {
